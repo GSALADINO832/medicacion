@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Medicación Familiar</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  :root {
+    --bg: #F4F1EC; --card: #FFFDF9; --border: #E2DDD4;
+    --text: #1A1614; --muted: #8A7F74; --accent: #2D5A3D;
+    --warn: #92400E; --danger: #991B1B; --ok: #166534;
+    --tag-b24-bg: #DBEAFE; --tag-b24: #1E3A8A;
+    --tag-pso-bg: #EDE9FE; --tag-pso: #5B21B6;
+    --tag-pend-bg: #FEF3C7; --tag-pend: #92400E;
+    --tag-apr-bg: #D1FAE5; --tag-apr: #065F46;
+    --tag-fin-bg: #DCFCE7; --tag-fin: #166534;
+    --radius: 14px; --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(0,0,0,.07);
+    --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.5; min-height: 100vh; }
+
+  .header { background: var(--accent); color: #fff; padding: 16px 16px 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .header-title { font-size: 18px; font-weight: 700; letter-spacing: -.2px; }
+  .header-sub { font-size: 12px; opacity: .75; margin-top: 1px; }
+  .sync-indicator { font-size: 11px; display: flex; align-items: center; gap: 5px; opacity: .85; }
+  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #A8D5B5; flex-shrink: 0; }
+  .sync-dot.syncing { background: #FCD34D; animation: pulse 1s infinite; }
+  .sync-dot.error { background: #FCA5A5; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  .tabs { display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink:0; padding:11px 10px 9px; border:none; background:none; color:rgba(255,255,255,.6); font-family:var(--font); font-size:14px; font-weight:700; cursor:pointer; border-bottom:3px solid transparent; transition:all .2s; text-align:center; white-space:nowrap; }
+  .tab.on { color:#fff; border-bottom-color:#A8D5B5; }
+  .cnt { display:inline-block; background:rgba(255,255,255,.25); border-radius:20px; padding:0 6px; font-size:11px; margin-left:4px; }
+
+  .sec { display:none; padding:14px 14px 80px; }
+  .sec.on { display:block; }
+
+  /* LOGIN */
+  .login-wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; padding:24px; text-align:center; }
+  .login-icon { font-size:56px; margin-bottom:16px; }
+  .login-title { font-size:22px; font-weight:700; margin-bottom:8px; }
+  .login-desc { font-size:14px; color:var(--muted); margin-bottom:28px; line-height:1.7; max-width:320px; }
+  .btn-google { display:flex; align-items:center; gap:12px; background:#fff; border:1.5px solid var(--border); border-radius:12px; padding:14px 24px; font-family:var(--font); font-size:15px; font-weight:700; color:var(--text); cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.1); transition:all .15s; }
+  .btn-google:hover { box-shadow:0 4px 16px rgba(0,0,0,.15); }
+  .btn-google:active { transform:scale(.97); }
+  .google-logo { width:22px; height:22px; }
+
+  .card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:12px; box-shadow:var(--shadow); }
+  .card-title { font-size:13px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; margin-bottom:14px; }
+  .field { display:flex; flex-direction:column; gap:5px; margin-bottom:12px; }
+  .field-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .field-row.full { grid-template-columns:1fr; }
+  label { font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; }
+  input,select,textarea { background:var(--bg); border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:10px 11px; color:var(--text); font-family:var(--font); font-size:14px; width:100%; transition:border .15s; -webkit-appearance:none; }
+  input:focus,select:focus,textarea:focus { outline:none; border-color:var(--accent); }
+  input[readonly] { background:#EAE7E0; color:var(--muted); border-style:dashed; cursor:default; }
+  textarea { resize:none; min-height:72px; }
+  .char-count { font-size:10px; color:var(--muted); text-align:right; font-family:var(--mono); }
+  .calc-hint { font-size:11px; color:var(--ok); font-weight:700; margin-top:4px; min-height:14px; }
+
+  .btn { padding:10px 16px; border-radius:var(--radius-sm); border:1.5px solid var(--border); background:var(--card); color:var(--text); font-family:var(--font); font-size:13px; font-weight:600; cursor:pointer; transition:all .15s; display:inline-flex; align-items:center; gap:6px; justify-content:center; }
+  .btn:active { transform:scale(.97); }
+  .btn.p { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .btn.p:active { background:#234d33; }
+  .btn.danger { color:var(--danger); border-color:#FECACA; }
+  .btn.danger:active { background:#FFF1F1; }
+  .btn.sm { padding:7px 12px; font-size:12px; }
+  .btn-row { display:flex; gap:8px; justify-content:flex-end; align-items:center; margin-top:4px; flex-wrap:wrap; }
+
+  #toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--accent); color:#fff; padding:10px 20px; border-radius:30px; font-size:13px; font-weight:600; box-shadow:0 4px 20px rgba(0,0,0,.2); transition:transform .3s cubic-bezier(.34,1.56,.64,1); z-index:999; white-space:nowrap; }
+  #toast.show { transform:translateX(-50%) translateY(0); }
+
+  .tc { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:12px; box-shadow:var(--shadow); overflow:hidden; }
+  .tc-head { padding:14px 14px 12px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
+  .tc-name { font-size:16px; font-weight:700; }
+  .tc-sub { font-size:12px; color:var(--muted); margin-top:3px; display:flex; gap:5px; flex-wrap:wrap; align-items:center; }
+  .tc-badges { display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0; }
+  .badge { display:inline-flex; align-items:center; gap:3px; padding:3px 9px; border-radius:20px; font-size:10px; font-weight:700; white-space:nowrap; }
+  .bp { background:var(--tag-pend-bg); color:var(--tag-pend); }
+  .ba { background:var(--tag-apr-bg); color:var(--tag-apr); }
+  .bf { background:var(--tag-fin-bg); color:var(--tag-fin); }
+  .bb24 { background:var(--tag-b24-bg); color:var(--tag-b24); }
+  .bpso { background:var(--tag-pso-bg); color:var(--tag-pso); }
+  .b-venc { background:#FEF2F2; color:var(--danger); font-size:10px; font-weight:700; }
+  .b-warn { background:#FFFBEB; color:var(--warn); font-size:10px; font-weight:700; }
+
+  .tc-grid { display:grid; grid-template-columns:1fr 1fr; }
+  .tf { padding:10px 14px; border-bottom:1px solid var(--border); border-right:1px solid var(--border); }
+  .tf:nth-child(even) { border-right:none; }
+  .tf:last-child,.tf:nth-last-child(2):nth-child(odd) { border-bottom:none; }
+  .tfl { font-size:10px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; margin-bottom:3px; }
+  .tfv { font-size:13px; color:var(--text); font-family:var(--mono); }
+  .tfv.ok { color:var(--ok); font-weight:700; }
+  .tfv.warn { color:var(--warn); font-weight:700; }
+  .tfv.bad { color:var(--danger); font-weight:700; }
+  .tfv.pend { color:var(--muted); font-style:italic; font-family:var(--font); }
+
+  .tc-step { padding:12px 14px; background:#F9F7F3; border-top:1px solid var(--border); }
+  .step-title { font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+  .step-num { background:var(--accent); color:#fff; border-radius:50%; width:17px; height:17px; display:inline-flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; flex-shrink:0; }
+  .tc-notes { padding:10px 14px; background:#FDFCF9; border-top:1px solid var(--border); font-size:12px; color:var(--muted); line-height:1.6; font-style:italic; }
+  .tc-acts { padding:10px 14px; border-top:1px solid var(--border); display:flex; gap:8px; flex-wrap:wrap; }
+
+  .empty { text-align:center; padding:40px 20px; color:var(--muted); }
+  .empty-icon { font-size:40px; display:block; margin-bottom:10px; }
+  .filters { display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
+  .fb { padding:5px 13px; border-radius:20px; border:1.5px solid var(--border); background:var(--card); color:var(--muted); cursor:pointer; font-family:var(--font); font-size:12px; font-weight:700; transition:all .15s; }
+  .fb.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .info-box { background:#EBF4EF; border:1px solid #A8D5B5; border-radius:var(--radius-sm); padding:12px 14px; font-size:12px; color:#1A3D28; line-height:1.7; margin-bottom:12px; }
+  .info-box b { font-weight:700; }
+  .alerta-box { background:#FEF9EC; border:1px solid #FCD34D; border-radius:var(--radius-sm); padding:10px 14px; font-size:12px; color:#78350F; margin-bottom:12px; }
+  .divider { height:1px; background:var(--border); margin:14px 0; }
+
+  /* ESTADÍSTICAS */
+  .stat-section-title { font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; margin:18px 0 10px; }
+  .stat-grid-top { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:6px; }
+  .stat-num-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:14px; box-shadow:var(--shadow); text-align:center; }
+  .stat-num { font-size:36px; font-weight:700; line-height:1; font-family:var(--mono); }
+  .stat-num.green{color:var(--ok)} .stat-num.blue{color:#1E3A8A} .stat-num.amber{color:var(--warn)} .stat-num.purple{color:#5B21B6}
+  .stat-label { font-size:11px; color:var(--muted); margin-top:5px; font-weight:600; text-transform:uppercase; letter-spacing:.4px; }
+  .pac-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:10px; box-shadow:var(--shadow); overflow:hidden; }
+  .pac-head { padding:12px 14px; background:var(--accent); display:flex; justify-content:space-between; align-items:center; }
+  .pac-name { font-size:15px; font-weight:700; color:#fff; }
+  .pac-total { font-size:12px; color:rgba(255,255,255,.8); font-weight:600; }
+  .enf-row { padding:10px 14px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .enf-row:last-child { border-bottom:none; }
+  .enf-left { display:flex; flex-direction:column; gap:4px; }
+  .enf-right { display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+  .bar-wrap { height:6px; background:var(--border); border-radius:3px; width:100%; margin-top:4px; overflow:hidden; }
+  .bar-fill { height:100%; border-radius:3px; }
+  .bar-b24{background:#3B82F6} .bar-pso{background:#8B5CF6}
+  .mini-stats { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+  .mini-stat { display:flex; flex-direction:column; align-items:center; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:6px 10px; min-width:60px; }
+  .mini-stat-n { font-size:18px; font-weight:700; font-family:var(--mono); }
+  .mini-stat-l { font-size:10px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.3px; text-align:center; margin-top:1px; }
+  .mini-stat-n.ok{color:var(--ok)} .mini-stat-n.warn{color:var(--warn)}
+  .med-row { display:flex; align-items:center; justify-content:space-between; padding:9px 14px; border-bottom:1px solid var(--border); }
+  .med-row:last-child{border-bottom:none}
+  .med-name{font-size:13px;font-weight:600}
+  .med-count{font-size:13px;font-family:var(--mono);color:var(--muted);font-weight:700}
+  .med-bar-wrap{height:4px;background:var(--border);border-radius:2px;margin-top:3px;width:100%;overflow:hidden}
+  .med-bar-fill{height:100%;border-radius:2px;background:var(--accent)}
+
+  /* LOADING */
+  .loading-wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:48px 20px; gap:12px; color:var(--muted); }
+  .spinner { width:32px; height:32px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* FAB */
+  .fab-print { position:fixed; bottom:20px; right:16px; z-index:200; display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+  .fab-main { width:52px; height:52px; border-radius:50%; background:var(--accent); color:#fff; border:none; font-size:22px; cursor:pointer; box-shadow:0 4px 16px rgba(0,0,0,.25); display:flex; align-items:center; justify-content:center; transition:all .2s; }
+  .fab-main:active{transform:scale(.93)}
+  .fab-label { background:rgba(0,0,0,.7); color:#fff; font-size:11px; padding:4px 10px; border-radius:20px; white-space:nowrap; font-family:var(--font); font-weight:600; }
+
+  @media print {
+    @page{size:A4;margin:18mm 15mm}
+    body{background:#fff!important;font-size:11pt;font-family:Arial,sans-serif}
+    .header,.tabs,.btn,.tc-step,.tc-acts,.filters,.info-box,.alerta-box,.fab-print,.login-wrap{display:none!important}
+    .sec{display:block!important;padding:0!important}
+    .sec:not(.print-target){display:none!important}
+    .print-header{display:block!important;margin-bottom:16pt;border-bottom:2pt solid #2D5A3D;padding-bottom:8pt}
+    .print-header-title{font-size:16pt;font-weight:700;color:#2D5A3D}
+    .print-header-sub,.print-header-date{font-size:9pt;color:#555;margin-top:3pt}
+    .tc{border:1pt solid #ccc!important;border-radius:0!important;margin-bottom:10pt!important;box-shadow:none!important;page-break-inside:avoid}
+    .tc-head{padding:8pt 10pt!important;background:#f5f5f5!important;border-bottom:1pt solid #ccc!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .tf{padding:5pt 10pt!important;border-color:#ddd!important}
+    .tfl{font-size:7.5pt!important;color:#777!important}
+    .tfv{font-size:10pt!important}
+    .tfv.ok{color:#166534!important} .tfv.warn{color:#92400E!important} .tfv.bad{color:#991B1B!important} .tfv.pend{color:#999!important}
+    .tc-notes{font-size:9pt!important;padding:5pt 10pt!important;color:#555!important;background:#fafafa!important;border-top:1pt solid #ddd!important}
+    .badge{font-size:8pt!important;padding:2pt 6pt!important;border-radius:3pt!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .bp{background:#FEF3C7!important;color:#92400E!important} .ba{background:#D1FAE5!important;color:#065F46!important}
+    .bf{background:#DCFCE7!important;color:#166534!important} .bb24{background:#DBEAFE!important;color:#1E3A8A!important} .bpso{background:#EDE9FE!important;color:#5B21B6!important}
+    .stat-num-card{border:1pt solid #ccc!important;border-radius:4pt!important;box-shadow:none!important}
+    .pac-card{border:1pt solid #ccc!important;border-radius:0!important;box-shadow:none!important;page-break-inside:avoid}
+    .pac-head{background:#2D5A3D!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .bar-fill,.med-bar-fill{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .bar-b24{background:#3B82F6!important} .bar-pso{background:#8B5CF6!important} .med-bar-fill{background:#2D5A3D!important}
+  }
+  .print-header{display:none}
+</style>
+</head>
+<body>
+
+<header class="header" id="main-header" style="display:none">
+  <div class="header-top">
+    <div>
+      <div class="header-title">💊 Medicación Familiar</div>
+      <div class="header-sub" id="user-email">Cargando...</div>
+    </div>
+    <div class="sync-indicator">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-txt">Sincronizado</span>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab on"  onclick="goTab('nuevo')">＋ Nuevo</button>
+    <button class="tab"     onclick="goTab('activos')">📋 En trámite <span class="cnt" id="cnt-a">0</span></button>
+    <button class="tab"     onclick="goTab('fin')">✓ Finalizados <span class="cnt" id="cnt-f">0</span></button>
+    <button class="tab"     onclick="goTab('stats')">📊 Estadísticas</button>
+  </div>
+</header>
+
+<div id="toast">✓ Guardado</div>
+
+<div class="fab-print" id="fab-wrap" style="display:none">
+  <div class="fab-label" id="fab-lbl">Imprimir PDF</div>
+  <button class="fab-main" onclick="imprimirSeccion()" title="Imprimir / Guardar PDF">🖨</button>
+</div>
+
+<!-- LOGIN -->
+<div id="sec-login" class="sec on">
+  <div class="login-wrap">
+    <div class="login-icon">💊</div>
+    <div class="login-title">Medicación Familiar</div>
+    <div class="login-desc">Iniciá sesión con tu cuenta de Google para acceder a tus trámites sincronizados en todos tus dispositivos.</div>
+    <button class="btn-google" onclick="signIn()">
+      <svg class="google-logo" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Iniciar sesión con Google
+    </button>
+    <div id="login-error" style="margin-top:16px;font-size:12px;color:var(--danger);display:none"></div>
+  </div>
+</div>
+
+<!-- NUEVO -->
+<div id="sec-nuevo" class="sec">
+  <div class="info-box"><b>Cálculo automático:</b><br>• <b>OS:</b> 10 días hábiles (Lun–Vie, sin feriados) desde el día siguiente a la presentación.<br>• <b>Droguería:</b> 48hs hábiles = 2 días hábiles (Lun–Sab, sin feriados) desde el día siguiente al ingreso.<br>• <b>B24:</b> no requiere fecha de toma/aplicación.</div>
+  <div id="alertas-box"></div>
+  <div class="card">
+    <div class="card-title">Datos del trámite</div>
+    <div class="field-row">
+      <div class="field"><label>Paciente *</label><input type="text" id="n-pac" placeholder="Nombre y apellido" autocomplete="off"></div>
+      <div class="field"><label>Enfermedad *</label>
+        <select id="n-enf" onchange="onEnfChange()">
+          <option value="">— Seleccionar —</option>
+          <option value="B24">B24</option>
+          <option value="Psoriasis/APS">Psoriasis / APS</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Medicación *</label><select id="n-med"><option value="">Primero elegí enfermedad</option></select></div>
+      <div class="field"><label>Otro (texto libre)</label><input type="text" id="n-medlib" placeholder="Si no está en la lista"></div>
+    </div>
+    <div id="row-toma" class="field-row full" style="display:none">
+      <div class="field"><label>Fecha de toma / aplicación</label><input type="date" id="n-toma"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="field-row">
+      <div class="field"><label>Presentación a obra social *</label><input type="date" id="n-pres" oninput="calcVencOS()"></div>
+      <div class="field"><label>Vto. legal OS — calculado (10 días hábiles)</label><input type="text" id="n-vos" readonly placeholder="Automático"></div>
+    </div>
+    <div class="field">
+      <label>Notas (máx. 200 caracteres)</label>
+      <textarea id="n-notas" maxlength="200" placeholder="Observaciones, número de expediente..."></textarea>
+      <span class="char-count" id="nc">0 / 200</span>
+    </div>
+    <div class="btn-row">
+      <button class="btn" onclick="limpiar()">Limpiar</button>
+      <button class="btn p" onclick="guardar()">Guardar trámite</button>
+    </div>
+  </div>
+</div>
+
+<!-- ACTIVOS -->
+<div id="sec-activos" class="sec">
+  <div class="print-header" id="ph-activos"><div class="print-header-title">💊 Medicación Familiar — Trámites en curso</div><div class="print-header-sub">Gestión de trámites y entregas</div><div class="print-header-date" id="phd-activos"></div></div>
+  <div class="filters">
+    <button class="fb on" id="fa-t" onclick="setF('a','todos')">Todos</button>
+    <button class="fb" id="fa-b" onclick="setF('a','B24')">B24</button>
+    <button class="fb" id="fa-p" onclick="setF('a','Psoriasis/APS')">Psoriasis / APS</button>
+  </div>
+  <div id="lst-a"></div>
+</div>
+
+<!-- FINALIZADOS -->
+<div id="sec-fin" class="sec">
+  <div class="print-header" id="ph-fin"><div class="print-header-title">💊 Medicación Familiar — Trámites finalizados</div><div class="print-header-sub">Gestión de trámites y entregas</div><div class="print-header-date" id="phd-fin"></div></div>
+  <div class="filters">
+    <button class="fb on" id="ff-t" onclick="setF('f','todos')">Todos</button>
+    <button class="fb" id="ff-b" onclick="setF('f','B24')">B24</button>
+    <button class="fb" id="ff-p" onclick="setF('f','Psoriasis/APS')">Psoriasis / APS</button>
+  </div>
+  <div id="lst-f"></div>
+</div>
+
+<!-- ESTADÍSTICAS -->
+<div id="sec-stats" class="sec">
+  <div class="print-header" id="ph-stats"><div class="print-header-title">💊 Medicación Familiar — Estadísticas</div><div class="print-header-sub">Gestión de trámites y entregas</div><div class="print-header-date" id="phd-stats"></div></div>
+  <div id="stats-content"></div>
+</div>
+
+<!-- Google API -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://apis.google.com/js/api.js"></script>
+
+<script>
+// ============================================================
+//  CONFIGURACIÓN
+// ============================================================
+const CLIENT_ID   = "21798518885-c7av9oa2ahpr7dpk9l0d7fjihus3mdr7.apps.googleusercontent.com";
+const SHEET_ID    = "1vytNvoKFi3EtmGFIrZ3mRxnnegz5ndI4VrvqsGkUMU8";
+const SHEET_NAME  = "Tramites";
+const SCOPES      = "https://www.googleapis.com/auth/spreadsheets";
+
+// ============================================================
+//  CONSTANTES
+// ============================================================
+const FER = new Set([
+  "2026-01-01","2026-02-16","2026-02-17","2026-03-24","2026-04-02","2026-04-03",
+  "2026-04-06","2026-05-01","2026-05-25","2026-06-15","2026-06-19","2026-06-20",
+  "2026-07-09","2026-08-17","2026-10-12","2026-11-20","2026-12-08","2026-12-25",
+  "2027-01-01","2027-02-15","2027-02-16","2027-03-24","2027-04-01","2027-04-02",
+  "2027-04-06","2027-05-01","2027-05-25","2027-06-21","2027-07-09","2027-08-16",
+  "2027-10-11","2027-11-20","2027-12-08","2027-12-25"
+]);
+const MEDS = {
+  "B24":["Biktarvy","Dovato","Dolutegravir","Cabenuva","Triumeq","Genvoya","Descovy","Atripla","Juluca","Zuvuvir L Pack","Otro"],
+  "Psoriasis/APS":["Adalimumab (Humira)","Secukinumab (Cosentyx)","Ixekizumab (Taltz)","Ustekinumab (Stelara)","Risankizumab (Skyrizi)","Guselkumab (Tremfya)","Metotrexato","Leflunomida","Apremilast (Otezla)","Baricitinib (Olumiant)","Otro"]
+};
+const COLS = ["id","paciente","enfermedad","medicacion","toma","presentacionOS","vencOS","aprobacionRealOS","ingresoDrogueria","vencDrogueria","disponibleFarmacia","notas","estado","creadoEn"];
+const filtros = { a:"todos", f:"todos" };
+let tabActual = "nuevo";
+let tokenClient = null;
+let accessToken = null;
+let cachedData  = [];
+
+// ============================================================
+//  FECHAS
+// ============================================================
+function ifmt(d){ return d.toISOString().slice(0,10); }
+function pd(s){ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); }
+function fh(d){ return FER.has(ifmt(d)); }
+function fd(s){ if(!s) return "—"; const [y,m,d]=s.split("-"); return `${d}/${m}/${y}`; }
+function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function hoyFmt(){ return new Date().toLocaleDateString("es-AR",{weekday:"long",year:"numeric",month:"long",day:"numeric"}); }
+
+function calcOS(start,n){
+  let d=pd(start); d.setDate(d.getDate()+1);
+  let c=0;
+  while(c<n){ const dw=d.getDay(); if(dw!==0&&dw!==6&&!fh(d)) c++; if(c<n) d.setDate(d.getDate()+1); }
+  return ifmt(d);
+}
+function calcDrog(start,dh){
+  let d=pd(start); d.setDate(d.getDate()+1);
+  let c=0;
+  while(c<dh){ const dw=d.getDay(); if(dw!==0&&!fh(d)) c++; if(c<dh) d.setDate(d.getDate()+1); }
+  return ifmt(d);
+}
+function siguienteDiaHabil(start){
+  let d=pd(start); d.setDate(d.getDate()+1);
+  while(true){ const dw=d.getDay(); if(dw!==0&&!fh(d)) return ifmt(d); d.setDate(d.getDate()+1); }
+}
+function diasDiff(s){ const h=new Date(); h.setHours(0,0,0,0); return Math.round((pd(s)-h)/86400000); }
+
+// ============================================================
+//  GOOGLE AUTH
+// ============================================================
+function initGoogleAuth(){
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    callback: async (resp) => {
+      if(resp.error){ showLoginError("Error de autenticación: "+resp.error); return; }
+      accessToken = resp.access_token;
+      localStorage.setItem("gsi_token", accessToken);
+      const info = parseJwt(resp.access_token);
+      const email = info?.email || localStorage.getItem("user_email") || "";
+      localStorage.setItem("user_email", email);
+      onSignedIn(email);
+    }
+  });
+  // Intentar restaurar sesión previa
+  const savedToken = localStorage.getItem("gsi_token");
+  const savedEmail = localStorage.getItem("user_email");
+  if(savedToken && savedEmail){
+    accessToken = savedToken;
+    onSignedIn(savedEmail);
+  }
+}
+
+function parseJwt(token){
+  try{
+    const base64 = token.split('.')[1];
+    return JSON.parse(atob(base64));
+  }catch(e){ return null; }
+}
+
+function signIn(){
+  if(!tokenClient){ showLoginError("La librería de Google aún no cargó. Esperá un momento e intentá de nuevo."); return; }
+  tokenClient.requestAccessToken({ prompt:"consent" });
+}
+
+function showLoginError(msg){
+  const el = document.getElementById("login-error");
+  el.textContent = msg; el.style.display = "block";
+}
+
+async function onSignedIn(email){
+  document.getElementById("main-header").style.display = "block";
+  document.getElementById("user-email").textContent = email;
+  document.getElementById("sec-login").classList.remove("on");
+  document.getElementById("sec-nuevo").classList.add("on");
+  // asegurar hoja
+  await ensureSheet();
+  await loadAndRender();
+}
+
+// ============================================================
+//  SHEETS API
+// ============================================================
+function sheetsUrl(range){
+  return `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(range)}`;
+}
+function authHeader(){
+  return { "Authorization": "Bearer "+accessToken, "Content-Type": "application/json" };
+}
+
+async function ensureSheet(){
+  // Verificar si la hoja "Tramites" existe; si no, crearla con headers
+  try{
+    const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}?fields=sheets.properties.title`,
+      { headers: authHeader() });
+    const data = await r.json();
+    if(data.error && data.error.code===401){ accessToken=null; localStorage.removeItem("gsi_token"); location.reload(); return; }
+    const hojas = (data.sheets||[]).map(s=>s.properties.title);
+    if(!hojas.includes(SHEET_NAME)){
+      // Crear la hoja
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}:batchUpdate`,{
+        method:"POST", headers:authHeader(),
+        body: JSON.stringify({ requests:[{ addSheet:{ properties:{ title:SHEET_NAME }}}]})
+      });
+      // Escribir headers
+      await fetch(sheetsUrl(SHEET_NAME+"!A1")+`?valueInputOption=RAW`,{
+        method:"PUT", headers:authHeader(),
+        body: JSON.stringify({ values:[COLS] })
+      });
+    }
+  }catch(e){ console.error("ensureSheet error",e); }
+}
+
+async function loadData(){
+  setSyncState("syncing","Sincronizando...");
+  try{
+    const r = await fetch(sheetsUrl(SHEET_NAME+"!A2:Z")+`?majorDimension=ROWS`,
+      { headers: authHeader() });
+    const data = await r.json();
+    if(data.error){
+      if(data.error.code===401){ accessToken=null; localStorage.removeItem("gsi_token"); location.reload(); }
+      setSyncState("error","Error de conexión");
+      return cachedData;
+    }
+    const rows = data.values || [];
+    cachedData = rows.map(row => {
+      const obj = {};
+      COLS.forEach((col,i) => obj[col] = row[i]||"");
+      return obj;
+    }).filter(t => t.id);
+    setSyncState("ok","Sincronizado");
+    return cachedData;
+  }catch(e){
+    setSyncState("error","Sin conexión");
+    return cachedData;
+  }
+}
+
+async function saveRow(t){
+  // Buscar si ya existe la fila con este id
+  setSyncState("syncing","Guardando...");
+  try{
+    const all = await loadData();
+    const idx = all.findIndex(x=>x.id===t.id);
+    const rowData = COLS.map(c=>t[c]||"");
+    if(idx===-1){
+      // Append
+      await fetch(sheetsUrl(SHEET_NAME+"!A1")+`:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,{
+        method:"POST", headers:authHeader(),
+        body: JSON.stringify({ values:[rowData] })
+      });
+    } else {
+      // Update fila existente (idx+2 porque fila 1=headers, idx base 0)
+      const rowNum = idx+2;
+      await fetch(sheetsUrl(SHEET_NAME+`!A${rowNum}`)+`?valueInputOption=RAW`,{
+        method:"PUT", headers:authHeader(),
+        body: JSON.stringify({ values:[rowData] })
+      });
+    }
+    setSyncState("ok","Sincronizado");
+    return true;
+  }catch(e){
+    setSyncState("error","Error al guardar");
+    return false;
+  }
+}
+
+async function deleteRow(id){
+  setSyncState("syncing","Eliminando...");
+  try{
+    // Obtener todas las filas para encontrar el índice
+    const r = await fetch(sheetsUrl(SHEET_NAME+"!A2:A")+`?majorDimension=ROWS`,
+      { headers:authHeader() });
+    const data = await r.json();
+    const rows = data.values||[];
+    const idx = rows.findIndex(r=>r[0]===id);
+    if(idx===-1){ setSyncState("ok","Sincronizado"); return true; }
+    const rowNum = idx+2; // +1 header +1 base0
+
+    // Obtener sheetId numérico
+    const meta = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}?fields=sheets.properties`,
+      { headers:authHeader() });
+    const metaData = await meta.json();
+    const sheet = (metaData.sheets||[]).find(s=>s.properties.title===SHEET_NAME);
+    const sheetId = sheet?.properties?.sheetId??0;
+
+    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}:batchUpdate`,{
+      method:"POST", headers:authHeader(),
+      body: JSON.stringify({ requests:[{ deleteDimension:{
+        range:{ sheetId, dimension:"ROWS", startIndex:rowNum-1, endIndex:rowNum }
+      }}]})
+    });
+    setSyncState("ok","Sincronizado");
+    return true;
+  }catch(e){
+    setSyncState("error","Error al eliminar");
+    return false;
+  }
+}
+
+function setSyncState(state,txt){
+  const dot=document.getElementById("sync-dot");
+  const label=document.getElementById("sync-txt");
+  if(!dot||!label) return;
+  dot.className="sync-dot"+(state==="syncing"?" syncing":state==="error"?" error":"");
+  label.textContent=txt;
+}
+
+async function loadAndRender(){
+  showLoading();
+  await loadData();
+  render();
+}
+
+function showLoading(){
+  ["lst-a","lst-f"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.innerHTML=`<div class="loading-wrap"><div class="spinner"></div><span>Cargando...</span></div>`;
+  });
+}
+
+// ============================================================
+//  FORMULARIO
+// ============================================================
+function onEnfChange(){
+  const enf=document.getElementById("n-enf").value;
+  const sel=document.getElementById("n-med");
+  sel.innerHTML='<option value="">— Seleccionar —</option>';
+  if(enf&&MEDS[enf]) MEDS[enf].forEach(m=>{ const o=document.createElement("option"); o.value=m; o.textContent=m; sel.appendChild(o); });
+  document.getElementById("row-toma").style.display=(enf==="B24"||!enf)?"none":"";
+}
+function calcVencOS(){ const v=document.getElementById("n-pres").value; document.getElementById("n-vos").value=v?fd(calcOS(v,10)):""; }
+document.getElementById("n-notas").addEventListener("input",function(){ document.getElementById("nc").textContent=this.value.length+" / 200"; });
+function limpiar(){
+  ["n-pac","n-pres","n-toma","n-notas","n-medlib"].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=""; });
+  document.getElementById("n-enf").value="";
+  document.getElementById("n-vos").value="";
+  document.getElementById("n-med").innerHTML='<option value="">Primero elegí enfermedad</option>';
+  document.getElementById("row-toma").style.display="none";
+  document.getElementById("nc").textContent="0 / 200";
+}
+async function guardar(){
+  const pac=document.getElementById("n-pac").value.trim();
+  const enf=document.getElementById("n-enf").value;
+  const medSel=document.getElementById("n-med").value;
+  const medLib=document.getElementById("n-medlib").value.trim();
+  const med=medLib||medSel;
+  const pres=document.getElementById("n-pres").value;
+  if(!pac||!enf||!med||!pres){ alert("Completar campos obligatorios (*):\n• Paciente\n• Enfermedad\n• Medicación\n• Fecha de presentación OS"); return; }
+  const t={
+    id:Date.now().toString(), paciente:pac, enfermedad:enf, medicacion:med,
+    toma:(enf==="B24")?"":(document.getElementById("n-toma").value||""),
+    presentacionOS:pres, vencOS:calcOS(pres,10),
+    aprobacionRealOS:"", ingresoDrogueria:"", vencDrogueria:"", disponibleFarmacia:"",
+    notas:document.getElementById("n-notas").value, estado:"pendiente",
+    creadoEn:new Date().toISOString()
+  };
+  const ok = await saveRow(t);
+  if(ok){ showToast("✓ Trámite guardado"); limpiar(); goTab("activos"); await loadAndRender(); }
+}
+
+// ============================================================
+//  HANDLERS TARJETAS
+// ============================================================
+function onAprChange(id){
+  const apr=document.getElementById("apr-"+id), ing=document.getElementById("ing-"+id), prev=document.getElementById("prev-"+id);
+  if(apr&&apr.value&&ing&&!ing.dataset.manual){ ing.value=apr.value; if(prev) prev.textContent="→ Vto. droguería: "+fd(calcDrog(apr.value,2)); }
+}
+function onIngChange(id){
+  const ing=document.getElementById("ing-"+id), prev=document.getElementById("prev-"+id);
+  if(ing){ ing.dataset.manual="1"; if(ing.value&&prev) prev.textContent="→ Vto. droguería: "+fd(calcDrog(ing.value,2)); }
+}
+async function guardarAprobacion(id){
+  const apr=document.getElementById("apr-"+id), ing=document.getElementById("ing-"+id);
+  if(!apr||!apr.value){ alert("Ingresá la fecha de aprobación real de la OS."); return; }
+  const ingVal=(ing&&ing.value)?ing.value:apr.value;
+  const all=await loadData(); const t=all.find(x=>x.id===id); if(!t) return;
+  t.aprobacionRealOS=apr.value; t.ingresoDrogueria=ingVal; t.vencDrogueria=calcDrog(ingVal,2); t.estado="aprobado";
+  const ok=await saveRow(t);
+  if(ok){ showToast("✓ Aprobación registrada"); await loadAndRender(); }
+}
+function onDispChange(id){ const inp=document.getElementById("disp-"+id); if(inp) inp.dataset.manual="1"; }
+async function guardarDisponible(id){
+  const inp=document.getElementById("disp-"+id);
+  if(!inp||!inp.value){ alert("Ingresá la fecha disponible en farmacia."); return; }
+  const all=await loadData(); const t=all.find(x=>x.id===id); if(!t) return;
+  t.disponibleFarmacia=inp.value; t.estado="finalizado";
+  const ok=await saveRow(t);
+  if(ok){ showToast("✓ Trámite finalizado"); await loadAndRender(); }
+}
+async function eliminar(id){
+  if(!confirm("¿Eliminar este trámite?\nEsta acción no se puede deshacer.")) return;
+  const ok=await deleteRow(id);
+  if(ok){ showToast("🗑 Eliminado"); await loadAndRender(); }
+}
+
+// ============================================================
+//  FILTROS / TOAST / IMPRESIÓN
+// ============================================================
+function setF(sec,val){
+  filtros[sec]=val;
+  const pre=sec==="a"?"fa":"ff";
+  ["t","b","p"].forEach(k=>{ const el=document.getElementById(pre+"-"+k); if(el) el.classList.remove("on"); });
+  const map={todos:"t","B24":"b","Psoriasis/APS":"p"};
+  const el=document.getElementById(pre+"-"+map[val]); if(el) el.classList.add("on");
+  render();
+}
+function showToast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2200); }
+function imprimirSeccion(){
+  const fechaHoy="Impreso el: "+hoyFmt();
+  ["activos","fin","stats"].forEach(n=>{ const el=document.getElementById("phd-"+n); if(el) el.textContent=fechaHoy; });
+  document.querySelectorAll(".sec").forEach(s=>s.classList.remove("print-target"));
+  const sec=document.getElementById("sec-"+tabActual); if(sec) sec.classList.add("print-target");
+  setTimeout(()=>window.print(),100);
+}
+
+// ============================================================
+//  ALERTAS
+// ============================================================
+function renderAlertas(){
+  const activos=cachedData.filter(x=>x.estado!=="finalizado");
+  const alertas=[];
+  activos.forEach(t=>{
+    if(!t.aprobacionRealOS&&t.vencOS){ const d=diasDiff(t.vencOS); if(d<0) alertas.push(`⚠ <b>${esc(t.paciente)}</b> — ${esc(t.medicacion)}: vto. OS vencido hace ${Math.abs(d)} día${Math.abs(d)!==1?"s":""}`); else if(d<=2) alertas.push(`⏰ <b>${esc(t.paciente)}</b> — ${esc(t.medicacion)}: vto. OS en ${d} día${d!==1?"s":""}`); }
+    if(t.estado==="aprobado"&&t.vencDrogueria){ const d=diasDiff(t.vencDrogueria); if(d<0) alertas.push(`⚠ <b>${esc(t.paciente)}</b> — ${esc(t.medicacion)}: vto. droguería vencido hace ${Math.abs(d)} día${Math.abs(d)!==1?"s":""}`); else if(d<=1) alertas.push(`⏰ <b>${esc(t.paciente)}</b> — ${esc(t.medicacion)}: droguería vence ${d===0?"hoy":"mañana"}`); }
+  });
+  const el=document.getElementById("alertas-box"); if(!el) return;
+  el.innerHTML=alertas.length?`<div class="alerta-box"><b>Alertas activas (${alertas.length})</b><br>${alertas.map(a=>`• ${a}`).join("<br>")}</div>`:"";
+}
+
+// ============================================================
+//  RENDER
+// ============================================================
+function render(){
+  const activos=cachedData.filter(x=>x.estado!=="finalizado");
+  const fin=cachedData.filter(x=>x.estado==="finalizado");
+  document.getElementById("cnt-a").textContent=activos.length;
+  document.getElementById("cnt-f").textContent=fin.length;
+  const fa=filtros.a==="todos"?activos:activos.filter(x=>x.enfermedad===filtros.a);
+  const ff=filtros.f==="todos"?fin:fin.filter(x=>x.enfermedad===filtros.f);
+  renderLista("lst-a",fa,false);
+  renderLista("lst-f",ff,true);
+  renderAlertas();
+}
+function renderLista(cid,lista,esFin){
+  const el=document.getElementById(cid);
+  if(!lista.length){ el.innerHTML=`<div class="empty"><span class="empty-icon">${esFin?"📂":"📋"}</span><span style="font-size:14px">${esFin?"No hay trámites finalizados aún":"No hay trámites activos"}</span></div>`; return; }
+  const pacs=[...new Set(lista.map(x=>x.paciente))];
+  let html="";
+  pacs.forEach(pac=>{
+    const del=lista.filter(x=>x.paciente===pac);
+    if(pacs.length>1) html+=`<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:14px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--border)">${esc(pac)}</div>`;
+    html+=del.map(t=>renderTC(t,esFin)).join("");
+  });
+  el.innerHTML=html;
+}
+function stateBadge(t){
+  if(t.estado==="finalizado") return `<span class="badge bf">✓ Finalizado</span>`;
+  if(t.estado==="aprobado")   return `<span class="badge ba">✓ OS Aprobada</span>`;
+  return `<span class="badge bp">⏳ Pendiente OS</span>`;
+}
+function enfBadge(e){ return e==="B24"?`<span class="badge bb24">B24</span>`:`<span class="badge bpso">Psoriasis/APS</span>`; }
+function diasBadge(venc){
+  if(!venc) return ""; const d=diasDiff(venc);
+  if(d<0)  return `<span class="badge b-venc">⚠ Vencido hace ${Math.abs(d)} día${Math.abs(d)!==1?"s":""}</span>`;
+  if(d===0)return `<span class="badge b-warn">⚠ Vence hoy</span>`;
+  if(d<=3) return `<span class="badge b-warn">Vence en ${d} días</span>`;
+  return "";
+}
+function vosClass(t){
+  if(t.aprobacionRealOS||!t.vencOS) return "";
+  const d=diasDiff(t.vencOS); if(d<0) return "bad"; if(d<=2) return "warn"; return "";
+}
+function renderTC(t,esFin){
+  let stepHtml="";
+  if(!esFin){
+    if(!t.aprobacionRealOS){
+      stepHtml=`<div class="tc-step"><div class="step-title"><span class="step-num">1</span> Registrar aprobación de obra social</div><div class="field-row" style="margin-bottom:8px"><div class="field" style="margin:0"><label>Aprobación real OS</label><input type="date" id="apr-${t.id}" oninput="onAprChange('${t.id}')"></div><div class="field" style="margin:0"><label>Ingreso a droguería</label><input type="date" id="ing-${t.id}" oninput="onIngChange('${t.id}')" placeholder="Se llena con fecha OS"></div></div><div class="calc-hint" id="prev-${t.id}"></div><div class="btn-row" style="margin-top:10px"><button class="btn p sm" onclick="guardarAprobacion('${t.id}')">Guardar aprobación</button></div></div>`;
+    } else if(!t.disponibleFarmacia){
+      const sug=t.vencDrogueria?siguienteDiaHabil(t.vencDrogueria):"";
+      stepHtml=`<div class="tc-step"><div class="step-title"><span class="step-num">2</span> Registrar disponible en farmacia</div><div style="font-size:11px;color:var(--muted);margin-bottom:8px">Fecha pre-completada con el día hábil siguiente al vto. de droguería. Podés modificarla.</div><div style="display:flex;gap:8px;align-items:flex-end"><div class="field" style="margin:0;flex:1"><label>Fecha disponible en farmacia</label><input type="date" id="disp-${t.id}" value="${sug}" oninput="onDispChange('${t.id}')"></div><button class="btn p sm" onclick="guardarDisponible('${t.id}')">Finalizar</button></div></div>`;
+    }
+  }
+  const notasHtml=t.notas?`<div class="tc-notes">📝 ${esc(t.notas)}</div>`:"";
+  const drogAlerta=(t.estado==="aprobado"&&t.vencDrogueria)?diasBadge(t.vencDrogueria):"";
+  return `<div class="tc"><div class="tc-head"><div><div class="tc-name">${esc(t.paciente)}</div><div class="tc-sub"><span>${esc(t.medicacion)}</span>${enfBadge(t.enfermedad)}</div></div><div class="tc-badges">${stateBadge(t)}${t.estado==="pendiente"?diasBadge(t.vencOS):""}${drogAlerta}</div></div><div class="tc-grid"><div class="tf"><div class="tfl">Presentado a OS</div><div class="tfv">${fd(t.presentacionOS)}</div></div><div class="tf"><div class="tfl">Vto. legal OS</div><div class="tfv ${vosClass(t)}">${fd(t.vencOS)}</div></div><div class="tf"><div class="tfl">Aprobación real OS</div><div class="tfv ${t.aprobacionRealOS?"ok":"pend"}">${t.aprobacionRealOS?fd(t.aprobacionRealOS):"Pendiente"}</div></div><div class="tf"><div class="tfl">Ingreso a droguería</div><div class="tfv">${fd(t.ingresoDrogueria)}</div></div><div class="tf"><div class="tfl">Vto. droguería (48hs)</div><div class="tfv">${fd(t.vencDrogueria)}</div></div><div class="tf"><div class="tfl">Disponible en farmacia</div><div class="tfv ${t.disponibleFarmacia?"ok":"pend"}">${t.disponibleFarmacia?fd(t.disponibleFarmacia):"—"}</div></div>${t.toma?`<div class="tf"><div class="tfl">Fecha toma / aplicación</div><div class="tfv">${fd(t.toma)}</div></div>`:""}<div class="tf"><div class="tfl">Iniciado el</div><div class="tfv" style="font-size:11px;color:var(--muted)">${fd(t.creadoEn?t.creadoEn.slice(0,10):"")}</div></div></div>${notasHtml}${stepHtml}<div class="tc-acts"><button class="btn danger sm" onclick="eliminar('${t.id}')">🗑 Eliminar</button></div></div>`;
+}
+
+// ============================================================
+//  ESTADÍSTICAS
+// ============================================================
+function renderStats(){
+  const lista=cachedData; const el=document.getElementById("stats-content");
+  if(!lista.length){ el.innerHTML=`<div class="empty"><span class="empty-icon">📊</span><span style="font-size:14px">Todavía no hay trámites cargados</span></div>`; return; }
+  const total=lista.length, finalizados=lista.filter(x=>x.estado==="finalizado").length, activos=lista.filter(x=>x.estado!=="finalizado").length;
+  const b24Total=lista.filter(x=>x.enfermedad==="B24").length, psoTotal=lista.filter(x=>x.enfermedad==="Psoriasis/APS").length;
+  const pacientes=[...new Set(lista.map(x=>x.paciente))].sort();
+  const medCount={}; lista.forEach(t=>{ medCount[t.medicacion]=(medCount[t.medicacion]||0)+1; });
+  const topMeds=Object.entries(medCount).sort((a,b)=>b[1]-a[1]).slice(0,5); const maxMed=topMeds[0]?.[1]||1;
+  const conApr=lista.filter(x=>x.aprobacionRealOS&&x.presentacionOS);
+  let demoraOS="—";
+  if(conApr.length){ const sum=conApr.reduce((a,t)=>a+Math.round((pd(t.aprobacionRealOS)-pd(t.presentacionOS))/86400000),0); demoraOS=Math.round(sum/conApr.length)+" días"; }
+  let html=`<div class="stat-section-title">📋 Resumen general</div><div class="stat-grid-top"><div class="stat-num-card"><div class="stat-num green">${total}</div><div class="stat-label">Total trámites</div></div><div class="stat-num-card"><div class="stat-num blue">${activos}</div><div class="stat-label">En trámite</div></div><div class="stat-num-card"><div class="stat-num amber">${finalizados}</div><div class="stat-label">Finalizados</div></div><div class="stat-num-card"><div class="stat-num purple">${pacientes.length}</div><div class="stat-label">Pacientes</div></div></div>`;
+  html+=`<div class="card" style="margin-top:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between"><div style="font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px">⏱ Demora promedio OS</div><div style="font-size:22px;font-weight:700;font-family:var(--mono);color:var(--warn)">${demoraOS}</div></div>`;
+  html+=`<div class="stat-section-title" style="margin-top:20px">🏥 Por enfermedad</div><div class="stat-grid-top"><div class="stat-num-card"><div class="stat-num" style="color:#1E3A8A">${b24Total}</div><div class="stat-label">B24</div><div class="bar-wrap" style="margin-top:8px"><div class="bar-fill bar-b24" style="width:${total?Math.round(b24Total/total*100):0}%"></div></div><div style="font-size:10px;color:var(--muted);margin-top:4px">${total?Math.round(b24Total/total*100):0}% del total</div></div><div class="stat-num-card"><div class="stat-num" style="color:#5B21B6">${psoTotal}</div><div class="stat-label">Psoriasis / APS</div><div class="bar-wrap" style="margin-top:8px"><div class="bar-fill bar-pso" style="width:${total?Math.round(psoTotal/total*100):0}%"></div></div><div style="font-size:10px;color:var(--muted);margin-top:4px">${total?Math.round(psoTotal/total*100):0}% del total</div></div></div>`;
+  html+=`<div class="stat-section-title" style="margin-top:20px">👤 Por paciente</div>`;
+  pacientes.forEach(pac=>{
+    const tp=lista.filter(x=>x.paciente===pac); const tot=tp.length, fin2=tp.filter(x=>x.estado==="finalizado").length, act=tp.filter(x=>x.estado!=="finalizado").length;
+    const b24p=tp.filter(x=>x.enfermedad==="B24").length, psop=tp.filter(x=>x.enfermedad==="Psoriasis/APS").length;
+    html+=`<div class="pac-card"><div class="pac-head"><div class="pac-name">👤 ${esc(pac)}</div><div class="pac-total">${tot} trámite${tot!==1?"s":""}</div></div><div style="padding:12px 14px;border-bottom:1px solid var(--border)"><div class="mini-stats"><div class="mini-stat"><span class="mini-stat-n">${tot}</span><span class="mini-stat-l">Total</span></div><div class="mini-stat"><span class="mini-stat-n ok">${fin2}</span><span class="mini-stat-l">Final.</span></div><div class="mini-stat"><span class="mini-stat-n warn">${act}</span><span class="mini-stat-l">Activos</span></div><div class="mini-stat"><span class="mini-stat-n" style="color:#1E3A8A">${b24p}</span><span class="mini-stat-l">B24</span></div><div class="mini-stat"><span class="mini-stat-n" style="color:#5B21B6">${psop}</span><span class="mini-stat-l">Pso/APS</span></div></div></div>`;
+    if(b24p>0){ const b24f=tp.filter(x=>x.enfermedad==="B24"&&x.estado==="finalizado").length, b24a=b24p-b24f, b24meds=[...new Set(tp.filter(x=>x.enfermedad==="B24").map(x=>x.medicacion))]; html+=`<div class="enf-row"><div class="enf-left"><span class="badge bb24" style="align-self:flex-start">B24</span><div style="font-size:11px;color:var(--muted);margin-top:4px">${b24meds.map(m=>`<b>${esc(m)}</b>`).join(", ")}</div><div class="bar-wrap" style="width:140px;margin-top:6px"><div class="bar-fill bar-b24" style="width:${Math.round(b24p/tot*100)}%"></div></div></div><div class="enf-right"><div style="font-size:20px;font-weight:700;font-family:var(--mono);color:#1E3A8A">${b24p}</div><div style="font-size:10px;color:var(--muted)">✓ ${b24f} fin. | ⏳ ${b24a} activo${b24a!==1?"s":""}</div></div></div>`; }
+    if(psop>0){ const psof=tp.filter(x=>x.enfermedad==="Psoriasis/APS"&&x.estado==="finalizado").length, psoa=psop-psof, psomeds=[...new Set(tp.filter(x=>x.enfermedad==="Psoriasis/APS").map(x=>x.medicacion))]; html+=`<div class="enf-row"><div class="enf-left"><span class="badge bpso" style="align-self:flex-start">Psoriasis / APS</span><div style="font-size:11px;color:var(--muted);margin-top:4px">${psomeds.map(m=>`<b>${esc(m)}</b>`).join(", ")}</div><div class="bar-wrap" style="width:140px;margin-top:6px"><div class="bar-fill bar-pso" style="width:${Math.round(psop/tot*100)}%"></div></div></div><div class="enf-right"><div style="font-size:20px;font-weight:700;font-family:var(--mono);color:#5B21B6">${psop}</div><div style="font-size:10px;color:var(--muted)">✓ ${psof} fin. | ⏳ ${psoa} activo${psoa!==1?"s":""}</div></div></div>`; }
+    html+=`</div>`;
+  });
+  if(topMeds.length){ html+=`<div class="stat-section-title" style="margin-top:20px">💊 Medicaciones más gestionadas</div><div class="card" style="padding:0;overflow:hidden">`; topMeds.forEach(([med,cnt])=>{ html+=`<div class="med-row"><div style="flex:1"><div class="med-name">${esc(med)}</div><div class="med-bar-wrap"><div class="med-bar-fill" style="width:${Math.round(cnt/maxMed*100)}%"></div></div></div><div class="med-count">${cnt} trámite${cnt!==1?"s":""}</div></div>`; }); html+=`</div>`; }
+  el.innerHTML=html;
+}
+
+// ============================================================
+//  NAV
+// ============================================================
+function goTab(name){
+  tabActual=name;
+  const names=["login","nuevo","activos","fin","stats"];
+  document.querySelectorAll(".tab").forEach((t,i)=>t.classList.toggle("on",["nuevo","activos","fin","stats"][i]===name));
+  document.querySelectorAll(".sec").forEach(s=>s.classList.remove("on"));
+  document.getElementById("sec-"+name).classList.add("on");
+  const fab=document.getElementById("fab-wrap");
+  if(name==="nuevo"||name==="login"){ fab.style.display="none"; }
+  else { fab.style.display="flex"; const lbls={activos:"Imprimir trámites activos",fin:"Imprimir finalizados",stats:"Imprimir estadísticas"}; document.getElementById("fab-lbl").textContent=lbls[name]||"Imprimir PDF"; }
+  if(name==="stats") renderStats();
+  else if(name!=="nuevo"&&name!=="login") render();
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+window.addEventListener("load", ()=>{
+  if(typeof google!=="undefined"&&google.accounts){
+    initGoogleAuth();
+  } else {
+    // Esperar a que cargue la librería
+    const interval = setInterval(()=>{
+      if(typeof google!=="undefined"&&google.accounts){
+        clearInterval(interval);
+        initGoogleAuth();
+      }
+    }, 300);
+  }
+});
+</script>
+</body>
+</html>
