@@ -297,7 +297,6 @@
 </div>
 
 <!-- Google API -->
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://apis.google.com/js/api.js"></script>
 
 <script>
@@ -327,7 +326,7 @@ const MEDS = {
 const COLS = ["id","paciente","enfermedad","medicacion","toma","presentacionOS","vencOS","aprobacionRealOS","ingresoDrogueria","vencDrogueria","disponibleFarmacia","notas","estado","creadoEn"];
 const filtros = { a:"todos", f:"todos" };
 let tabActual = "nuevo";
-let tokenClient = null;
+
 let accessToken = null;
 let cachedData  = [];
 
@@ -360,46 +359,54 @@ function siguienteDiaHabil(start){
 function diasDiff(s){ const h=new Date(); h.setHours(0,0,0,0); return Math.round((pd(s)-h)/86400000); }
 
 // ============================================================
-//  GOOGLE AUTH
+//  GOOGLE AUTH — GAPI OAuth2 popup (funciona en GitHub Pages)
 // ============================================================
-function initGoogleAuth(){
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID,
-    scope: SCOPES,
-    callback: async (resp) => {
-      if(resp.error){ showLoginError("Error de autenticación: "+resp.error); return; }
-      accessToken = resp.access_token;
-      localStorage.setItem("gsi_token", accessToken);
-      const info = parseJwt(resp.access_token);
-      const email = info?.email || localStorage.getItem("user_email") || "";
-      localStorage.setItem("user_email", email);
-      onSignedIn(email);
-    }
-  });
-  // Intentar restaurar sesión previa
-  const savedToken = localStorage.getItem("gsi_token");
-  const savedEmail = localStorage.getItem("user_email");
-  if(savedToken && savedEmail){
-    accessToken = savedToken;
-    onSignedIn(savedEmail);
-  }
-}
-
-function parseJwt(token){
-  try{
-    const base64 = token.split('.')[1];
-    return JSON.parse(atob(base64));
-  }catch(e){ return null; }
-}
-
-function signIn(){
-  if(!tokenClient){ showLoginError("La librería de Google aún no cargó. Esperá un momento e intentá de nuevo."); return; }
-  tokenClient.requestAccessToken({ prompt:"consent" });
-}
-
 function showLoginError(msg){
   const el = document.getElementById("login-error");
-  el.textContent = msg; el.style.display = "block";
+  if(el){ el.textContent = msg; el.style.display = "block"; }
+}
+
+function initGoogleAuth(){
+  gapi.load("client:auth2", async () => {
+    try {
+      await gapi.client.init({
+        clientId: CLIENT_ID,
+        scope: SCOPES,
+        plugin_name: "MedicacionFamiliar"
+      });
+      const authInstance = gapi.auth2.getAuthInstance();
+      // Verificar si ya hay sesión activa
+      if(authInstance.isSignedIn.get()){
+        const user = authInstance.currentUser.get();
+        accessToken = user.getAuthResponse().access_token;
+        const email = user.getBasicProfile().getEmail();
+        onSignedIn(email);
+      }
+      // Escuchar cambios de sesión
+      authInstance.isSignedIn.listen(async (isSignedIn) => {
+        if(isSignedIn){
+          const user = authInstance.currentUser.get();
+          accessToken = user.getAuthResponse().access_token;
+          const email = user.getBasicProfile().getEmail();
+          onSignedIn(email);
+        }
+      });
+    } catch(e){
+      console.error("gapi init error", e);
+      showLoginError("Error al inicializar Google. Recargá la página.");
+    }
+  });
+}
+
+async function signIn(){
+  try {
+    const authInstance = gapi.auth2.getAuthInstance();
+    await authInstance.signIn({ prompt: "select_account" });
+  } catch(e){
+    if(e.error !== "popup_closed_by_user"){
+      showLoginError("Error al iniciar sesión: " + (e.error || e.message || e));
+    }
+  }
 }
 
 async function onSignedIn(email){
@@ -407,7 +414,6 @@ async function onSignedIn(email){
   document.getElementById("user-email").textContent = email;
   document.getElementById("sec-login").classList.remove("on");
   document.getElementById("sec-nuevo").classList.add("on");
-  // asegurar hoja
   await ensureSheet();
   await loadAndRender();
 }
@@ -419,6 +425,11 @@ function sheetsUrl(range){
   return `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(range)}`;
 }
 function authHeader(){
+  // Siempre obtener el token fresco desde gapi
+  try {
+    const user = gapi.auth2.getAuthInstance().currentUser.get();
+    accessToken = user.getAuthResponse().access_token;
+  } catch(e){}
   return { "Authorization": "Bearer "+accessToken, "Content-Type": "application/json" };
 }
 
@@ -770,17 +781,13 @@ function goTab(name){
 //  INIT
 // ============================================================
 window.addEventListener("load", ()=>{
-  if(typeof google!=="undefined"&&google.accounts){
-    initGoogleAuth();
-  } else {
-    // Esperar a que cargue la librería
-    const interval = setInterval(()=>{
-      if(typeof google!=="undefined"&&google.accounts){
-        clearInterval(interval);
-        initGoogleAuth();
-      }
-    }, 300);
-  }
+  // Esperar a que cargue gapi
+  const interval = setInterval(()=>{
+    if(typeof gapi !== "undefined"){
+      clearInterval(interval);
+      initGoogleAuth();
+    }
+  }, 200);
 });
 </script>
 </body>
