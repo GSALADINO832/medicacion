@@ -202,9 +202,12 @@
       <div class="header-title">💊 Medicación Familiar</div>
       <div class="header-sub" id="user-email">Cargando...</div>
     </div>
-    <div class="sync-indicator">
-      <div class="sync-dot" id="sync-dot"></div>
-      <span id="sync-txt">Sincronizado</span>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="sync-indicator" id="sync-wrap" onclick="reLogin()" style="cursor:pointer">
+        <div class="sync-dot" id="sync-dot"></div>
+        <span id="sync-txt">Sincronizado</span>
+      </div>
+      <button onclick="cerrarSesion()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font)">Salir</button>
     </div>
   </div>
   <div class="tabs">
@@ -378,25 +381,40 @@ function showLoginError(msg){
   if(el){ el.textContent = msg; el.style.display = "block"; }
 }
 
+function cerrarSesion(){
+  if(!confirm("¿Cerrar sesión?")) return;
+  accessToken = null;
+  localStorage.removeItem("med_access_token");
+  localStorage.removeItem("med_user_email");
+  if(syncTimer) clearTimeout(syncTimer);
+  // Volver a pantalla de login
+  document.getElementById("main-header").style.display = "none";
+  document.querySelectorAll(".sec").forEach(s=>s.classList.remove("on"));
+  document.getElementById("sec-login").classList.add("on");
+}
+
+async function reLogin(){
+  // Si hay error de conexión, tocar el indicador intenta reconectar
+  const txt = document.getElementById("sync-txt");
+  if(txt && txt.textContent.includes("Error")){
+    showToast("Reconectando...");
+    await signIn();
+  }
+}
+
 let tokenClient = null;
 
 function initGoogleAuth(){
-  // Inicializar gapi para llamadas a Sheets
-  gapi.load("client", async () => {
-    await gapi.client.init({});
-    await gapi.client.load("https://sheets.googleapis.com/$discovery/rest?version=v4");
-  });
-  // Restaurar sesión previa si existe
-  const savedToken = localStorage.getItem("med_access_token");
-  const savedEmail = localStorage.getItem("med_user_email");
-  if(savedToken && savedEmail){
+  const savedToken  = localStorage.getItem("med_access_token");
+  const savedEmail  = localStorage.getItem("med_user_email");
+  const savedExpiry = parseInt(localStorage.getItem("med_token_expiry") || "0");
+  const tokenValid  = savedToken && savedEmail && Date.now() < savedExpiry;
+
+  if(tokenValid){
     accessToken = savedToken;
-    gapi.load("client", async () => {
-      await gapi.client.init({});
-      gapi.client.setToken({ access_token: savedToken });
-      onSignedIn(savedEmail);
-    });
+    onSignedIn(savedEmail);
   }
+  // Si no hay token válido, el usuario verá la pantalla de login normalmente
 }
 
 async function signIn(){
@@ -409,27 +427,55 @@ async function signIn(){
     scope: SCOPES,
     callback: async (resp) => {
       if(resp.error){
-        showLoginError("Error: " + resp.error);
+        if(resp.error !== "popup_closed_by_user"){
+          showLoginError("Error: " + resp.error);
+        }
         return;
       }
       accessToken = resp.access_token;
-      gapi.client.setToken({ access_token: accessToken });
-      // Obtener email del usuario
+      // Guardar token con timestamp para saber cuándo vence (1 hora)
+      const expiry = Date.now() + 55 * 60 * 1000; // 55 minutos
+      localStorage.setItem("med_access_token", accessToken);
+      localStorage.setItem("med_token_expiry", expiry.toString());
       try {
         const r = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
           headers: { "Authorization": "Bearer " + accessToken }
         });
         const info = await r.json();
         const email = info.email || "Usuario";
-        localStorage.setItem("med_access_token", accessToken);
         localStorage.setItem("med_user_email", email);
         onSignedIn(email);
       } catch(e){
-        onSignedIn("Usuario");
+        const email = localStorage.getItem("med_user_email") || "Usuario";
+        onSignedIn(email);
       }
     }
   });
-  tokenClient.requestAccessToken({ prompt: "" });
+  tokenClient.requestAccessToken({ prompt: "none" });
+}
+
+async function refreshTokenIfNeeded(){
+  const expiry = parseInt(localStorage.getItem("med_token_expiry") || "0");
+  if(Date.now() > expiry){
+    // Token vencido, pedir uno nuevo silenciosamente
+    return new Promise((resolve) => {
+      if(typeof google === "undefined" || !google.accounts){ resolve(false); return; }
+      const tc = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        callback: async (resp) => {
+          if(resp.error){ resolve(false); return; }
+          accessToken = resp.access_token;
+          const expiry2 = Date.now() + 55 * 60 * 1000;
+          localStorage.setItem("med_access_token", accessToken);
+          localStorage.setItem("med_token_expiry", expiry2.toString());
+          resolve(true);
+        }
+      });
+      tc.requestAccessToken({ prompt: "none" });
+    });
+  }
+  return true;
 }
 
 async function onSignedIn(email){
@@ -474,7 +520,9 @@ async function ensureSheet(){
 }
 
 async function loadData(){
-  if(isSyncing) return cachedData;   // ya hay una sync en curso, no arrancar otra
+  if(isSyncing) return cachedData;
+  // Renovar token si está por vencer
+  await refreshTokenIfNeeded();
   isSyncing = true;
   setSyncState("syncing","Sincronizando...");
   try{
