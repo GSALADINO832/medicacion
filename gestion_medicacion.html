@@ -452,20 +452,19 @@ function authHeader(){
 }
 
 async function ensureSheet(){
-  // Verificar si la hoja "Tramites" existe; si no, crearla con headers
   try{
-    const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}?fields=sheets.properties.title`,
-      { headers: authHeader() });
+    const r = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}?fields=sheets.properties.title`,
+      { headers: authHeader() }
+    );
     const data = await r.json();
-    if(data.error && data.error.code===401){ accessToken=null; localStorage.removeItem("gsi_token"); location.reload(); return; }
+    if(data.error){ return; } // no recargar, solo salir
     const hojas = (data.sheets||[]).map(s=>s.properties.title);
     if(!hojas.includes(SHEET_NAME)){
-      // Crear la hoja
       await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}:batchUpdate`,{
         method:"POST", headers:authHeader(),
         body: JSON.stringify({ requests:[{ addSheet:{ properties:{ title:SHEET_NAME }}}]})
       });
-      // Escribir headers
       await fetch(sheetsUrl(SHEET_NAME+"!A1")+`?valueInputOption=RAW`,{
         method:"PUT", headers:authHeader(),
         body: JSON.stringify({ values:[COLS] })
@@ -483,13 +482,6 @@ async function loadData(){
       { headers: authHeader() });
     const data = await r.json();
     if(data.error){
-      if(data.error.code===401){
-        accessToken=null;
-        localStorage.removeItem("med_access_token");
-        localStorage.removeItem("med_user_email");
-        isSyncing = false;
-        location.reload();
-      }
       setSyncState("error","Error de conexión");
       isSyncing = false;
       return cachedData;
@@ -587,37 +579,33 @@ function setSyncState(state,txt){
 }
 
 async function loadAndRender(){
-  if(isSyncing) return;   // no re-entrar si ya está sincronizando
-  showLoading();
+  if(isSyncing) return;
   await loadData();
   render();
-  // Auto-refresh cada 60 segundos (no en bucle continuo)
+  // Programar UN solo refresh en 90 segundos, sin recursividad
   if(syncTimer) clearTimeout(syncTimer);
-  syncTimer = setTimeout(async () => {
-    if(!isSyncing){
-      await loadData();
-      render();
-    }
-    // Reprogramar el siguiente refresh
-    scheduleRefresh();
-  }, 60000);
+  syncTimer = setTimeout(silentRefresh, 90000);
 }
 
-function scheduleRefresh(){
+async function silentRefresh(){
+  // Refresh silencioso: no muestra loading, no parpadea
   if(syncTimer) clearTimeout(syncTimer);
-  syncTimer = setTimeout(async () => {
-    if(!isSyncing && accessToken){
-      await loadData();
-      render();
-    }
-    scheduleRefresh();
-  }, 60000);
+  if(!isSyncing && accessToken){
+    const prevHash = lastHash;
+    await loadData();
+    if(lastHash !== prevHash) render(); // solo re-renderiza si algo cambió
+  }
+  // Programar el próximo en 90 segundos
+  syncTimer = setTimeout(silentRefresh, 90000);
 }
 
 function showLoading(){
+  // Solo mostrar spinner en la carga inicial (listas vacías)
   ["lst-a","lst-f"].forEach(id=>{
     const el=document.getElementById(id);
-    if(el) el.innerHTML=`<div class="loading-wrap"><div class="spinner"></div><span>Cargando...</span></div>`;
+    if(el && el.innerHTML.trim()===""){
+      el.innerHTML=`<div class="loading-wrap"><div class="spinner"></div><span>Cargando...</span></div>`;
+    }
   });
 }
 
