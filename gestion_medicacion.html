@@ -202,12 +202,11 @@
       <div class="header-title">💊 Medicación Familiar</div>
       <div class="header-sub" id="user-email">Cargando...</div>
     </div>
-    <div style="display:flex;align-items:center;gap:10px">
-      <div class="sync-indicator" id="sync-wrap" onclick="reLogin()" style="cursor:pointer">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="sync-indicator">
         <div class="sync-dot" id="sync-dot"></div>
         <span id="sync-txt">Sincronizado</span>
       </div>
-      <button onclick="cerrarSesion()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font)">Salir</button>
     </div>
   </div>
   <div class="tabs">
@@ -230,17 +229,28 @@
   <div class="login-wrap">
     <div class="login-icon">💊</div>
     <div class="login-title">Medicación Familiar</div>
-    <div class="login-desc">Iniciá sesión con tu cuenta de Google para acceder a tus trámites sincronizados en todos tus dispositivos.</div>
-    <button class="btn-google" onclick="signIn()">
-      <svg class="google-logo" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-      Iniciar sesión con Google
-    </button>
-    <div id="login-error" style="margin-top:16px;font-size:12px;color:var(--danger);display:none"></div>
+    <div class="login-desc">Ingresá tu usuario y contraseña para acceder.</div>
+    <div style="width:100%;max-width:320px;display:flex;flex-direction:column;gap:12px">
+      <div class="field">
+        <label>Usuario</label>
+        <input type="text" id="l-user" placeholder="Usuario" autocomplete="username" onkeydown="if(event.key==='Enter') doLogin()">
+      </div>
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" id="l-pass" placeholder="Contraseña" autocomplete="current-password" onkeydown="if(event.key==='Enter') doLogin()">
+      </div>
+      <button class="btn p" style="width:100%;padding:12px" onclick="doLogin()">Ingresar</button>
+      <div id="login-error" style="font-size:12px;color:var(--danger);text-align:center;display:none">Usuario o contraseña incorrectos</div>
+    </div>
   </div>
 </div>
 
 <!-- NUEVO -->
 <div id="sec-nuevo" class="sec">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <div style="font-size:12px;color:var(--muted)" id="bienvenida"></div>
+    <button onclick="cerrarSesion()" class="btn danger sm">🔒 Cerrar sesión</button>
+  </div>
   <div class="info-box"><b>Cálculo automático:</b><br>• <b>OS:</b> 10 días hábiles (Lun–Vie, sin feriados) desde el día siguiente a la presentación.<br>• <b>Droguería:</b> 48hs hábiles = 2 días hábiles (Lun–Sab, sin feriados) desde el día siguiente al ingreso.<br>• <b>B24:</b> no requiere fecha de toma/aplicación.</div>
   <div id="alertas-box"></div>
   <div class="card">
@@ -308,17 +318,16 @@
 </div>
 
 <!-- Google API -->
-<script src="https://apis.google.com/js/api.js"></script>
-<script src="https://accounts.google.com/gsi/client" async></script>
+
 
 <script>
 // ============================================================
 //  CONFIGURACIÓN
 // ============================================================
-const CLIENT_ID   = "21798518885-c7av9oa2ahpr7dpk9l0d7fjihus3mdr7.apps.googleusercontent.com";
+// URL del Apps Script Web App (se configura una vez)
+const SCRIPT_URL  = "https://script.google.com/macros/s/AKfycbwtC5XqUnQMPrMfd1CBooiSZyonbyFhr9YoUhou0kcjtCKcLP7WW7SrY2H-jHLyZL88/exec";
 const SHEET_ID    = "1vytNvoKFi3EtmGFIrZ3mRxnnegz5ndI4VrvqsGkUMU8";
 const SHEET_NAME  = "Tramites";
-const SCOPES      = "https://www.googleapis.com/auth/spreadsheets";
 
 // ============================================================
 //  CONSTANTES
@@ -402,85 +411,52 @@ async function reLogin(){
   }
 }
 
-let tokenClient = null;
+// ============================================================
+//  AUTH PROPIO (usuario + contraseña)
+// ============================================================
+const USUARIOS = {
+  "gustavo":  "med2026",
+  "familiar": "med2026"
+};
 
-function initGoogleAuth(){
-  const savedToken  = localStorage.getItem("med_access_token");
-  const savedEmail  = localStorage.getItem("med_user_email");
-  const savedExpiry = parseInt(localStorage.getItem("med_token_expiry") || "0");
-  const tokenValid  = savedToken && savedEmail && Date.now() < savedExpiry;
-
-  if(tokenValid){
-    accessToken = savedToken;
-    onSignedIn(savedEmail);
+function doLogin(){
+  const user = (document.getElementById("l-user").value || "").trim().toLowerCase();
+  const pass = (document.getElementById("l-pass").value || "").trim();
+  const errEl = document.getElementById("login-error");
+  if(USUARIOS[user] && USUARIOS[user] === pass){
+    errEl.style.display = "none";
+    localStorage.setItem("med_logged_user", user);
+    onSignedIn(user);
+  } else {
+    errEl.style.display = "block";
   }
-  // Si no hay token válido, el usuario verá la pantalla de login normalmente
 }
 
-async function signIn(){
-  if(typeof google === "undefined" || !google.accounts){
-    showLoginError("La librería de Google no cargó. Verificá tu conexión y recargá la página.");
-    return;
-  }
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID,
-    scope: SCOPES,
-    callback: async (resp) => {
-      if(resp.error){
-        if(resp.error !== "popup_closed_by_user"){
-          showLoginError("Error: " + resp.error);
-        }
-        return;
-      }
-      accessToken = resp.access_token;
-      // Guardar token con timestamp para saber cuándo vence (1 hora)
-      const expiry = Date.now() + 55 * 60 * 1000; // 55 minutos
-      localStorage.setItem("med_access_token", accessToken);
-      localStorage.setItem("med_token_expiry", expiry.toString());
-      try {
-        const r = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
-          headers: { "Authorization": "Bearer " + accessToken }
-        });
-        const info = await r.json();
-        const email = info.email || "Usuario";
-        localStorage.setItem("med_user_email", email);
-        onSignedIn(email);
-      } catch(e){
-        const email = localStorage.getItem("med_user_email") || "Usuario";
-        onSignedIn(email);
-      }
-    }
-  });
-  tokenClient.requestAccessToken({ prompt: "none" });
+function cerrarSesion(){
+  if(!confirm("¿Cerrar sesión?")) return;
+  localStorage.removeItem("med_logged_user");
+  if(syncTimer) clearTimeout(syncTimer);
+  document.getElementById("main-header").style.display = "none";
+  document.querySelectorAll(".sec").forEach(s=>s.classList.remove("on"));
+  document.getElementById("sec-login").classList.add("on");
+  document.getElementById("l-user").value = "";
+  document.getElementById("l-pass").value = "";
 }
 
-async function refreshTokenIfNeeded(){
-  const expiry = parseInt(localStorage.getItem("med_token_expiry") || "0");
-  if(Date.now() > expiry){
-    // Token vencido, pedir uno nuevo silenciosamente
-    return new Promise((resolve) => {
-      if(typeof google === "undefined" || !google.accounts){ resolve(false); return; }
-      const tc = google.accounts.oauth2.initTokenClient({
-        client_id: CLIENT_ID,
-        scope: SCOPES,
-        callback: async (resp) => {
-          if(resp.error){ resolve(false); return; }
-          accessToken = resp.access_token;
-          const expiry2 = Date.now() + 55 * 60 * 1000;
-          localStorage.setItem("med_access_token", accessToken);
-          localStorage.setItem("med_token_expiry", expiry2.toString());
-          resolve(true);
-        }
-      });
-      tc.requestAccessToken({ prompt: "none" });
-    });
+function initAuth(){
+  const savedUser = localStorage.getItem("med_logged_user");
+  if(savedUser){
+    onSignedIn(savedUser);
   }
-  return true;
 }
 
-async function onSignedIn(email){
+async function refreshTokenIfNeeded(){ return true; } // no aplica con auth propio
+
+async function onSignedIn(user){
   document.getElementById("main-header").style.display = "block";
-  document.getElementById("user-email").textContent = email;
+  document.getElementById("user-email").textContent = "👤 " + user;
+  const bienEl = document.getElementById("bienvenida");
+  if(bienEl) bienEl.textContent = "Hola, " + user;
   document.getElementById("sec-login").classList.remove("on");
   document.getElementById("sec-nuevo").classList.add("on");
   await ensureSheet();
@@ -493,54 +469,48 @@ async function onSignedIn(email){
 function sheetsUrl(range){
   return `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(range)}`;
 }
+// API Key de Google para acceso a Sheets (planilla compartida como Editor)
+const API_KEY = "AIzaSyD_placeholder"; // se reemplaza con clave real
+
 function authHeader(){
-  return { "Authorization": "Bearer "+accessToken, "Content-Type": "application/json" };
+  return { "Content-Type": "application/json" };
 }
 
-async function ensureSheet(){
-  try{
-    const r = await fetch(
-      `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}?fields=sheets.properties.title`,
-      { headers: authHeader() }
-    );
-    const data = await r.json();
-    if(data.error){ return; } // no recargar, solo salir
-    const hojas = (data.sheets||[]).map(s=>s.properties.title);
-    if(!hojas.includes(SHEET_NAME)){
-      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}:batchUpdate`,{
-        method:"POST", headers:authHeader(),
-        body: JSON.stringify({ requests:[{ addSheet:{ properties:{ title:SHEET_NAME }}}]})
-      });
-      await fetch(sheetsUrl(SHEET_NAME+"!A1")+`?valueInputOption=RAW`,{
-        method:"PUT", headers:authHeader(),
-        body: JSON.stringify({ values:[COLS] })
-      });
-    }
-  }catch(e){ console.error("ensureSheet error",e); }
+function sheetsUrlWithKey(range){
+  return sheetsUrl(range) + "?key=" + API_KEY;
+}
+
+async function ensureSheet(){ /* Apps Script maneja esto */ }
+
+async function callScript(action, payload){
+  try {
+    const r = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action, sheetId: SHEET_ID, sheetName: SHEET_NAME, cols: COLS, ...payload })
+    });
+    return await r.json();
+  } catch(e) {
+    return { error: e.message };
+  }
 }
 
 async function loadData(){
   if(isSyncing) return cachedData;
-  // Renovar token si está por vencer
-  await refreshTokenIfNeeded();
   isSyncing = true;
   setSyncState("syncing","Sincronizando...");
   try{
-    const r = await fetch(sheetsUrl(SHEET_NAME+"!A2:Z")+`?majorDimension=ROWS`,
-      { headers: authHeader() });
-    const data = await r.json();
+    const data = await callScript("getAll", {});
     if(data.error){
-      setSyncState("error","Error de conexión");
+      setSyncState("error","Sin conexión");
       isSyncing = false;
       return cachedData;
     }
-    const rows = data.values || [];
-    const newData = rows.map(row => {
+    const newData = (data.rows || []).map(row => {
       const obj = {};
       COLS.forEach((col,i) => obj[col] = row[i]||"");
       return obj;
     }).filter(t => t.id);
-    // Solo actualizar si los datos cambiaron realmente
     const newHash = JSON.stringify(newData);
     if(newHash !== lastHash){
       lastHash = newHash;
@@ -557,66 +527,28 @@ async function loadData(){
 }
 
 async function saveRow(t){
-  // Buscar si ya existe la fila con este id
   setSyncState("syncing","Guardando...");
   try{
-    const all = await loadData();
-    const idx = all.findIndex(x=>x.id===t.id);
     const rowData = COLS.map(c=>t[c]||"");
-    if(idx===-1){
-      // Append
-      await fetch(sheetsUrl(SHEET_NAME+"!A1")+`:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,{
-        method:"POST", headers:authHeader(),
-        body: JSON.stringify({ values:[rowData] })
-      });
-    } else {
-      // Update fila existente (idx+2 porque fila 1=headers, idx base 0)
-      const rowNum = idx+2;
-      await fetch(sheetsUrl(SHEET_NAME+`!A${rowNum}`)+`?valueInputOption=RAW`,{
-        method:"PUT", headers:authHeader(),
-        body: JSON.stringify({ values:[rowData] })
-      });
-    }
-    setSyncState("ok","Sincronizado");
-    return true;
+    const data = await callScript("saveRow", { id: t.id, row: rowData });
+    if(data.ok){ setSyncState("ok","Sincronizado"); lastHash=""; return true; }
+    setSyncState("error","Error al guardar"); return false;
   }catch(e){
-    setSyncState("error","Error al guardar");
-    return false;
+    setSyncState("error","Error al guardar"); return false;
   }
 }
 
 async function deleteRow(id){
   setSyncState("syncing","Eliminando...");
   try{
-    // Obtener todas las filas para encontrar el índice
-    const r = await fetch(sheetsUrl(SHEET_NAME+"!A2:A")+`?majorDimension=ROWS`,
-      { headers:authHeader() });
-    const data = await r.json();
-    const rows = data.values||[];
-    const idx = rows.findIndex(r=>r[0]===id);
-    if(idx===-1){ setSyncState("ok","Sincronizado"); return true; }
-    const rowNum = idx+2; // +1 header +1 base0
-
-    // Obtener sheetId numérico
-    const meta = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}?fields=sheets.properties`,
-      { headers:authHeader() });
-    const metaData = await meta.json();
-    const sheet = (metaData.sheets||[]).find(s=>s.properties.title===SHEET_NAME);
-    const sheetId = sheet?.properties?.sheetId??0;
-
-    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}:batchUpdate`,{
-      method:"POST", headers:authHeader(),
-      body: JSON.stringify({ requests:[{ deleteDimension:{
-        range:{ sheetId, dimension:"ROWS", startIndex:rowNum-1, endIndex:rowNum }
-      }}]})
-    });
-    setSyncState("ok","Sincronizado");
-    return true;
+    const data = await callScript("deleteRow", { id });
+    if(data.ok){ setSyncState("ok","Sincronizado"); lastHash=""; return true; }
+    setSyncState("error","Error al eliminar"); return false;
   }catch(e){
-    setSyncState("error","Error al eliminar");
-    return false;
+    setSyncState("error","Error al eliminar"); return false;
   }
 }
+
 
 function setSyncState(state,txt){
   const dot=document.getElementById("sync-dot");
@@ -874,12 +806,7 @@ function goTab(name){
 //  INIT
 // ============================================================
 window.addEventListener("load", ()=>{
-  const interval = setInterval(()=>{
-    if(typeof gapi !== "undefined"){
-      clearInterval(interval);
-      initGoogleAuth();
-    }
-  }, 200);
+  initAuth();
 });
 </script>
 </body>
