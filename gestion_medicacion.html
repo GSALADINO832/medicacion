@@ -298,6 +298,7 @@
 
 <!-- Google API -->
 <script src="https://apis.google.com/js/api.js"></script>
+<script src="https://accounts.google.com/gsi/client" async></script>
 
 <script>
 // ============================================================
@@ -366,47 +367,58 @@ function showLoginError(msg){
   if(el){ el.textContent = msg; el.style.display = "block"; }
 }
 
+let tokenClient = null;
+
 function initGoogleAuth(){
-  gapi.load("client:auth2", async () => {
-    try {
-      await gapi.client.init({
-        clientId: CLIENT_ID,
-        scope: SCOPES,
-        plugin_name: "MedicacionFamiliar"
-      });
-      const authInstance = gapi.auth2.getAuthInstance();
-      // Verificar si ya hay sesión activa
-      if(authInstance.isSignedIn.get()){
-        const user = authInstance.currentUser.get();
-        accessToken = user.getAuthResponse().access_token;
-        const email = user.getBasicProfile().getEmail();
-        onSignedIn(email);
-      }
-      // Escuchar cambios de sesión
-      authInstance.isSignedIn.listen(async (isSignedIn) => {
-        if(isSignedIn){
-          const user = authInstance.currentUser.get();
-          accessToken = user.getAuthResponse().access_token;
-          const email = user.getBasicProfile().getEmail();
-          onSignedIn(email);
-        }
-      });
-    } catch(e){
-      console.error("gapi init error", e);
-      showLoginError("Error al inicializar Google. Recargá la página.");
-    }
+  // Inicializar gapi para llamadas a Sheets
+  gapi.load("client", async () => {
+    await gapi.client.init({});
+    await gapi.client.load("https://sheets.googleapis.com/$discovery/rest?version=v4");
   });
+  // Restaurar sesión previa si existe
+  const savedToken = localStorage.getItem("med_access_token");
+  const savedEmail = localStorage.getItem("med_user_email");
+  if(savedToken && savedEmail){
+    accessToken = savedToken;
+    gapi.load("client", async () => {
+      await gapi.client.init({});
+      gapi.client.setToken({ access_token: savedToken });
+      onSignedIn(savedEmail);
+    });
+  }
 }
 
 async function signIn(){
-  try {
-    const authInstance = gapi.auth2.getAuthInstance();
-    await authInstance.signIn({ prompt: "select_account" });
-  } catch(e){
-    if(e.error !== "popup_closed_by_user"){
-      showLoginError("Error al iniciar sesión: " + (e.error || e.message || e));
-    }
+  if(typeof google === "undefined" || !google.accounts){
+    showLoginError("La librería de Google no cargó. Verificá tu conexión y recargá la página.");
+    return;
   }
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    callback: async (resp) => {
+      if(resp.error){
+        showLoginError("Error: " + resp.error);
+        return;
+      }
+      accessToken = resp.access_token;
+      gapi.client.setToken({ access_token: accessToken });
+      // Obtener email del usuario
+      try {
+        const r = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+          headers: { "Authorization": "Bearer " + accessToken }
+        });
+        const info = await r.json();
+        const email = info.email || "Usuario";
+        localStorage.setItem("med_access_token", accessToken);
+        localStorage.setItem("med_user_email", email);
+        onSignedIn(email);
+      } catch(e){
+        onSignedIn("Usuario");
+      }
+    }
+  });
+  tokenClient.requestAccessToken({ prompt: "" });
 }
 
 async function onSignedIn(email){
@@ -425,11 +437,6 @@ function sheetsUrl(range){
   return `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(range)}`;
 }
 function authHeader(){
-  // Siempre obtener el token fresco desde gapi
-  try {
-    const user = gapi.auth2.getAuthInstance().currentUser.get();
-    accessToken = user.getAuthResponse().access_token;
-  } catch(e){}
   return { "Authorization": "Bearer "+accessToken, "Content-Type": "application/json" };
 }
 
@@ -781,7 +788,6 @@ function goTab(name){
 //  INIT
 // ============================================================
 window.addEventListener("load", ()=>{
-  // Esperar a que cargue gapi
   const interval = setInterval(()=>{
     if(typeof gapi !== "undefined"){
       clearInterval(interval);
