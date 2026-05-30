@@ -338,6 +338,9 @@ let tabActual = "nuevo";
 
 let accessToken = null;
 let cachedData  = [];
+let isSyncing   = false;   // evita llamadas simultáneas
+let syncTimer   = null;    // timer de auto-refresh
+let lastHash    = "";      // detecta cambios reales en los datos
 
 // ============================================================
 //  FECHAS
@@ -472,26 +475,43 @@ async function ensureSheet(){
 }
 
 async function loadData(){
+  if(isSyncing) return cachedData;   // ya hay una sync en curso, no arrancar otra
+  isSyncing = true;
   setSyncState("syncing","Sincronizando...");
   try{
     const r = await fetch(sheetsUrl(SHEET_NAME+"!A2:Z")+`?majorDimension=ROWS`,
       { headers: authHeader() });
     const data = await r.json();
     if(data.error){
-      if(data.error.code===401){ accessToken=null; localStorage.removeItem("gsi_token"); location.reload(); }
+      if(data.error.code===401){
+        accessToken=null;
+        localStorage.removeItem("med_access_token");
+        localStorage.removeItem("med_user_email");
+        isSyncing = false;
+        location.reload();
+      }
       setSyncState("error","Error de conexión");
+      isSyncing = false;
       return cachedData;
     }
     const rows = data.values || [];
-    cachedData = rows.map(row => {
+    const newData = rows.map(row => {
       const obj = {};
       COLS.forEach((col,i) => obj[col] = row[i]||"");
       return obj;
     }).filter(t => t.id);
+    // Solo actualizar si los datos cambiaron realmente
+    const newHash = JSON.stringify(newData);
+    if(newHash !== lastHash){
+      lastHash = newHash;
+      cachedData = newData;
+    }
     setSyncState("ok","Sincronizado");
+    isSyncing = false;
     return cachedData;
   }catch(e){
     setSyncState("error","Sin conexión");
+    isSyncing = false;
     return cachedData;
   }
 }
@@ -567,9 +587,31 @@ function setSyncState(state,txt){
 }
 
 async function loadAndRender(){
+  if(isSyncing) return;   // no re-entrar si ya está sincronizando
   showLoading();
   await loadData();
   render();
+  // Auto-refresh cada 60 segundos (no en bucle continuo)
+  if(syncTimer) clearTimeout(syncTimer);
+  syncTimer = setTimeout(async () => {
+    if(!isSyncing){
+      await loadData();
+      render();
+    }
+    // Reprogramar el siguiente refresh
+    scheduleRefresh();
+  }, 60000);
+}
+
+function scheduleRefresh(){
+  if(syncTimer) clearTimeout(syncTimer);
+  syncTimer = setTimeout(async () => {
+    if(!isSyncing && accessToken){
+      await loadData();
+      render();
+    }
+    scheduleRefresh();
+  }, 60000);
 }
 
 function showLoading(){
@@ -616,7 +658,7 @@ async function guardar(){
     creadoEn:new Date().toISOString()
   };
   const ok = await saveRow(t);
-  if(ok){ showToast("✓ Trámite guardado"); limpiar(); goTab("activos"); await loadAndRender(); }
+  if(ok){ showToast("✓ Trámite guardado"); limpiar(); lastHash=""; goTab("activos"); await loadAndRender(); }
 }
 
 // ============================================================
@@ -637,7 +679,7 @@ async function guardarAprobacion(id){
   const all=await loadData(); const t=all.find(x=>x.id===id); if(!t) return;
   t.aprobacionRealOS=apr.value; t.ingresoDrogueria=ingVal; t.vencDrogueria=calcDrog(ingVal,2); t.estado="aprobado";
   const ok=await saveRow(t);
-  if(ok){ showToast("✓ Aprobación registrada"); await loadAndRender(); }
+  if(ok){ showToast("✓ Aprobación registrada"); lastHash=""; await loadAndRender(); }
 }
 function onDispChange(id){ const inp=document.getElementById("disp-"+id); if(inp) inp.dataset.manual="1"; }
 async function guardarDisponible(id){
@@ -646,12 +688,12 @@ async function guardarDisponible(id){
   const all=await loadData(); const t=all.find(x=>x.id===id); if(!t) return;
   t.disponibleFarmacia=inp.value; t.estado="finalizado";
   const ok=await saveRow(t);
-  if(ok){ showToast("✓ Trámite finalizado"); await loadAndRender(); }
+  if(ok){ showToast("✓ Trámite finalizado"); lastHash=""; await loadAndRender(); }
 }
 async function eliminar(id){
   if(!confirm("¿Eliminar este trámite?\nEsta acción no se puede deshacer.")) return;
   const ok=await deleteRow(id);
-  if(ok){ showToast("🗑 Eliminado"); await loadAndRender(); }
+  if(ok){ showToast("🗑 Eliminado"); lastHash=""; await loadAndRender(); }
 }
 
 // ============================================================
