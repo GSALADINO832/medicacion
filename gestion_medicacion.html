@@ -358,9 +358,28 @@ let lastHash    = "";      // detecta cambios reales en los datos
 //  FECHAS
 // ============================================================
 function ifmt(d){ return d.toISOString().slice(0,10); }
-function pd(s){ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); }
+function pd(s){
+  const clean = (s||"").split("T")[0].trim();
+  const [y,m,d] = clean.split("-").map(Number);
+  return new Date(y, m-1, d);
+}
 function fh(d){ return FER.has(ifmt(d)); }
-function fd(s){ if(!s) return "—"; const [y,m,d]=s.split("-"); return `${d}/${m}/${y}`; }
+function fd(s){
+  if(!s || s==="—") return "—";
+  try {
+    // Manejar formato ISO completo: "2026-06-01T03:00:00.000Z"
+    const clean = s.split("T")[0].trim();
+    if(!clean || clean.length < 8) return s;
+    const parts = clean.split("-");
+    if(parts.length !== 3) return s;
+    const [y, m, d] = parts;
+    if(!y || !m || !d) return s;
+    // Asegurar dos dígitos
+    const dd = d.padStart(2,"0");
+    const mm = m.padStart(2,"0");
+    return `${dd}/${mm}/${y}`;
+  } catch(e){ return s; }
+}
 function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 function hoyFmt(){ return new Date().toLocaleDateString("es-AR",{weekday:"long",year:"numeric",month:"long",day:"numeric"}); }
 
@@ -415,8 +434,8 @@ async function reLogin(){
 //  AUTH PROPIO (usuario + contraseña)
 // ============================================================
 const USUARIOS = {
-  "gustavo":  "med2026",
-  "familiar": "med2026"
+  "gsaladino": "med2026",
+  "rdursi":    "med2026"
 };
 
 function doLogin(){
