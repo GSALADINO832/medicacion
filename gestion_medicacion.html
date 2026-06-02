@@ -1285,8 +1285,7 @@ async function subirReceta(){
 }
 
 async function eliminarReceta(fileId){
-  if(!confirm("¿Eliminar esta receta?
-Se moverá a la papelera de Google Drive.")) return;
+  if(!confirm("¿Eliminar esta receta?\nSe moverá a la papelera de Google Drive.")) return;
   try {
     const data = await callScript("deleteReceta", { fileId });
     if(data.ok){ showToast("🗑 Receta eliminada"); cargarRecetas(); }
