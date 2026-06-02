@@ -646,9 +646,10 @@ let tabActual = "nuevo";
 
 let accessToken = null;
 let cachedData  = [];
-let isSyncing   = false;   // evita llamadas simultáneas
-let syncTimer   = null;    // timer de auto-refresh
-let lastHash    = "";      // detecta cambios reales en los datos
+let isSyncing   = false;
+let syncTimer   = null;
+let lastHash    = "";
+let accessToken = null; // no usado con auth propio, se mantiene por compatibilidad
 
 // ============================================================
 //  FECHAS
@@ -883,14 +884,13 @@ async function loadAndRender(){
 }
 
 async function silentRefresh(){
-  // Refresh silencioso: no muestra loading, no parpadea
   if(syncTimer) clearTimeout(syncTimer);
-  if(!isSyncing && accessToken){
+  const loggedIn = !!localStorage.getItem("med_logged_user");
+  if(!isSyncing && loggedIn){
     const prevHash = lastHash;
     await loadData();
-    if(lastHash !== prevHash) render(); // solo re-renderiza si algo cambió
+    if(lastHash !== prevHash) render();
   }
-  // Programar el próximo en 90 segundos
   syncTimer = setTimeout(silentRefresh, 90000);
 }
 
