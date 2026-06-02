@@ -457,6 +457,7 @@
     <button class="tab"     onclick="goTab('activos')">📋 En trámite <span class="cnt" id="cnt-a">0</span></button>
     <button class="tab"     onclick="goTab('fin')">✓ Finalizados <span class="cnt" id="cnt-f">0</span></button>
     <button class="tab"     onclick="goTab('stats')">📊 Estadísticas</button>
+    <button class="tab"     onclick="goTab('recetas')">📄 Recetas</button>
   </div>
 </header>
 
@@ -558,6 +559,58 @@
 <div id="sec-stats" class="sec">
   <div class="print-header" id="ph-stats"><div class="print-header-title">💊 Seguimiento Medicación Familiar OS UP — Estadísticas</div><div class="print-header-sub">Seguimiento de aprobaciones OS UP · Grupo familiar</div><div class="print-header-date" id="phd-stats"></div></div>
   <div id="stats-content"></div>
+</div>
+
+<!-- RECETAS -->
+<div id="sec-recetas" class="sec">
+  <div class="print-header" id="ph-recetas">
+    <div class="print-header-title">💊 Seguimiento Medicación Familiar OS UP — Recetas</div>
+    <div class="print-header-sub">Seguimiento de aprobaciones OS UP · Grupo familiar</div>
+    <div class="print-header-date" id="phd-recetas"></div>
+  </div>
+
+  <!-- Selector de paciente -->
+  <div id="rec-selector">
+    <div class="card-title" style="margin-bottom:10px">Seleccioná un paciente</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap" id="rec-pac-btns"></div>
+  </div>
+
+  <!-- Contenido recetas del paciente -->
+  <div id="rec-contenido" style="display:none">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <button class="btn sm" onclick="volverSelector()">← Volver</button>
+      <div style="font-size:15px;font-weight:700;color:var(--text)" id="rec-pac-titulo"></div>
+    </div>
+
+    <!-- Tabs de enfermedad -->
+    <div class="filters" id="rec-enf-tabs"></div>
+
+    <!-- Uploader -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">Subir nueva receta</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Año</label>
+          <select id="rec-anio"></select>
+        </div>
+        <div class="field">
+          <label>Nombre del archivo (opcional)</label>
+          <input type="text" id="rec-nombre" placeholder="Ej: Receta junio 2026">
+        </div>
+      </div>
+      <div class="field full">
+        <label>Archivo (PDF o imagen)</label>
+        <input type="file" id="rec-file" accept=".pdf,image/*" style="padding:8px">
+      </div>
+      <div class="btn-row">
+        <div id="rec-upload-progress" style="font-size:12px;color:var(--text2);display:none">⏳ Subiendo...</div>
+        <button class="btn p sm" onclick="subirReceta()">⬆ Subir receta</button>
+      </div>
+    </div>
+
+    <!-- Lista de recetas -->
+    <div id="rec-lista"></div>
+  </div>
 </div>
 
 <!-- Google API -->
@@ -1049,18 +1102,212 @@ function renderStats(){
 }
 
 // ============================================================
+//  RECETAS
+// ============================================================
+const PACIENTES_RECETAS = {
+  "gsaladino":  { nombre: "Gustavo Saladino",    enfermedades: ["B24", "Psoriasis-APS"] },
+  "rdursi":     { nombre: "Jorge Ricardo Dursi", enfermedades: ["B24", "Psoriasis-APS"] }
+};
+
+// También derivamos pacientes de los trámites cargados
+function getPacientesUnicos(){
+  const fromData = [...new Set(cachedData.map(x=>x.paciente))].filter(Boolean);
+  return fromData.length ? fromData : ["Gustavo Saladino", "Jorge Ricardo Dursi"];
+}
+
+let recPacienteActual = "";
+let recEnfActual = "";
+
+function initRecetas(){
+  const btns = document.getElementById("rec-pac-btns");
+  const pacs = getPacientesUnicos();
+  btns.innerHTML = pacs.map(p => `
+    <button class="btn" style="flex:1;min-width:140px;padding:16px;flex-direction:column;gap:6px;height:auto"
+      onclick="seleccionarPaciente('${esc(p)}')">
+      <span style="font-size:24px">👤</span>
+      <span style="font-size:13px;font-weight:700">${esc(p)}</span>
+    </button>`).join("");
+}
+
+function seleccionarPaciente(pac){
+  recPacienteActual = pac;
+  document.getElementById("rec-selector").style.display = "none";
+  document.getElementById("rec-contenido").style.display = "block";
+  document.getElementById("rec-pac-titulo").textContent = "👤 " + pac;
+
+  // Enfermedades del paciente (desde sus trámites)
+  const enfs = [...new Set(cachedData.filter(x=>x.paciente===pac).map(x=>x.enfermedad))].filter(Boolean);
+  const enfList = enfs.length ? enfs : ["B24", "Psoriasis-APS"];
+  recEnfActual = enfList[0];
+
+  // Tabs de enfermedad
+  const tabs = document.getElementById("rec-enf-tabs");
+  tabs.innerHTML = enfList.map(e => `
+    <button class="fb ${e===recEnfActual?"on":""}" onclick="seleccionarEnf('${esc(e)}')">${esc(e)}</button>
+  `).join("");
+
+  // Años disponibles
+  const anioSel = document.getElementById("rec-anio");
+  const anioActual = new Date().getFullYear();
+  anioSel.innerHTML = [anioActual, anioActual+1, anioActual-1].map(a=>
+    `<option value="${a}">${a}</option>`).join("");
+
+  cargarRecetas();
+}
+
+function seleccionarEnf(enf){
+  recEnfActual = enf;
+  document.querySelectorAll("#rec-enf-tabs .fb").forEach(b=>{
+    b.classList.toggle("on", b.textContent.trim()===enf);
+  });
+  cargarRecetas();
+}
+
+function volverSelector(){
+  document.getElementById("rec-selector").style.display = "block";
+  document.getElementById("rec-contenido").style.display = "none";
+  document.getElementById("rec-lista").innerHTML = "";
+}
+
+async function cargarRecetas(){
+  const lista = document.getElementById("rec-lista");
+  lista.innerHTML = `<div class="loading-wrap"><div class="spinner"></div><span>Cargando recetas...</span></div>`;
+  try {
+    const data = await callScript("getRecetas", {
+      paciente: recPacienteActual,
+      enfermedad: recEnfActual
+    });
+    if(data.error){ lista.innerHTML = `<div class="empty"><span class="empty-icon">⚠️</span><span>Error: ${esc(data.error)}</span></div>`; return; }
+    renderRecetas(data.recetas || []);
+  } catch(e){
+    lista.innerHTML = `<div class="empty"><span class="empty-icon">⚠️</span><span>Sin conexión</span></div>`;
+  }
+}
+
+function renderRecetas(recetas){
+  const lista = document.getElementById("rec-lista");
+  if(!recetas.length){
+    lista.innerHTML = `<div class="empty"><span class="empty-icon">📄</span><span style="font-size:14px">No hay recetas cargadas aún</span></div>`;
+    return;
+  }
+
+  // Agrupar por año
+  const porAnio = {};
+  recetas.forEach(r => {
+    if(!porAnio[r.anio]) porAnio[r.anio] = [];
+    porAnio[r.anio].push(r);
+  });
+
+  let html = "";
+  Object.keys(porAnio).sort((a,b)=>b-a).forEach(anio => {
+    html += `<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin:16px 0 8px;display:flex;align-items:center;gap:8px">
+      📅 ${anio} <span style="flex:1;height:1px;background:var(--border);display:block"></span>
+    </div>`;
+    porAnio[anio].forEach(r => {
+      const esImagen = r.mimeType && r.mimeType.startsWith("image/");
+      const esPDF    = r.mimeType === "application/pdf";
+      const icono    = esPDF ? "📄" : esImagen ? "🖼" : "📎";
+      const kb       = r.size ? Math.round(r.size/1024) + " KB" : "";
+      html += `
+      <div class="tc" style="margin-bottom:8px">
+        <div style="padding:12px 16px;display:flex;align-items:center;gap:12px">
+          <div style="font-size:28px;flex-shrink:0">${icono}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.nombre)}</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">${r.fecha ? fd(r.fecha) : ""} ${kb ? "· "+kb : ""}</div>
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0">
+            <a href="${r.viewUrl}" target="_blank" class="btn sm" style="text-decoration:none">👁 Ver</a>
+            <button class="btn danger sm" onclick="eliminarReceta('${r.fileId}')">🗑</button>
+          </div>
+        </div>
+      </div>`;
+    });
+  });
+  lista.innerHTML = html;
+}
+
+async function subirReceta(){
+  const fileInput = document.getElementById("rec-file");
+  const nombreInput = document.getElementById("rec-nombre");
+  const anio = document.getElementById("rec-anio").value;
+  const progress = document.getElementById("rec-upload-progress");
+
+  if(!fileInput.files.length){ alert("Seleccioná un archivo primero."); return; }
+  const file = fileInput.files[0];
+
+  // Validar tipo
+  const tiposValidos = ["application/pdf","image/jpeg","image/png","image/jpg","image/webp","image/heic"];
+  if(!tiposValidos.includes(file.type) && !file.type.startsWith("image/")){
+    alert("Solo se aceptan archivos PDF o imágenes."); return;
+  }
+
+  // Validar tamaño (máx 10MB)
+  if(file.size > 10 * 1024 * 1024){ alert("El archivo no puede superar 10MB."); return; }
+
+  const nombre = nombreInput.value.trim() ||
+    (recPacienteActual.split(" ")[0] + " - " + recEnfActual + " - " + anio + " - " + file.name);
+
+  progress.style.display = "block";
+  document.querySelector("[onclick='subirReceta()']").disabled = true;
+
+  try {
+    // Convertir a base64
+    const base64 = await new Promise((res, rej) => {
+      const reader = new FileReader();
+      reader.onload = () => res(reader.result.split(",")[1]);
+      reader.onerror = () => rej(new Error("Error al leer el archivo"));
+      reader.readAsDataURL(file);
+    });
+
+    const data = await callScript("uploadReceta", {
+      paciente:   recPacienteActual,
+      enfermedad: recEnfActual,
+      anio:       parseInt(anio),
+      nombre:     nombre,
+      mimeType:   file.type,
+      base64:     base64
+    });
+
+    if(data.error){ alert("Error al subir: " + data.error); return; }
+
+    showToast("✓ Receta subida correctamente");
+    fileInput.value = "";
+    nombreInput.value = "";
+    cargarRecetas();
+
+  } catch(e){
+    alert("Error: " + e.message);
+  } finally {
+    progress.style.display = "none";
+    document.querySelector("[onclick='subirReceta()']").disabled = false;
+  }
+}
+
+async function eliminarReceta(fileId){
+  if(!confirm("¿Eliminar esta receta?
+Se moverá a la papelera de Google Drive.")) return;
+  try {
+    const data = await callScript("deleteReceta", { fileId });
+    if(data.ok){ showToast("🗑 Receta eliminada"); cargarRecetas(); }
+    else alert("Error al eliminar: " + (data.error||""));
+  } catch(e){ alert("Error: " + e.message); }
+}
+
+// ============================================================
 //  NAV
 // ============================================================
 function goTab(name){
   tabActual=name;
-  const names=["login","nuevo","activos","fin","stats"];
-  document.querySelectorAll(".tab").forEach((t,i)=>t.classList.toggle("on",["nuevo","activos","fin","stats"][i]===name));
+  const names=["login","nuevo","activos","fin","stats","recetas"];
+  document.querySelectorAll(".tab").forEach((t,i)=>t.classList.toggle("on",["nuevo","activos","fin","stats","recetas"][i]===name));
   document.querySelectorAll(".sec").forEach(s=>s.classList.remove("on"));
   document.getElementById("sec-"+name).classList.add("on");
   const fab=document.getElementById("fab-wrap");
-  if(name==="nuevo"||name==="login"){ fab.style.display="none"; }
+  if(name==="nuevo"||name==="login"||name==="recetas"){ fab.style.display="none"; }
   else { fab.style.display="flex"; const lbls={activos:"Imprimir trámites activos",fin:"Imprimir finalizados",stats:"Imprimir estadísticas"}; document.getElementById("fab-lbl").textContent=lbls[name]||"Imprimir PDF"; }
   if(name==="stats") renderStats();
+  else if(name==="recetas"){ initRecetas(); }
   else if(name!=="nuevo"&&name!=="login") render();
 }
 
