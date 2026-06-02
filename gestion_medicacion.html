@@ -1104,14 +1104,14 @@ function renderStats(){
 //  RECETAS
 // ============================================================
 const PACIENTES_RECETAS = {
-  "gsaladino":  { nombre: "Gustavo Saladino",    enfermedades: ["B24", "Psoriasis-APS"] },
+  "gsaladino":  { nombre: "G. Saladino", enfermedades: ["B24", "Psoriasis-APS"] },
   "rdursi":     { nombre: "Jorge Ricardo Dursi", enfermedades: ["B24", "Psoriasis-APS"] }
 };
 
 // También derivamos pacientes de los trámites cargados
 function getPacientesUnicos(){
   const fromData = [...new Set(cachedData.map(x=>x.paciente))].filter(Boolean);
-  return fromData.length ? fromData : ["Gustavo Saladino", "Jorge Ricardo Dursi"];
+  return fromData.length ? fromData : [];
 }
 
 let recPacienteActual = "";
