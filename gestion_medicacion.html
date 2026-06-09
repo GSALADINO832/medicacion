@@ -1061,7 +1061,7 @@ async function loadAndRender(){
   render();
   // Programar UN solo refresh en 90 segundos, sin recursividad
   if(syncTimer) clearTimeout(syncTimer);
-  syncTimer = setTimeout(silentRefresh, 90000);
+  syncTimer = setTimeout(silentRefresh, 120000);
 }
 
 async function silentRefresh(){
@@ -1072,7 +1072,7 @@ async function silentRefresh(){
     await loadData();
     if(lastHash !== prevHash) render();
   }
-  syncTimer = setTimeout(silentRefresh, 90000);
+  syncTimer = setTimeout(silentRefresh, 120000);
 }
 
 function showLoading(){
@@ -1212,15 +1212,51 @@ function render(){
 }
 function renderLista(cid,lista,esFin){
   const el=document.getElementById(cid);
-  if(!lista.length){ el.innerHTML=`<div class="empty"><span class="empty-icon">${esFin?"📂":"📋"}</span><span style="font-size:14px">${esFin?"No hay trámites finalizados aún":"No hay trámites activos"}</span></div>`; return; }
-  const pacs=[...new Set(lista.map(x=>x.paciente))];
-  let html="";
-  pacs.forEach(pac=>{
-    const del=lista.filter(x=>x.paciente===pac);
-    if(pacs.length>1) html+=`<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:14px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--border)">${esc(pac)}</div>`;
-    html+=del.map(t=>renderTC(t,esFin)).join("");
+  if(!lista.length){
+    el.innerHTML=`<div class="empty"><span class="empty-icon">${esFin?"📂":"📋"}</span><span style="font-size:14px">${esFin?"No hay trámites finalizados aún":"No hay trámites activos"}</span></div>`;
+    return;
+  }
+
+  // Agrupar por paciente y dentro por enfermedad
+  const pacs = [...new Set(lista.map(x=>x.paciente))].sort();
+  let html = "";
+
+  pacs.forEach(pac => {
+    const tramitesPac = lista.filter(x=>x.paciente===pac);
+    const enfs = [...new Set(tramitesPac.map(x=>x.enfermedad))].sort();
+
+    // Encabezado de paciente
+    html += `<div style="
+      display:flex; align-items:center; gap:10px;
+      margin:18px 0 10px; padding:10px 14px;
+      background:linear-gradient(135deg, var(--accent) 0%, #7C3AED 100%);
+      border-radius:12px; color:#fff;
+    ">
+      <span style="font-size:20px">👤</span>
+      <span style="font-size:14px;font-weight:700;letter-spacing:-.2px">${esc(pac)}</span>
+      <span style="font-size:11px;opacity:.75;margin-left:auto">${tramitesPac.length} trámite${tramitesPac.length!==1?"s":""}</span>
+    </div>`;
+
+    // Por cada enfermedad del paciente
+    enfs.forEach(enf => {
+      const tramitesEnf = tramitesPac.filter(x=>x.enfermedad===enf);
+      const enfBadgeClass = enf==="B24" ? "bb24" : "bpso";
+
+      // Sub-encabezado de enfermedad
+      html += `<div style="
+        display:flex; align-items:center; gap:8px;
+        margin:10px 0 8px 4px;
+      ">
+        <span class="badge ${enfBadgeClass}">${esc(enf)}</span>
+        <span style="flex:1;height:1px;background:var(--border);display:block"></span>
+        <span style="font-size:10px;color:var(--text3);font-weight:600">${tramitesEnf.length} trámite${tramitesEnf.length!==1?"s":""}</span>
+      </div>`;
+
+      html += tramitesEnf.map(t=>renderTC(t,esFin)).join("");
+    });
   });
-  el.innerHTML=html;
+
+  el.innerHTML = html;
 }
 function stateBadge(t){
   if(t.estado==="finalizado") return `<span class="badge bf">✓ Finalizado</span>`;
@@ -1522,8 +1558,12 @@ function abrirEdicion(id){
 }
 
 function cerrarModal(e){
-  if(e && e.target !== document.querySelector(".modal-overlay")) return;
+  // Si se llamó desde el overlay, verificar que sea el overlay mismo
+  if(e && e.type === "click" && e.currentTarget !== e.target) return;
   document.getElementById("edit-modal").style.display = "none";
+  // Limpiar manual flag del ingreso droguería
+  const ing = document.getElementById("edit-ing");
+  if(ing) ing.dataset.manual = "";
 }
 
 function editCalcProxima(){
