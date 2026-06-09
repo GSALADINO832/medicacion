@@ -720,8 +720,8 @@
 </div>
 
 <!-- MODAL EDICIÓN -->
-<div id="edit-modal" style="display:none">
-  <div class="modal-overlay">
+<div id="edit-modal" style="position:fixed;inset:0;z-index:500;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.7);backdrop-filter:blur(4px)">
+  <div class="modal" onclick="event.stopPropagation()" style="width:100%;max-width:600px;max-height:90vh;overflow-y:auto;border-radius:20px 20px 0 0;background:var(--card);border:1px solid var(--border);padding:20px 16px 32px;animation:slideUp .25s cubic-bezier(.4,0,.2,1)">
     <div class="modal" onclick="event.stopPropagation()">
       <div class="modal-header">
         <div class="modal-title">✏️ Editar trámite</div>
@@ -799,7 +799,6 @@
         <button class="btn" onclick="cerrarModal()">Cancelar</button>
         <button class="btn p" onclick="guardarEdicion()">Guardar cambios</button>
       </div>
-    </div>
   </div>
 </div>
 
@@ -1609,7 +1608,7 @@ function abrirEdicion(id){
     t.enfermedad === "B24" ? "none" : "";
 
   // Mostrar modal
-  document.getElementById("edit-modal").style.display = "block";
+  document.getElementById("edit-modal").style.display = "flex";
 }
 
 function cerrarModal(){
@@ -1890,7 +1889,7 @@ function goTab(name){
   if(name==="stats") renderStats();
   else if(name==="recetas"){ initRecetas(); }
   else if(name==="estudios"){ initEstudios(); }
-  else if(name==="activos"||name==="fin"){ render(); }
+  else if(name==="activos"||name==="fin"){ loadAndRender(); }
   else if(name!=="nuevo"&&name!=="login") render();
 }
 
