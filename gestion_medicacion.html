@@ -1596,9 +1596,18 @@ document.getElementById("edit-notas").addEventListener("input", function(){
   document.getElementById("edit-nc").textContent = this.value.length + " / 200";
 });
 
-function abrirEdicion(id, origen){
+async function abrirEdicion(id, origen){
+  // Si cachedData está vacío, recargar primero
+  if(!cachedData.length) await loadData();
   const t = cachedData.find(x=>x.id===id);
-  if(!t){ alert("No se encontró el trámite. Intentá recargar la página."); return; }
+  if(!t){
+    // Último intento: forzar recarga
+    await loadData();
+    const t2 = cachedData.find(x=>x.id===id);
+    if(!t2){ showToast("Recargando datos..."); await loadAndRender(); return; }
+    abrirEdicion(id, origen);
+    return;
+  }
 
   editOrigen = origen || "activos";
   document.getElementById("edit-id").value    = id;
@@ -1907,7 +1916,7 @@ function goTab(name){
   if(name==="stats") renderStats();
   else if(name==="recetas"){ initRecetas(); }
   else if(name==="estudios"){ initEstudios(); }
-  else if(name==="activos"||name==="fin"){ loadAndRender(); }
+  else if(name==="activos"||name==="fin"){ if(!cachedData.length) loadAndRender(); else render(); }
   else if(name!=="nuevo"&&name!=="login") render();
 }
 
