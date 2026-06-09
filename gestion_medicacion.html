@@ -562,23 +562,39 @@
 <!-- ACTIVOS -->
 <div id="sec-activos" class="sec">
   <div class="print-header" id="ph-activos"><div class="print-header-title">💊 Seguimiento Medicación Familiar OS UP — Trámites en curso</div><div class="print-header-sub">Seguimiento de aprobaciones OS UP · Grupo familiar</div><div class="print-header-date" id="phd-activos"></div></div>
-  <div class="filters">
-    <button class="fb on" id="fa-t" onclick="setF('a','todos')">Todos</button>
-    <button class="fb" id="fa-b" onclick="setF('a','B24')">B24</button>
-    <button class="fb" id="fa-p" onclick="setF('a','Psoriasis/APS')">Psoriasis / APS</button>
+  <!-- Selector paciente -->
+  <div id="act-selector">
+    <div class="card-title" style="margin-bottom:10px">Seleccioná un paciente</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap" id="act-pac-btns"></div>
   </div>
-  <div id="lst-a"></div>
+  <!-- Contenido -->
+  <div id="act-contenido" style="display:none">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+      <button class="btn sm" onclick="volverSelectorAct()">← Volver</button>
+      <div style="font-size:15px;font-weight:700;color:var(--text)" id="act-pac-titulo"></div>
+    </div>
+    <div class="filters" id="act-enf-tabs"></div>
+    <div id="lst-a"></div>
+  </div>
 </div>
 
 <!-- FINALIZADOS -->
 <div id="sec-fin" class="sec">
   <div class="print-header" id="ph-fin"><div class="print-header-title">💊 Seguimiento Medicación Familiar OS UP — Trámites finalizados</div><div class="print-header-sub">Seguimiento de aprobaciones OS UP · Grupo familiar</div><div class="print-header-date" id="phd-fin"></div></div>
-  <div class="filters">
-    <button class="fb on" id="ff-t" onclick="setF('f','todos')">Todos</button>
-    <button class="fb" id="ff-b" onclick="setF('f','B24')">B24</button>
-    <button class="fb" id="ff-p" onclick="setF('f','Psoriasis/APS')">Psoriasis / APS</button>
+  <!-- Selector paciente -->
+  <div id="fin-selector">
+    <div class="card-title" style="margin-bottom:10px">Seleccioná un paciente</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap" id="fin-pac-btns"></div>
   </div>
-  <div id="lst-f"></div>
+  <!-- Contenido -->
+  <div id="fin-contenido" style="display:none">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+      <button class="btn sm" onclick="volverSelectorFin()">← Volver</button>
+      <div style="font-size:15px;font-weight:700;color:var(--text)" id="fin-pac-titulo"></div>
+    </div>
+    <div class="filters" id="fin-enf-tabs"></div>
+    <div id="lst-f"></div>
+  </div>
 </div>
 
 <!-- ESTADÍSTICAS -->
@@ -705,7 +721,7 @@
 
 <!-- MODAL EDICIÓN -->
 <div id="edit-modal" style="display:none">
-  <div class="modal-overlay" onclick="cerrarModal(event)">
+  <div class="modal-overlay">
     <div class="modal" onclick="event.stopPropagation()">
       <div class="modal-header">
         <div class="modal-title">✏️ Editar trámite</div>
@@ -1163,16 +1179,8 @@ async function eliminar(id){
 }
 
 // ============================================================
-//  FILTROS / TOAST / IMPRESIÓN
+//  TOAST / IMPRESIÓN
 // ============================================================
-function setF(sec,val){
-  filtros[sec]=val;
-  const pre=sec==="a"?"fa":"ff";
-  ["t","b","p"].forEach(k=>{ const el=document.getElementById(pre+"-"+k); if(el) el.classList.remove("on"); });
-  const map={todos:"t","B24":"b","Psoriasis/APS":"p"};
-  const el=document.getElementById(pre+"-"+map[val]); if(el) el.classList.add("on");
-  render();
-}
 function showToast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2200); }
 function imprimirSeccion(){
   const fechaHoy="Impreso el: "+hoyFmt();
@@ -1199,64 +1207,111 @@ function renderAlertas(){
 // ============================================================
 //  RENDER
 // ============================================================
+// Estado de navegación por paciente
+let actPaciente = ""; let actEnf = "";
+let finPaciente = ""; let finEnf = "";
+
 function render(){
-  const activos=cachedData.filter(x=>x.estado!=="finalizado");
-  const fin=cachedData.filter(x=>x.estado==="finalizado");
-  document.getElementById("cnt-a").textContent=activos.length;
-  document.getElementById("cnt-f").textContent=fin.length;
-  const fa=filtros.a==="todos"?activos:activos.filter(x=>x.enfermedad===filtros.a);
-  const ff=filtros.f==="todos"?fin:fin.filter(x=>x.enfermedad===filtros.f);
-  renderLista("lst-a",fa,false);
-  renderLista("lst-f",ff,true);
+  const activos = cachedData.filter(x=>x.estado!=="finalizado");
+  const fin     = cachedData.filter(x=>x.estado==="finalizado");
+  document.getElementById("cnt-a").textContent = activos.length;
+  document.getElementById("cnt-f").textContent = fin.length;
   renderAlertas();
+  // Actualizar selector de pacientes en activos
+  renderSelectorPac("act-pac-btns", activos, "activos");
+  renderSelectorPac("fin-pac-btns", fin, "fin");
+  // Si ya hay paciente seleccionado, refrescar la lista
+  if(actPaciente) renderTramitesPac("lst-a", activos, actPaciente, actEnf, false);
+  if(finPaciente) renderTramitesPac("lst-f", fin, finPaciente, finEnf, true);
 }
-function renderLista(cid,lista,esFin){
-  const el=document.getElementById(cid);
-  if(!lista.length){
-    el.innerHTML=`<div class="empty"><span class="empty-icon">${esFin?"📂":"📋"}</span><span style="font-size:14px">${esFin?"No hay trámites finalizados aún":"No hay trámites activos"}</span></div>`;
+
+function renderSelectorPac(cid, lista, sec){
+  const el = document.getElementById(cid);
+  if(!el) return;
+  const pacs = [...new Set(lista.map(x=>x.paciente))].filter(Boolean).sort();
+  if(!pacs.length){
+    el.innerHTML = `<div class="empty"><span class="empty-icon">${sec==="activos"?"📋":"📂"}</span><span style="font-size:14px">${sec==="activos"?"No hay trámites activos":"No hay trámites finalizados"}</span></div>`;
     return;
   }
+  el.innerHTML = pacs.map(p => {
+    const cnt = lista.filter(x=>x.paciente===p).length;
+    return `<button class="btn" style="flex:1;min-width:140px;padding:16px;flex-direction:column;gap:6px;height:auto"
+      onclick="selPac('${esc(p)}','${sec}')">
+      <span style="font-size:24px">👤</span>
+      <span style="font-size:13px;font-weight:700">${esc(p)}</span>
+      <span style="font-size:11px;color:var(--text3)">${cnt} trámite${cnt!==1?"s":""}</span>
+    </button>`;
+  }).join("");
+}
 
-  // Agrupar por paciente y dentro por enfermedad
-  const pacs = [...new Set(lista.map(x=>x.paciente))].sort();
-  let html = "";
+function selPac(pac, sec){
+  const lista = cachedData.filter(x=> sec==="activos" ? x.estado!=="finalizado" : x.estado==="finalizado");
+  const enfs  = [...new Set(lista.filter(x=>x.paciente===pac).map(x=>x.enfermedad))].filter(Boolean);
+  const primeraEnf = enfs[0] || "";
 
-  pacs.forEach(pac => {
-    const tramitesPac = lista.filter(x=>x.paciente===pac);
-    const enfs = [...new Set(tramitesPac.map(x=>x.enfermedad))].sort();
+  if(sec==="activos"){
+    actPaciente = pac; actEnf = primeraEnf;
+    document.getElementById("act-selector").style.display = "none";
+    document.getElementById("act-contenido").style.display = "block";
+    document.getElementById("act-pac-titulo").textContent = "👤 " + pac;
+    renderEnfTabs("act-enf-tabs", enfs, actEnf, "activos");
+    renderTramitesPac("lst-a", lista, pac, actEnf, false);
+  } else {
+    finPaciente = pac; finEnf = primeraEnf;
+    document.getElementById("fin-selector").style.display = "none";
+    document.getElementById("fin-contenido").style.display = "block";
+    document.getElementById("fin-pac-titulo").textContent = "👤 " + pac;
+    renderEnfTabs("fin-enf-tabs", enfs, finEnf, "fin");
+    renderTramitesPac("lst-f", lista, pac, finEnf, true);
+  }
+}
 
-    // Encabezado de paciente
-    html += `<div style="
-      display:flex; align-items:center; gap:10px;
-      margin:18px 0 10px; padding:10px 14px;
-      background:linear-gradient(135deg, var(--accent) 0%, #7C3AED 100%);
-      border-radius:12px; color:#fff;
-    ">
-      <span style="font-size:20px">👤</span>
-      <span style="font-size:14px;font-weight:700;letter-spacing:-.2px">${esc(pac)}</span>
-      <span style="font-size:11px;opacity:.75;margin-left:auto">${tramitesPac.length} trámite${tramitesPac.length!==1?"s":""}</span>
-    </div>`;
+function renderEnfTabs(cid, enfs, activa, sec){
+  const el = document.getElementById(cid);
+  if(!el) return;
+  const todas = ["Todas", ...enfs];
+  el.innerHTML = todas.map(e =>
+    `<button class="fb ${e===activa||(!activa&&e==="Todas")?"on":""}"
+      onclick="selEnf('${esc(e)}','${sec}')">${esc(e==="Todas"?"Todas las enfermedades":e)}</button>`
+  ).join("");
+}
 
-    // Por cada enfermedad del paciente
-    enfs.forEach(enf => {
-      const tramitesEnf = tramitesPac.filter(x=>x.enfermedad===enf);
-      const enfBadgeClass = enf==="B24" ? "bb24" : "bpso";
+function selEnf(enf, sec){
+  const lista = cachedData.filter(x=> sec==="activos" ? x.estado!=="finalizado" : x.estado==="finalizado");
+  if(sec==="activos"){
+    actEnf = enf==="Todas" ? "" : enf;
+    renderEnfTabs("act-enf-tabs", [...new Set(lista.filter(x=>x.paciente===actPaciente).map(x=>x.enfermedad))], enf, "activos");
+    renderTramitesPac("lst-a", lista, actPaciente, actEnf, false);
+  } else {
+    finEnf = enf==="Todas" ? "" : enf;
+    renderEnfTabs("fin-enf-tabs", [...new Set(lista.filter(x=>x.paciente===finPaciente).map(x=>x.enfermedad))], enf, "fin");
+    renderTramitesPac("lst-f", lista, finPaciente, finEnf, true);
+  }
+}
 
-      // Sub-encabezado de enfermedad
-      html += `<div style="
-        display:flex; align-items:center; gap:8px;
-        margin:10px 0 8px 4px;
-      ">
-        <span class="badge ${enfBadgeClass}">${esc(enf)}</span>
-        <span style="flex:1;height:1px;background:var(--border);display:block"></span>
-        <span style="font-size:10px;color:var(--text3);font-weight:600">${tramitesEnf.length} trámite${tramitesEnf.length!==1?"s":""}</span>
-      </div>`;
+function renderTramitesPac(cid, lista, pac, enf, esFin){
+  const el = document.getElementById(cid);
+  if(!el) return;
+  let filtrada = lista.filter(x=>x.paciente===pac);
+  if(enf) filtrada = filtrada.filter(x=>x.enfermedad===enf);
+  if(!filtrada.length){
+    el.innerHTML = `<div class="empty"><span class="empty-icon">${esFin?"📂":"📋"}</span><span style="font-size:14px">No hay trámites</span></div>`;
+    return;
+  }
+  el.innerHTML = filtrada.map(t=>renderTC(t,esFin)).join("");
+}
 
-      html += tramitesEnf.map(t=>renderTC(t,esFin)).join("");
-    });
-  });
-
-  el.innerHTML = html;
+function volverSelectorAct(){
+  actPaciente=""; actEnf="";
+  document.getElementById("act-selector").style.display = "block";
+  document.getElementById("act-contenido").style.display = "none";
+  document.getElementById("lst-a").innerHTML = "";
+}
+function volverSelectorFin(){
+  finPaciente=""; finEnf="";
+  document.getElementById("fin-selector").style.display = "block";
+  document.getElementById("fin-contenido").style.display = "none";
+  document.getElementById("lst-f").innerHTML = "";
 }
 function stateBadge(t){
   if(t.estado==="finalizado") return `<span class="badge bf">✓ Finalizado</span>`;
@@ -1557,11 +1612,8 @@ function abrirEdicion(id){
   document.getElementById("edit-modal").style.display = "block";
 }
 
-function cerrarModal(e){
-  // Si se llamó desde el overlay, verificar que sea el overlay mismo
-  if(e && e.type === "click" && e.currentTarget !== e.target) return;
+function cerrarModal(){
   document.getElementById("edit-modal").style.display = "none";
-  // Limpiar manual flag del ingreso droguería
   const ing = document.getElementById("edit-ing");
   if(ing) ing.dataset.manual = "";
 }
@@ -1838,6 +1890,7 @@ function goTab(name){
   if(name==="stats") renderStats();
   else if(name==="recetas"){ initRecetas(); }
   else if(name==="estudios"){ initEstudios(); }
+  else if(name==="activos"||name==="fin"){ render(); }
   else if(name!=="nuevo"&&name!=="login") render();
 }
 
