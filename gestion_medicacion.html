@@ -481,6 +481,7 @@
     <button class="tab"     onclick="goTab('activos')">📋 En trámite <span class="cnt" id="cnt-a">0</span></button>
     <button class="tab"     onclick="goTab('fin')">✓ Finalizados <span class="cnt" id="cnt-f">0</span></button>
     <button class="tab"     onclick="goTab('recetas')">📄 Recetas</button>
+    <button class="tab" id="tab-editar" style="display:none" onclick="goTab('editar')">✏️ Editando</button>
     <button class="tab"     onclick="goTab('estudios')">🔬 Estudios</button>
     <button class="tab"     onclick="goTab('stats')">📊 Estadísticas</button>
   </div>
@@ -719,88 +720,107 @@
   </div>
 </div>
 
-<!-- MODAL EDICIÓN -->
-<div id="edit-modal" style="position:fixed;inset:0;z-index:500;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.7);backdrop-filter:blur(4px)">
-  <div class="modal" onclick="event.stopPropagation()" style="width:100%;max-width:600px;max-height:90vh;overflow-y:auto;border-radius:20px 20px 0 0;background:var(--card);border:1px solid var(--border);padding:20px 16px 32px;animation:slideUp .25s cubic-bezier(.4,0,.2,1)">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="modal-header">
-        <div class="modal-title">✏️ Editar trámite</div>
-        <button class="modal-close" onclick="cerrarModal()">×</button>
-      </div>
-      <input type="hidden" id="edit-id">
+<!-- SECCIÓN EDICIÓN -->
+<div id="sec-editar" class="sec">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+    <button class="btn sm" id="edit-volver-btn" onclick="volverDeEdicion()">← Volver</button>
+    <div style="font-size:16px;font-weight:700;color:var(--text)">✏️ Editar trámite</div>
+  </div>
 
-      <div class="field-row">
-        <div class="field">
-          <label>Paciente</label>
-          <input type="text" id="edit-pac" readonly style="opacity:.6">
-        </div>
-        <div class="field">
-          <label>Enfermedad</label>
-          <input type="text" id="edit-enf" readonly style="opacity:.6">
-        </div>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label>Medicación</label>
-          <select id="edit-med"></select>
-        </div>
-        <div class="field">
-          <label>Otro medicamento</label>
-          <input type="text" id="edit-medlib" placeholder="Texto libre">
-        </div>
-      </div>
-      <div id="edit-row-toma" class="field-row">
-        <div class="field">
-          <label>Fecha toma / aplicación</label>
-          <input type="date" id="edit-toma" oninput="editCalcProxima()">
-        </div>
-        <div class="field">
-          <label>Próxima aplicación (calculada)</label>
-          <input type="text" id="edit-proxima" readonly placeholder="Automático">
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div class="field-row">
-        <div class="field">
-          <label>Presentación a OS</label>
-          <input type="date" id="edit-pres" oninput="editCalcVencOS()">
-        </div>
-        <div class="field">
-          <label>Vto. legal OS (calculado)</label>
-          <input type="text" id="edit-vos" readonly>
-        </div>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label>Aprobación real OS</label>
-          <input type="date" id="edit-apr" oninput="editCalcDrog()">
-        </div>
-        <div class="field">
-          <label>Ingreso a droguería</label>
-          <input type="date" id="edit-ing" oninput="editCalcVencDrog()">
-        </div>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label>Vto. droguería (calculado)</label>
-          <input type="text" id="edit-vdrog" readonly>
-        </div>
-        <div class="field">
-          <label>Disponible en farmacia</label>
-          <input type="date" id="edit-disp">
-        </div>
+  <input type="hidden" id="edit-id">
+  <input type="hidden" id="edit-origen">
+
+  <div class="card">
+    <div class="card-title">Paciente y enfermedad</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Paciente</label>
+        <input type="text" id="edit-pac" readonly style="opacity:.5">
       </div>
       <div class="field">
-        <label>Notas (máx. 200 caracteres)</label>
-        <textarea id="edit-notas" maxlength="200" placeholder="Observaciones..."></textarea>
-        <span id="edit-nc" class="char-count">0 / 200</span>
+        <label>Enfermedad</label>
+        <input type="text" id="edit-enf" readonly style="opacity:.5">
       </div>
-      <div class="btn-row" style="margin-top:8px">
-        <button class="btn" onclick="cerrarModal()">Cancelar</button>
-        <button class="btn p" onclick="guardarEdicion()">Guardar cambios</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Medicación</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Medicación</label>
+        <select id="edit-med"></select>
       </div>
+      <div class="field">
+        <label>Otro (texto libre)</label>
+        <input type="text" id="edit-medlib" placeholder="Si no está en la lista">
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="edit-card-toma">
+    <div class="card-title">Fechas de aplicación</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Fecha de toma / aplicación</label>
+        <input type="date" id="edit-toma" oninput="editCalcProxima()">
+      </div>
+      <div class="field">
+        <label>Próxima aplicación (calculada)</label>
+        <input type="text" id="edit-proxima" readonly placeholder="Automático">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Obra social</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Presentación a OS</label>
+        <input type="date" id="edit-pres" oninput="editCalcVencOS()">
+      </div>
+      <div class="field">
+        <label>Vto. legal OS (calculado)</label>
+        <input type="text" id="edit-vos" readonly>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Aprobación real OS</label>
+        <input type="date" id="edit-apr" oninput="editCalcDrog()">
+      </div>
+      <div class="field">
+        <label>Ingreso a droguería</label>
+        <input type="date" id="edit-ing" oninput="editCalcVencDrog()">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Vto. droguería (calculado)</label>
+        <input type="text" id="edit-vdrog" readonly>
+      </div>
+      <div class="field">
+        <label>Disponible en farmacia</label>
+        <input type="date" id="edit-disp">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Notas</div>
+    <div class="field">
+      <textarea id="edit-notas" maxlength="200" placeholder="Observaciones..."></textarea>
+      <span id="edit-nc" class="char-count">0 / 200</span>
+    </div>
+  </div>
+
+  <div class="btn-row" style="margin-top:4px">
+    <button class="btn" onclick="volverDeEdicion()">Cancelar</button>
+    <button class="btn p" onclick="guardarEdicion()">💾 Guardar cambios</button>
   </div>
 </div>
+
+
 
 <!-- Google API -->
 
@@ -1342,7 +1362,7 @@ function renderTC(t,esFin){
   const notasHtml=(t.notas&&t.notas.trim())?`<div class="tc-notes">📝 ${esc(t.notas)}</div>`:"";
   const drogAlerta=(t.estado==="aprobado"&&t.vencDrogueria)?diasBadge(t.vencDrogueria):"";
   return `<div class="tc"><div class="tc-head"><div><div class="tc-name">${esc(t.paciente)}</div><div class="tc-sub"><span>${esc(t.medicacion)}</span>${enfBadge(t.enfermedad)}</div></div><div class="tc-badges">${stateBadge(t)}${t.estado==="pendiente"?diasBadge(t.vencOS):""}${drogAlerta}</div></div><div class="tc-grid"><div class="tf"><div class="tfl">Presentado a OS</div><div class="tfv">${fd(t.presentacionOS)}</div></div><div class="tf"><div class="tfl">Vto. legal OS</div><div class="tfv ${vosClass(t)}">${fd(t.vencOS)}</div></div><div class="tf"><div class="tfl">Aprobación real OS</div><div class="tfv ${t.aprobacionRealOS?"ok":"pend"}">${t.aprobacionRealOS?fd(t.aprobacionRealOS):"Pendiente"}</div></div><div class="tf"><div class="tfl">Ingreso a droguería</div><div class="tfv">${fd(t.ingresoDrogueria)}</div></div><div class="tf"><div class="tfl">Vto. droguería (48hs)</div><div class="tfv">${fd(t.vencDrogueria)}</div></div><div class="tf"><div class="tfl">Disponible en farmacia</div><div class="tfv ${t.disponibleFarmacia?"ok":"pend"}">${t.disponibleFarmacia?fd(t.disponibleFarmacia):"—"}</div></div>${(t.toma||t.enfermedad==="Psoriasis/APS")?`<div class="tf"><div class="tfl">Fecha toma / aplicación</div><div class="tfv ${t.toma?"":"pend"}">${t.toma?fd(t.toma):"—"}</div></div>`:""}
-      ${(t.enfermedad==="Psoriasis/APS")?`<div class="tf"><div class="tfl">Próxima aplicación</div><div class="tfv ${(t.proximaAplicacion||t.toma)?"ok":""}">${t.toma?fd(t.proximaAplicacion||calcProximaAplicacion(t.toma)):"—"}</div></div>`:""}<div class="tf"><div class="tfl">Iniciado el</div><div class="tfv" style="font-size:11px;color:var(--muted)">${fd(t.creadoEn?t.creadoEn.slice(0,10):"")}</div></div></div>${notasHtml}${stepHtml}<div class="tc-acts"><button class="btn sm" onclick="abrirEdicion('${t.id}')">✏️ Editar</button><button class="btn danger sm" onclick="eliminar('${t.id}')">🗑 Eliminar</button></div></div>`;
+      ${(t.enfermedad==="Psoriasis/APS")?`<div class="tf"><div class="tfl">Próxima aplicación</div><div class="tfv ${(t.proximaAplicacion||t.toma)?"ok":""}">${t.toma?fd(t.proximaAplicacion||calcProximaAplicacion(t.toma)):"—"}</div></div>`:""}<div class="tf"><div class="tfl">Iniciado el</div><div class="tfv" style="font-size:11px;color:var(--muted)">${fd(t.creadoEn?t.creadoEn.slice(0,10):"")}</div></div></div>${notasHtml}${stepHtml}<div class="tc-acts"><button class="btn sm" onclick="abrirEdicion('${t.id}','${esFin?'fin':'activos'}')">✏️ Editar</button><button class="btn danger sm" onclick="eliminar('${t.id}')">🗑 Eliminar</button></div></div>`;
 }
 
 // ============================================================
@@ -1570,51 +1590,60 @@ async function eliminarReceta(fileId){
 // ============================================================
 //  EDICIÓN DE TRÁMITES
 // ============================================================
-function abrirEdicion(id){
+let editOrigen = "activos"; // para saber a donde volver
+
+document.getElementById("edit-notas").addEventListener("input", function(){
+  document.getElementById("edit-nc").textContent = this.value.length + " / 200";
+});
+
+function abrirEdicion(id, origen){
   const t = cachedData.find(x=>x.id===id);
-  if(!t) return;
+  if(!t){ alert("No se encontró el trámite. Intentá recargar la página."); return; }
 
-  document.getElementById("edit-id").value = id;
-  document.getElementById("edit-pac").value = t.paciente;
-  document.getElementById("edit-enf").value = t.enfermedad;
+  editOrigen = origen || "activos";
+  document.getElementById("edit-id").value    = id;
+  document.getElementById("edit-origen").value = editOrigen;
+  document.getElementById("edit-pac").value   = t.paciente;
+  document.getElementById("edit-enf").value   = t.enfermedad;
 
-  // Cargar opciones de medicación
+  // Medicación
   const sel = document.getElementById("edit-med");
   sel.innerHTML = '<option value="">— Seleccionar —</option>';
   const meds = MEDS[t.enfermedad] || [];
   meds.forEach(m => {
     const o = document.createElement("option");
-    o.value = m; o.textContent = m;
-    sel.appendChild(o);
+    o.value = m; o.textContent = m; sel.appendChild(o);
   });
+  const esListado = meds.includes(t.medicacion);
+  sel.value = esListado ? t.medicacion : "";
+  document.getElementById("edit-medlib").value = esListado ? "" : t.medicacion;
 
-  // Setear valores
-  const medLib = meds.includes(t.medicacion) ? "" : t.medicacion;
-  sel.value = meds.includes(t.medicacion) ? t.medicacion : "";
-  document.getElementById("edit-medlib").value = medLib;
-  document.getElementById("edit-toma").value = t.toma || "";
+  // Fechas
+  document.getElementById("edit-toma").value  = t.toma || "";
   document.getElementById("edit-proxima").value = t.toma ? fd(t.proximaAplicacion || calcProximaAplicacion(t.toma)) : "";
-  document.getElementById("edit-pres").value = t.presentacionOS || "";
-  document.getElementById("edit-vos").value = t.vencOS ? fd(t.vencOS) : "";
-  document.getElementById("edit-apr").value = t.aprobacionRealOS || "";
-  document.getElementById("edit-ing").value = t.ingresoDrogueria || "";
+  document.getElementById("edit-pres").value  = t.presentacionOS || "";
+  document.getElementById("edit-vos").value   = t.vencOS ? fd(t.vencOS) : "";
+  document.getElementById("edit-apr").value   = t.aprobacionRealOS || "";
+  document.getElementById("edit-ing").value   = t.ingresoDrogueria || "";
   document.getElementById("edit-vdrog").value = t.vencDrogueria ? fd(t.vencDrogueria) : "";
-  document.getElementById("edit-disp").value = t.disponibleFarmacia || "";
+  document.getElementById("edit-disp").value  = t.disponibleFarmacia || "";
+
+  // Notas
   document.getElementById("edit-notas").value = t.notas || "";
   document.getElementById("edit-nc").textContent = (t.notas||"").length + " / 200";
 
-  // Mostrar/ocultar fecha toma según enfermedad
-  document.getElementById("edit-row-toma").style.display =
-    t.enfermedad === "B24" ? "none" : "";
+  // Mostrar/ocultar card de toma
+  document.getElementById("edit-card-toma").style.display = t.enfermedad === "B24" ? "none" : "block";
 
-  // Mostrar modal
-  document.getElementById("edit-modal").style.display = "flex";
+  // Navegar a la sección de edición
+  document.getElementById("tab-editar").style.display = "flex";
+  goTab("editar");
 }
 
-function cerrarModal(){
-  document.getElementById("edit-modal").style.display = "none";
-  const ing = document.getElementById("edit-ing");
-  if(ing) ing.dataset.manual = "";
+function volverDeEdicion(){
+  document.getElementById("tab-editar").style.display = "none";
+  document.getElementById("edit-ing").dataset.manual = "";
+  goTab(editOrigen === "fin" ? "fin" : "activos");
 }
 
 function editCalcProxima(){
@@ -1627,11 +1656,8 @@ function editCalcVencOS(){
 }
 function editCalcDrog(){
   const apr = document.getElementById("edit-apr").value;
-  const ing = document.getElementById("edit-ing");
-  if(apr && !ing.dataset.manual) {
-    ing.value = apr;
-    editCalcVencDrog();
-  }
+  const ing  = document.getElementById("edit-ing");
+  if(apr && !ing.dataset.manual){ ing.value = apr; editCalcVencDrog(); }
 }
 function editCalcVencDrog(){
   const v = document.getElementById("edit-ing").value;
@@ -1639,51 +1665,43 @@ function editCalcVencDrog(){
   document.getElementById("edit-ing").dataset.manual = "1";
 }
 
-document.getElementById("edit-notas").addEventListener("input", function(){
-  document.getElementById("edit-nc").textContent = this.value.length + " / 200";
-});
-
 async function guardarEdicion(){
-  const id = document.getElementById("edit-id").value;
+  const id   = document.getElementById("edit-id").value;
   const lista = await loadData();
-  const t = lista.find(x=>x.id===id);
+  const t    = lista.find(x=>x.id===id);
   if(!t){ alert("No se encontró el trámite."); return; }
 
   const medSel = document.getElementById("edit-med").value;
   const medLib = document.getElementById("edit-medlib").value.trim();
-  const med = medLib || medSel;
-  const pres = document.getElementById("edit-pres").value;
-  const toma = document.getElementById("edit-toma").value;
-  const apr  = document.getElementById("edit-apr").value;
-  const ing  = document.getElementById("edit-ing").value;
-  const disp = document.getElementById("edit-disp").value;
+  const med    = medLib || medSel;
+  const pres   = document.getElementById("edit-pres").value;
+  const toma   = document.getElementById("edit-toma").value;
+  const apr    = document.getElementById("edit-apr").value;
+  const ing    = document.getElementById("edit-ing").value;
+  const disp   = document.getElementById("edit-disp").value;
 
-  if(!med){ alert("La medicación no puede estar vacía."); return; }
+  if(!med){  alert("La medicación no puede estar vacía."); return; }
   if(!pres){ alert("La fecha de presentación OS no puede estar vacía."); return; }
 
-  // Actualizar campos editables
-  t.medicacion        = med;
-  t.toma              = (t.enfermedad==="B24") ? "" : toma;
-  t.proximaAplicacion = (t.enfermedad==="Psoriasis/APS" && toma) ? calcProximaAplicacion(toma) : "";
-  t.presentacionOS    = pres;
-  t.vencOS            = calcOS(pres, 10);
-  t.aprobacionRealOS  = apr;
-  t.ingresoDrogueria  = ing || apr;
-  t.vencDrogueria     = (ing||apr) ? calcDrog(ing||apr, 2) : "";
-  t.disponibleFarmacia= disp;
-  t.notas             = document.getElementById("edit-notas").value;
-
-  // Actualizar estado según campos completados
-  if(disp)       t.estado = "finalizado";
-  else if(apr)   t.estado = "aprobado";
-  else           t.estado = "pendiente";
+  t.medicacion         = med;
+  t.toma               = (t.enfermedad==="B24") ? "" : toma;
+  t.proximaAplicacion  = (t.enfermedad==="Psoriasis/APS" && toma) ? calcProximaAplicacion(toma) : "";
+  t.presentacionOS     = pres;
+  t.vencOS             = calcOS(pres, 10);
+  t.aprobacionRealOS   = apr;
+  t.ingresoDrogueria   = ing || apr;
+  t.vencDrogueria      = (ing||apr) ? calcDrog(ing||apr, 2) : "";
+  t.disponibleFarmacia = disp;
+  t.notas              = document.getElementById("edit-notas").value;
+  if(disp)     t.estado = "finalizado";
+  else if(apr) t.estado = "aprobado";
+  else         t.estado = "pendiente";
 
   const ok = await saveRow(t);
   if(ok){
     showToast("✓ Trámite actualizado");
-    document.getElementById("edit-modal").style.display = "none";
-    document.getElementById("edit-ing").dataset.manual = "";
     lastHash = "";
+    volverDeEdicion();
     await loadAndRender();
   } else {
     alert("Error al guardar los cambios.");
@@ -1879,12 +1897,12 @@ async function eliminarEstudio(fileId){
 // ============================================================
 function goTab(name){
   tabActual=name;
-  const names=["login","nuevo","activos","fin","recetas","estudios","stats"];
-  document.querySelectorAll(".tab").forEach((t,i)=>t.classList.toggle("on",["nuevo","activos","fin","recetas","estudios","stats"][i]===name));
+  const names=["login","nuevo","activos","fin","recetas","estudios","stats","editar"];
+  document.querySelectorAll(".tab").forEach((t,i)=>t.classList.toggle("on",["nuevo","activos","fin","recetas","estudios","stats","editar"][i]===name));
   document.querySelectorAll(".sec").forEach(s=>s.classList.remove("on"));
   document.getElementById("sec-"+name).classList.add("on");
   const fab=document.getElementById("fab-wrap");
-  if(name==="nuevo"||name==="login"||name==="recetas"||name==="estudios"){ fab.style.display="none"; }
+  if(name==="nuevo"||name==="login"||name==="recetas"||name==="estudios"||name==="editar"){ fab.style.display="none"; }
   else { fab.style.display="flex"; const lbls={activos:"Imprimir trámites activos",fin:"Imprimir finalizados",stats:"Imprimir estadísticas"}; document.getElementById("fab-lbl").textContent=lbls[name]||"Imprimir PDF"; }
   if(name==="stats") renderStats();
   else if(name==="recetas"){ initRecetas(); }
