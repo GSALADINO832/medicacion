@@ -458,6 +458,7 @@
     <button class="tab"     onclick="goTab('fin')">✓ Finalizados <span class="cnt" id="cnt-f">0</span></button>
     <button class="tab"     onclick="goTab('stats')">📊 Estadísticas</button>
     <button class="tab"     onclick="goTab('recetas')">📄 Recetas</button>
+    <button class="tab"     onclick="goTab('estudios')">🔬 Estudios</button>
   </div>
 </header>
 
@@ -513,8 +514,9 @@
       <div class="field"><label>Medicación *</label><select id="n-med"><option value="">Primero elegí enfermedad</option></select></div>
       <div class="field"><label>Otro (texto libre)</label><input type="text" id="n-medlib" placeholder="Si no está en la lista"></div>
     </div>
-    <div id="row-toma" class="field-row full" style="display:none">
-      <div class="field"><label>Fecha de toma / aplicación</label><input type="date" id="n-toma"></div>
+    <div id="row-toma" class="field-row" style="display:none">
+      <div class="field"><label>Fecha de toma / aplicación</label><input type="date" id="n-toma" oninput="calcProxima()"></div>
+      <div class="field"><label>Próxima aplicación (calculada)</label><input type="text" id="n-proxima" readonly placeholder="Automático"></div>
     </div>
     <div class="divider"></div>
     <div class="field-row">
@@ -613,6 +615,70 @@
   </div>
 </div>
 
+<!-- ESTUDIOS -->
+<div id="sec-estudios" class="sec">
+  <div class="print-header" id="ph-estudios">
+    <div class="print-header-title">💊 Seguimiento Medicación Familiar OS UP — Estudios médicos</div>
+    <div class="print-header-sub">Seguimiento de aprobaciones OS UP · Grupo familiar</div>
+    <div class="print-header-date" id="phd-estudios"></div>
+  </div>
+
+  <div id="est-selector">
+    <div class="card-title" style="margin-bottom:10px">Seleccioná un paciente</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap" id="est-pac-btns"></div>
+  </div>
+
+  <div id="est-contenido" style="display:none">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <button class="btn sm" onclick="volverSelectorEst()">← Volver</button>
+      <div style="font-size:15px;font-weight:700;color:var(--text)" id="est-pac-titulo"></div>
+    </div>
+
+    <!-- Filtro por tipo -->
+    <div class="filters" id="est-tipo-tabs"></div>
+
+    <!-- Uploader -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">Subir nuevo estudio</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Tipo de estudio *</label>
+          <select id="est-tipo">
+            <option value="Laboratorio">Laboratorio</option>
+            <option value="Diagnóstico por imágenes">Diagnóstico por imágenes</option>
+            <option value="Biopsia">Biopsia</option>
+            <option value="Otros">Otros</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Fecha del estudio *</label>
+          <input type="date" id="est-fecha">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Año</label>
+          <select id="est-anio"></select>
+        </div>
+        <div class="field">
+          <label>Nombre / descripción (opcional)</label>
+          <input type="text" id="est-nombre" placeholder="Ej: Hemograma completo">
+        </div>
+      </div>
+      <div class="field full">
+        <label>Archivo (PDF o imagen)</label>
+        <input type="file" id="est-file" accept=".pdf,image/*" style="padding:8px">
+      </div>
+      <div class="btn-row">
+        <div id="est-upload-progress" style="font-size:12px;color:var(--text2);display:none">⏳ Subiendo...</div>
+        <button class="btn p sm" onclick="subirEstudio()">⬆ Subir estudio</button>
+      </div>
+    </div>
+
+    <div id="est-lista"></div>
+  </div>
+</div>
+
 <!-- Google API -->
 
 
@@ -640,7 +706,7 @@ const MEDS = {
   "B24":["Biktarvy","Dovato","Dolutegravir","Cabenuva","Triumeq","Genvoya","Descovy","Atripla","Juluca","Zuvuvir L Pack","Otro"],
   "Psoriasis/APS":["Adalimumab (Humira)","Secukinumab (Cosentyx)","Ixekizumab (Taltz)","Ustekinumab (Stelara)","Risankizumab (Skyrizi)","Guselkumab (Tremfya)","Metotrexato","Leflunomida","Apremilast (Otezla)","Baricitinib (Olumiant)","Otro"]
 };
-const COLS = ["id","paciente","enfermedad","medicacion","toma","presentacionOS","vencOS","aprobacionRealOS","ingresoDrogueria","vencDrogueria","disponibleFarmacia","notas","estado","creadoEn"];
+const COLS = ["id","paciente","enfermedad","medicacion","toma","proximaAplicacion","presentacionOS","vencOS","aprobacionRealOS","ingresoDrogueria","vencDrogueria","disponibleFarmacia","notas","estado","creadoEn"];
 const filtros = { a:"todos", f:"todos" };
 let tabActual = "nuevo";
 
@@ -685,6 +751,14 @@ function calcOS(start,n){
   while(c<n){ const dw=d.getDay(); if(dw!==0&&dw!==6&&!fh(d)) c++; if(c<n) d.setDate(d.getDate()+1); }
   return ifmt(d);
 }
+// Próxima aplicación: 28 días corridos desde fecha de aplicación (inclusive)
+function calcProximaAplicacion(fechaToma){
+  if(!fechaToma) return "";
+  const d = pd(fechaToma);
+  d.setDate(d.getDate() + 27); // +27 porque el día de aplicación cuenta como día 1
+  return ifmt(d);
+}
+
 function calcDrog(start,dh){
   let d=pd(start); d.setDate(d.getDate()+1);
   let c=0;
@@ -914,6 +988,7 @@ function onEnfChange(){
   document.getElementById("row-toma").style.display=(enf==="B24"||!enf)?"none":"";
 }
 function calcVencOS(){ const v=document.getElementById("n-pres").value; document.getElementById("n-vos").value=v?fd(calcOS(v,10)):""; }
+function calcProxima(){ const v=document.getElementById("n-toma").value; document.getElementById("n-proxima").value=v?fd(calcProximaAplicacion(v)):""; }
 document.getElementById("n-notas").addEventListener("input",function(){ document.getElementById("nc").textContent=this.value.length+" / 200"; });
 function limpiar(){
   ["n-pac","n-pres","n-toma","n-notas","n-medlib"].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=""; });
@@ -934,6 +1009,7 @@ async function guardar(){
   const t={
     id:Date.now().toString(), paciente:pac, enfermedad:enf, medicacion:med,
     toma:(enf==="B24")?"":(document.getElementById("n-toma").value||""),
+    proximaAplicacion:(enf==="B24")?"":(calcProximaAplicacion(document.getElementById("n-toma").value)||""),
     presentacionOS:pres, vencOS:calcOS(pres,10),
     aprobacionRealOS:"", ingresoDrogueria:"", vencDrogueria:"", disponibleFarmacia:"",
     notas:document.getElementById("n-notas").value, estado:"pendiente",
@@ -1065,9 +1141,10 @@ function renderTC(t,esFin){
       stepHtml=`<div class="tc-step"><div class="step-title"><span class="step-num">2</span> Registrar disponible en farmacia</div><div style="font-size:11px;color:var(--muted);margin-bottom:8px">Fecha pre-completada con el día hábil siguiente al vto. de droguería. Podés modificarla.</div><div style="display:flex;gap:8px;align-items:flex-end"><div class="field" style="margin:0;flex:1"><label>Fecha disponible en farmacia</label><input type="date" id="disp-${t.id}" value="${sug}" oninput="onDispChange('${t.id}')"></div><button class="btn p sm" onclick="guardarDisponible('${t.id}')">Finalizar</button></div></div>`;
     }
   }
-  const notasHtml=t.notas?`<div class="tc-notes">📝 ${esc(t.notas)}</div>`:"";
+  const notasHtml=(t.notas&&t.notas.trim())?`<div class="tc-notes">📝 ${esc(t.notas)}</div>`:"";
   const drogAlerta=(t.estado==="aprobado"&&t.vencDrogueria)?diasBadge(t.vencDrogueria):"";
-  return `<div class="tc"><div class="tc-head"><div><div class="tc-name">${esc(t.paciente)}</div><div class="tc-sub"><span>${esc(t.medicacion)}</span>${enfBadge(t.enfermedad)}</div></div><div class="tc-badges">${stateBadge(t)}${t.estado==="pendiente"?diasBadge(t.vencOS):""}${drogAlerta}</div></div><div class="tc-grid"><div class="tf"><div class="tfl">Presentado a OS</div><div class="tfv">${fd(t.presentacionOS)}</div></div><div class="tf"><div class="tfl">Vto. legal OS</div><div class="tfv ${vosClass(t)}">${fd(t.vencOS)}</div></div><div class="tf"><div class="tfl">Aprobación real OS</div><div class="tfv ${t.aprobacionRealOS?"ok":"pend"}">${t.aprobacionRealOS?fd(t.aprobacionRealOS):"Pendiente"}</div></div><div class="tf"><div class="tfl">Ingreso a droguería</div><div class="tfv">${fd(t.ingresoDrogueria)}</div></div><div class="tf"><div class="tfl">Vto. droguería (48hs)</div><div class="tfv">${fd(t.vencDrogueria)}</div></div><div class="tf"><div class="tfl">Disponible en farmacia</div><div class="tfv ${t.disponibleFarmacia?"ok":"pend"}">${t.disponibleFarmacia?fd(t.disponibleFarmacia):"—"}</div></div>${t.toma?`<div class="tf"><div class="tfl">Fecha toma / aplicación</div><div class="tfv">${fd(t.toma)}</div></div>`:""}<div class="tf"><div class="tfl">Iniciado el</div><div class="tfv" style="font-size:11px;color:var(--muted)">${fd(t.creadoEn?t.creadoEn.slice(0,10):"")}</div></div></div>${notasHtml}${stepHtml}<div class="tc-acts"><button class="btn danger sm" onclick="eliminar('${t.id}')">🗑 Eliminar</button></div></div>`;
+  return `<div class="tc"><div class="tc-head"><div><div class="tc-name">${esc(t.paciente)}</div><div class="tc-sub"><span>${esc(t.medicacion)}</span>${enfBadge(t.enfermedad)}</div></div><div class="tc-badges">${stateBadge(t)}${t.estado==="pendiente"?diasBadge(t.vencOS):""}${drogAlerta}</div></div><div class="tc-grid"><div class="tf"><div class="tfl">Presentado a OS</div><div class="tfv">${fd(t.presentacionOS)}</div></div><div class="tf"><div class="tfl">Vto. legal OS</div><div class="tfv ${vosClass(t)}">${fd(t.vencOS)}</div></div><div class="tf"><div class="tfl">Aprobación real OS</div><div class="tfv ${t.aprobacionRealOS?"ok":"pend"}">${t.aprobacionRealOS?fd(t.aprobacionRealOS):"Pendiente"}</div></div><div class="tf"><div class="tfl">Ingreso a droguería</div><div class="tfv">${fd(t.ingresoDrogueria)}</div></div><div class="tf"><div class="tfl">Vto. droguería (48hs)</div><div class="tfv">${fd(t.vencDrogueria)}</div></div><div class="tf"><div class="tfl">Disponible en farmacia</div><div class="tfv ${t.disponibleFarmacia?"ok":"pend"}">${t.disponibleFarmacia?fd(t.disponibleFarmacia):"—"}</div></div>${t.toma?`<div class="tf"><div class="tfl">Fecha toma / aplicación</div><div class="tfv">${fd(t.toma)}</div></div>`:""}
+      ${(t.toma&&t.enfermedad==="Psoriasis/APS")?`<div class="tf"><div class="tfl">Próxima aplicación</div><div class="tfv ok">${fd(t.proximaAplicacion||calcProximaAplicacion(t.toma))}</div></div>`:""}<div class="tf"><div class="tfl">Iniciado el</div><div class="tfv" style="font-size:11px;color:var(--muted)">${fd(t.creadoEn?t.creadoEn.slice(0,10):"")}</div></div></div>${notasHtml}${stepHtml}<div class="tc-acts"><button class="btn danger sm" onclick="eliminar('${t.id}')">🗑 Eliminar</button></div></div>`;
 }
 
 // ============================================================
@@ -1293,19 +1370,204 @@ async function eliminarReceta(fileId){
 }
 
 // ============================================================
+//  ESTUDIOS MÉDICOS
+// ============================================================
+const TIPOS_ESTUDIO = ["Todos","Laboratorio","Diagnóstico por imágenes","Biopsia","Otros"];
+let estPacienteActual = "";
+let estTipoActual = "Todos";
+
+function initEstudios(){
+  const btns = document.getElementById("est-pac-btns");
+  const pacs = getPacientesUnicos();
+  btns.innerHTML = pacs.map(p => `
+    <button class="btn" style="flex:1;min-width:140px;padding:16px;flex-direction:column;gap:6px;height:auto"
+      onclick="seleccionarPacienteEst('${esc(p)}')">
+      <span style="font-size:24px">👤</span>
+      <span style="font-size:13px;font-weight:700">${esc(p)}</span>
+    </button>`).join("");
+}
+
+function seleccionarPacienteEst(pac){
+  estPacienteActual = pac;
+  estTipoActual = "Todos";
+  document.getElementById("est-selector").style.display = "none";
+  document.getElementById("est-contenido").style.display = "block";
+  document.getElementById("est-pac-titulo").textContent = "👤 " + pac;
+
+  // Tabs de tipo
+  const tabs = document.getElementById("est-tipo-tabs");
+  tabs.innerHTML = TIPOS_ESTUDIO.map(t =>
+    `<button class="fb ${t==="Todos"?"on":""}" onclick="seleccionarTipoEst('${esc(t)}')">${esc(t)}</button>`
+  ).join("");
+
+  // Años
+  const anioSel = document.getElementById("est-anio");
+  const anioActual = new Date().getFullYear();
+  anioSel.innerHTML = [anioActual, anioActual+1, anioActual-1].map(a=>
+    `<option value="${a}">${a}</option>`).join("");
+
+  // Fecha default hoy
+  document.getElementById("est-fecha").value = ifmt(new Date());
+
+  cargarEstudios();
+}
+
+function seleccionarTipoEst(tipo){
+  estTipoActual = tipo;
+  document.querySelectorAll("#est-tipo-tabs .fb").forEach(b=>{
+    b.classList.toggle("on", b.textContent.trim()===tipo);
+  });
+  cargarEstudios();
+}
+
+function volverSelectorEst(){
+  document.getElementById("est-selector").style.display = "block";
+  document.getElementById("est-contenido").style.display = "none";
+  document.getElementById("est-lista").innerHTML = "";
+}
+
+async function cargarEstudios(){
+  const lista = document.getElementById("est-lista");
+  lista.innerHTML = `<div class="loading-wrap"><div class="spinner"></div><span>Cargando estudios...</span></div>`;
+  try {
+    const enfermedad = estTipoActual === "Todos" ? "" : estTipoActual;
+    const data = await callScript("getRecetas", {
+      paciente: estPacienteActual + "_estudios",
+      enfermedad: enfermedad
+    });
+    if(data.error){ lista.innerHTML = `<div class="empty"><span class="empty-icon">⚠️</span><span>Error: ${esc(data.error)}</span></div>`; return; }
+    renderEstudios(data.recetas || []);
+  } catch(e){
+    lista.innerHTML = `<div class="empty"><span class="empty-icon">⚠️</span><span>Sin conexión</span></div>`;
+  }
+}
+
+function renderEstudios(estudios){
+  const lista = document.getElementById("est-lista");
+  if(!estudios.length){
+    lista.innerHTML = `<div class="empty"><span class="empty-icon">🔬</span><span style="font-size:14px">No hay estudios cargados aún</span></div>`;
+    return;
+  }
+
+  // Agrupar por año
+  const porAnio = {};
+  estudios.forEach(e => {
+    if(!porAnio[e.anio]) porAnio[e.anio] = [];
+    porAnio[e.anio].push(e);
+  });
+
+  const iconos = { "Laboratorio":"🧪", "Diagnóstico por imágenes":"🩻", "Biopsia":"🔬", "Otros":"📋" };
+
+  let html = "";
+  Object.keys(porAnio).sort((a,b)=>b-a).forEach(anio => {
+    html += `<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin:16px 0 8px;display:flex;align-items:center;gap:8px">
+      📅 ${anio} <span style="flex:1;height:1px;background:var(--border);display:block"></span>
+    </div>`;
+    porAnio[anio].forEach(e => {
+      const icono = iconos[e.enfermedad] || "📋";
+      const kb = e.size ? Math.round(e.size/1024) + " KB" : "";
+      // Extract fecha from nombre if stored
+      const fechaDisplay = e.fecha ? fd(e.fecha) : "";
+      html += `
+      <div class="tc" style="margin-bottom:8px">
+        <div style="padding:12px 16px;display:flex;align-items:center;gap:12px">
+          <div style="font-size:28px;flex-shrink:0">${icono}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(e.nombre)}</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap">
+              <span class="badge ${e.enfermedad==="Laboratorio"?"ba":e.enfermedad==="Biopsia"?"b-venc":"bb24"}">${esc(e.enfermedad)}</span>
+              ${fechaDisplay ? `<span>📅 ${fechaDisplay}</span>` : ""}
+              ${kb ? `<span>${kb}</span>` : ""}
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0">
+            <a href="${e.viewUrl}" target="_blank" class="btn sm" style="text-decoration:none">👁 Ver</a>
+            <button class="btn danger sm" onclick="eliminarEstudio('${e.fileId}')">🗑</button>
+          </div>
+        </div>
+      </div>`;
+    });
+  });
+  lista.innerHTML = html;
+}
+
+async function subirEstudio(){
+  const fileInput = document.getElementById("est-file");
+  const tipo = document.getElementById("est-tipo").value;
+  const fecha = document.getElementById("est-fecha").value;
+  const nombreInput = document.getElementById("est-nombre");
+  const anio = document.getElementById("est-anio").value;
+  const progress = document.getElementById("est-upload-progress");
+
+  if(!fileInput.files.length){ alert("Seleccioná un archivo primero."); return; }
+  if(!fecha){ alert("Ingresá la fecha del estudio."); return; }
+  const file = fileInput.files[0];
+
+  if(file.size > 10 * 1024 * 1024){ alert("El archivo no puede superar 10MB."); return; }
+
+  const fechaStr = fd(fecha);
+  const nombre = nombreInput.value.trim() ||
+    (tipo + " - " + fechaStr + " - " + file.name);
+
+  progress.style.display = "block";
+  document.querySelector("[onclick='subirEstudio()']").disabled = true;
+
+  try {
+    const base64 = await new Promise((res, rej) => {
+      const reader = new FileReader();
+      reader.onload = () => res(reader.result.split(",")[1]);
+      reader.onerror = () => rej(new Error("Error al leer el archivo"));
+      reader.readAsDataURL(file);
+    });
+
+    const data = await callScript("uploadReceta", {
+      paciente:   estPacienteActual + "_estudios",
+      enfermedad: tipo,
+      anio:       parseInt(anio),
+      nombre:     nombre,
+      mimeType:   file.type,
+      base64:     base64
+    });
+
+    if(data.error){ alert("Error al subir: " + data.error); return; }
+
+    showToast("✓ Estudio subido correctamente");
+    fileInput.value = "";
+    nombreInput.value = "";
+    cargarEstudios();
+
+  } catch(e){
+    alert("Error: " + e.message);
+  } finally {
+    progress.style.display = "none";
+    document.querySelector("[onclick='subirEstudio()']").disabled = false;
+  }
+}
+
+async function eliminarEstudio(fileId){
+  if(!confirm("¿Eliminar este estudio?\nSe moverá a la papelera de Google Drive.")) return;
+  try {
+    const data = await callScript("deleteReceta", { fileId });
+    if(data.ok){ showToast("🗑 Estudio eliminado"); cargarEstudios(); }
+    else alert("Error al eliminar: " + (data.error||""));
+  } catch(e){ alert("Error: " + e.message); }
+}
+
+// ============================================================
 //  NAV
 // ============================================================
 function goTab(name){
   tabActual=name;
-  const names=["login","nuevo","activos","fin","stats","recetas"];
-  document.querySelectorAll(".tab").forEach((t,i)=>t.classList.toggle("on",["nuevo","activos","fin","stats","recetas"][i]===name));
+  const names=["login","nuevo","activos","fin","stats","recetas","estudios"];
+  document.querySelectorAll(".tab").forEach((t,i)=>t.classList.toggle("on",["nuevo","activos","fin","stats","recetas","estudios"][i]===name));
   document.querySelectorAll(".sec").forEach(s=>s.classList.remove("on"));
   document.getElementById("sec-"+name).classList.add("on");
   const fab=document.getElementById("fab-wrap");
-  if(name==="nuevo"||name==="login"||name==="recetas"){ fab.style.display="none"; }
+  if(name==="nuevo"||name==="login"||name==="recetas"||name==="estudios"){ fab.style.display="none"; }
   else { fab.style.display="flex"; const lbls={activos:"Imprimir trámites activos",fin:"Imprimir finalizados",stats:"Imprimir estadísticas"}; document.getElementById("fab-lbl").textContent=lbls[name]||"Imprimir PDF"; }
   if(name==="stats") renderStats();
   else if(name==="recetas"){ initRecetas(); }
+  else if(name==="estudios"){ initEstudios(); }
   else if(name!=="nuevo"&&name!=="login") render();
 }
 
