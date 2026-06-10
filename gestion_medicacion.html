@@ -2,460 +2,207 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjEwMCIgZmlsbD0iIzJENUEzRCIvPjxwYXRoIGQ9Ik0xNDAgMjU2IEExMTYgMTE2IDAgMCAxIDI1NiAxNDAgTDI1NiAzNzIgQTExNiAxMTYgMCAwIDEgMTQwIDI1NiBaIiBmaWxsPSIjRkZGRkZGIi8+PHBhdGggZD0iTTI1NiAxNDAgQTExNiAxMTYgMCAwIDEgMzcyIDI1NiBBMTE2IDExNiAwIDAgMSAyNTYgMzcyIFoiIGZpbGw9IiNBOEQ1QjUiLz48bGluZSB4MT0iMjU2IiB5MT0iMTQwIiB4Mj0iMjU2IiB5Mj0iMzcyIiBzdHJva2U9IiMyRDVBM0QiIHN0cm9rZS13aWR0aD0iMTIiLz48Y2lyY2xlIGN4PSIyNTYiIGN5PSIyNTYiIHI9IjExNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjEwIiBvcGFjaXR5PSIwLjQiLz48L3N2Zz4=">
-<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjEwMCIgZmlsbD0iIzJENUEzRCIvPjxwYXRoIGQ9Ik0xNDAgMjU2IEExMTYgMTE2IDAgMCAxIDI1NiAxNDAgTDI1NiAzNzIgQTExNiAxMTYgMCAwIDEgMTQwIDI1NiBaIiBmaWxsPSIjRkZGRkZGIi8+PHBhdGggZD0iTTI1NiAxNDAgQTExNiAxMTYgMCAwIDEgMzcyIDI1NiBBMTE2IDExNiAwIDAgMSAyNTYgMzcyIFoiIGZpbGw9IiNBOEQ1QjUiLz48bGluZSB4MT0iMjU2IiB5MT0iMTQwIiB4Mj0iMjU2IiB5Mj0iMzcyIiBzdHJva2U9IiMyRDVBM0QiIHN0cm9rZS13aWR0aD0iMTIiLz48Y2lyY2xlIGN4PSIyNTYiIGN5PSIyNTYiIHI9IjExNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjEwIiBvcGFjaXR5PSIwLjQiLz48L3N2Zz4=">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Medicacion">
-<meta name="theme-color" content="#2D5A3D">
-<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjogIk1lZGljYWNpb24gRmFtaWxpYXIiLCAic2hvcnRfbmFtZSI6ICJNZWRpY2FjaW9uIiwgInN0YXJ0X3VybCI6ICJodHRwczovL2dzYWxhZGlubzgzMi5naXRodWIuaW8vbWVkaWNhY2lvbi9nZXN0aW9uX21lZGljYWNpb24uaHRtbCIsICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLCAiYmFja2dyb3VuZF9jb2xvciI6ICIjMkQ1QTNEIiwgInRoZW1lX2NvbG9yIjogIiMyRDVBM0QiLCAiaWNvbnMiOiBbeyJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpSUhacFpYZENiM2c5SWpBZ01DQTFNVElnTlRFeUlqNDhjbVZqZENCM2FXUjBhRDBpTlRFeUlpQm9aV2xuYUhROUlqVXhNaUlnY25nOUlqRXdNQ0lnWm1sc2JEMGlJekpFTlVFelJDSXZQanh3WVhSb0lHUTlJazB4TkRBZ01qVTJJRUV4TVRZZ01URTJJREFnTUNBeElESTFOaUF4TkRBZ1RESTFOaUF6TnpJZ1FURXhOaUF4TVRZZ01DQXdJREVnTVRRd0lESTFOaUJhSWlCbWFXeHNQU0lqUmtaR1JrWkdJaTgrUEhCaGRHZ2daRDBpVFRJMU5pQXhOREFnUVRFeE5pQXhNVFlnTUNBd0lERWdNemN5SURJMU5pQkJNVEUySURFeE5pQXdJREFnTVNBeU5UWWdNemN5SUZvaUlHWnBiR3c5SWlOQk9FUTFRalVpTHo0OGJHbHVaU0I0TVQwaU1qVTJJaUI1TVQwaU1UUXdJaUI0TWowaU1qVTJJaUI1TWowaU16Y3lJaUJ6ZEhKdmEyVTlJaU15UkRWQk0wUWlJSE4wY205clpTMTNhV1IwYUQwaU1USWlMejQ4WTJseVkyeGxJR040UFNJeU5UWWlJR041UFNJeU5UWWlJSEk5SWpFeE5pSWdabWxzYkQwaWJtOXVaU0lnYzNSeWIydGxQU0lqUmtaR1JrWkdJaUJ6ZEhKdmEyVXRkMmxrZEdnOUlqRXdJaUJ2Y0dGamFYUjVQU0l3TGpRaUx6NDhMM04yWno0PSIsICJzaXplcyI6ICI1MTJ4NTEyIiwgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCJ9XX0=">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Seguimiento Medicación Familiar — OS UP</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+:root {
+  --bg:#0F1117; --bg2:#1A1D27; --bg3:#22263A; --card:#1E2235; --card2:#252A40;
+  --border:#2E3450; --border2:#3A4060; --text:#F0F2FF; --text2:#9BA3C8; --text3:#6B7399;
+  --accent:#4F6EF7; --accent2:#6B86FF; --accent-bg:rgba(79,110,247,.15); --accent-border:rgba(79,110,247,.3);
+  --ok:#34D399; --ok-bg:rgba(52,211,153,.12); --ok-border:rgba(52,211,153,.25);
+  --warn:#FBBF24; --warn-bg:rgba(251,191,36,.12); --warn-border:rgba(251,191,36,.25);
+  --danger:#F87171; --danger-bg:rgba(248,113,113,.12); --danger-border:rgba(248,113,113,.25);
+  --b24:#60A5FA; --b24-bg:rgba(96,165,250,.12); --b24-border:rgba(96,165,250,.25);
+  --pso:#A78BFA; --pso-bg:rgba(167,139,250,.12); --pso-border:rgba(167,139,250,.25);
+  --radius:16px; --radius-sm:10px; --shadow:0 4px 24px rgba(0,0,0,.4);
+  --font:'Inter',sans-serif; --mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 
-  :root {
-    --bg: #0F1117;
-    --bg2: #1A1D27;
-    --bg3: #22263A;
-    --card: #1E2235;
-    --card2: #252A40;
-    --border: #2E3450;
-    --border2: #3A4060;
-    --text: #F0F2FF;
-    --text2: #9BA3C8;
-    --text3: #6B7399;
-    --accent: #4F6EF7;
-    --accent2: #6B86FF;
-    --accent-bg: rgba(79,110,247,.15);
-    --accent-border: rgba(79,110,247,.3);
-    --ok: #34D399;
-    --ok-bg: rgba(52,211,153,.12);
-    --ok-border: rgba(52,211,153,.25);
-    --warn: #FBBF24;
-    --warn-bg: rgba(251,191,36,.12);
-    --warn-border: rgba(251,191,36,.25);
-    --danger: #F87171;
-    --danger-bg: rgba(248,113,113,.12);
-    --danger-border: rgba(248,113,113,.25);
-    --b24: #60A5FA;
-    --b24-bg: rgba(96,165,250,.12);
-    --b24-border: rgba(96,165,250,.25);
-    --pso: #A78BFA;
-    --pso-bg: rgba(167,139,250,.12);
-    --pso-border: rgba(167,139,250,.25);
-    --pend: #FBBF24;
-    --pend-bg: rgba(251,191,36,.12);
-    --apr: #34D399;
-    --apr-bg: rgba(52,211,153,.12);
-    --fin: #34D399;
-    --fin-bg: rgba(52,211,153,.08);
-    --radius: 16px;
-    --radius-sm: 10px;
-    --radius-xs: 6px;
-    --shadow: 0 4px 24px rgba(0,0,0,.4);
-    --shadow-sm: 0 2px 12px rgba(0,0,0,.3);
-    --font: 'Inter', sans-serif;
-    --mono: 'JetBrains Mono', monospace;
-    --transition: all .2s cubic-bezier(.4,0,.2,1);
-  }
+/* HEADER */
+.header{background:linear-gradient(135deg,#1A1D27,#1E2235);border-bottom:1px solid var(--border);padding:14px 16px 0;position:sticky;top:0;z-index:100}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.header-brand{display:flex;align-items:center;gap:10px}
+.header-logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#7C3AED);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 16px rgba(79,110,247,.4)}
+.header-title{font-size:16px;font-weight:700;letter-spacing:-.3px}
+.header-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.sync-indicator{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);font-weight:500}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 6px var(--ok);flex-shrink:0}
+.sync-dot.syncing{background:var(--warn);animation:pulse 1s infinite}
+.sync-dot.error{background:var(--danger)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.tabs{display:flex;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:9px 12px 10px;border:none;background:none;color:var(--text3);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.tab:hover{color:var(--text2)}
+.tab.on{color:var(--accent2);border-bottom-color:var(--accent)}
+.cnt{display:inline-flex;align-items:center;justify-content:center;background:var(--accent-bg);border:1px solid var(--accent-border);color:var(--accent2);border-radius:20px;padding:0 6px;font-size:10px;margin-left:5px;font-weight:700;min-width:18px;height:16px}
 
-  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
-  body { font-family:var(--font); background:var(--bg); color:var(--text); font-size:14px; line-height:1.6; min-height:100vh; }
+/* SECTIONS */
+.sec{display:none;padding:16px 14px 90px;animation:fadeIn .2s ease}
+.sec.on{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 
-  /* ── SCROLLBAR ── */
-  ::-webkit-scrollbar { width:4px; }
-  ::-webkit-scrollbar-track { background:var(--bg); }
-  ::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+/* LOGIN */
+.login-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;padding:24px;text-align:center}
+.login-logo{width:72px;height:72px;border-radius:20px;margin-bottom:20px;background:linear-gradient(135deg,var(--accent),#7C3AED);display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 0 40px rgba(79,110,247,.3)}
+.login-title{font-size:24px;font-weight:800;margin-bottom:6px;letter-spacing:-.5px}
+.login-desc{font-size:13px;color:var(--text2);margin-bottom:28px;line-height:1.7;max-width:280px}
+.login-box{width:100%;max-width:320px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow)}
 
-  /* ── HEADER ── */
-  .header {
-    background: linear-gradient(135deg, #1A1D27 0%, #1E2235 100%);
-    border-bottom: 1px solid var(--border);
-    padding: 14px 16px 0;
-    position: sticky; top:0; z-index:100;
-    backdrop-filter: blur(12px);
-  }
-  .header-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-  .header-brand { display:flex; align-items:center; gap:10px; }
-  .header-logo {
-    width:34px; height:34px; border-radius:10px;
-    background: linear-gradient(135deg, var(--accent) 0%, #7C3AED 100%);
-    display:flex; align-items:center; justify-content:center; font-size:18px;
-    box-shadow: 0 0 16px rgba(79,110,247,.4);
-  }
-  .header-title { font-size:17px; font-weight:700; letter-spacing:-.3px; color:var(--text); }
-  .header-sub { font-size:11px; color:var(--text3); margin-top:1px; }
-  .sync-indicator { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--text2); font-weight:500; }
-  .sync-dot { width:7px; height:7px; border-radius:50%; background:var(--ok); box-shadow:0 0 6px var(--ok); flex-shrink:0; }
-  .sync-dot.syncing { background:var(--warn); box-shadow:0 0 6px var(--warn); animation:pulse 1s infinite; }
-  .sync-dot.error { background:var(--danger); box-shadow:0 0 6px var(--danger); }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.card-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.card-title::before{content:'';display:block;width:3px;height:12px;background:var(--accent);border-radius:2px}
 
-  /* ── TABS ── */
-  .tabs { display:flex; gap:2px; overflow-x:auto; scrollbar-width:none; padding-bottom:1px; }
-  .tabs::-webkit-scrollbar { display:none; }
-  .tab {
-    flex-shrink:0; padding:9px 14px 10px; border:none; background:none;
-    color:var(--text3); font-family:var(--font); font-size:13px; font-weight:600;
-    cursor:pointer; border-bottom:2px solid transparent; transition:var(--transition);
-    white-space:nowrap; letter-spacing:-.1px;
-  }
-  .tab:hover { color:var(--text2); }
-  .tab.on { color:var(--accent2); border-bottom-color:var(--accent); }
-  .cnt {
-    display:inline-flex; align-items:center; justify-content:center;
-    background:var(--accent-bg); border:1px solid var(--accent-border);
-    color:var(--accent2); border-radius:20px; padding:0 6px; font-size:10px;
-    margin-left:5px; font-weight:700; min-width:18px; height:16px;
-  }
+/* FIELDS */
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field-row.full{grid-template-columns:1fr}
+label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+input,select,textarea{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;color:var(--text);font-family:var(--font);font-size:13px;width:100%;outline:none;transition:border .15s;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);background:var(--bg3);box-shadow:0 0 0 3px var(--accent-bg)}
+input::placeholder,textarea::placeholder{color:var(--text3)}
+input[readonly]{background:var(--bg);color:var(--text3);border-style:dashed;cursor:default}
+input[readonly]:focus{box-shadow:none;border-color:var(--border)}
+textarea{resize:none;min-height:70px}
+select option{background:var(--card);color:var(--text)}
+.char-count{font-size:10px;color:var(--text3);text-align:right;font-family:var(--mono)}
 
-  /* ── SECTIONS ── */
-  .sec { display:none; padding:16px 14px 90px; animation:fadeIn .2s ease; }
-  .sec.on { display:block; }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+/* BUTTONS */
+.btn{padding:10px 16px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--card2);color:var(--text);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;justify-content:center;transition:all .15s}
+.btn:active{transform:scale(.97)}
+.btn.p{background:linear-gradient(135deg,var(--accent),#6B45E8);color:#fff;border-color:transparent;box-shadow:0 4px 16px rgba(79,110,247,.35)}
+.btn.p:hover{filter:brightness(1.1)}
+.btn.danger{color:var(--danger);border-color:var(--danger-border);background:var(--danger-bg)}
+.btn.warn{color:var(--warn);border-color:var(--warn-border);background:var(--warn-bg)}
+.btn.sm{padding:6px 12px;font-size:12px}
+.btn.full{width:100%}
+.btn-row{display:flex;gap:8px;justify-content:flex-end;align-items:center;margin-top:6px;flex-wrap:wrap}
+.divider{height:1px;background:var(--border);margin:14px 0}
 
-  /* ── LOGIN ── */
-  .login-wrap {
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    min-height:85vh; padding:24px; text-align:center;
-  }
-  .login-logo {
-    width:72px; height:72px; border-radius:20px; margin-bottom:20px;
-    background:linear-gradient(135deg, var(--accent) 0%, #7C3AED 100%);
-    display:flex; align-items:center; justify-content:center; font-size:36px;
-    box-shadow:0 0 40px rgba(79,110,247,.3);
-  }
-  .login-title { font-size:24px; font-weight:800; margin-bottom:6px; letter-spacing:-.5px; }
-  .login-desc { font-size:13px; color:var(--text2); margin-bottom:28px; line-height:1.7; max-width:280px; }
-  .login-box {
-    width:100%; max-width:320px;
-    background:var(--card); border:1px solid var(--border);
-    border-radius:var(--radius); padding:24px; display:flex; flex-direction:column; gap:14px;
-    box-shadow:var(--shadow);
-  }
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:linear-gradient(135deg,var(--accent),#7C3AED);color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:600;box-shadow:0 8px 32px rgba(79,110,247,.4);transition:transform .3s cubic-bezier(.34,1.56,.64,1);z-index:999;white-space:nowrap}
+#toast.show{transform:translateX(-50%) translateY(0)}
 
-  /* ── CARDS ── */
-  .card {
-    background:var(--card); border:1px solid var(--border);
-    border-radius:var(--radius); padding:16px; margin-bottom:12px;
-    box-shadow:var(--shadow-sm); transition:var(--transition);
-  }
-  .card-title {
-    font-size:11px; font-weight:700; color:var(--text3);
-    text-transform:uppercase; letter-spacing:.8px; margin-bottom:14px;
-    display:flex; align-items:center; gap:6px;
-  }
-  .card-title::before {
-    content:''; display:block; width:3px; height:12px;
-    background:var(--accent); border-radius:2px;
-  }
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;white-space:nowrap;border:1px solid}
+.bp{background:var(--warn-bg);color:var(--warn);border-color:var(--warn-border)}
+.ba{background:var(--ok-bg);color:var(--ok);border-color:var(--ok-border)}
+.bf{background:var(--ok-bg);color:var(--ok);border-color:var(--ok-border)}
+.bb24{background:var(--b24-bg);color:var(--b24);border-color:var(--b24-border)}
+.bpso{background:var(--pso-bg);color:var(--pso);border-color:var(--pso-border)}
+.b-venc{background:var(--danger-bg);color:var(--danger);border-color:var(--danger-border)}
+.b-warn{background:var(--warn-bg);color:var(--warn);border-color:var(--warn-border)}
 
-  /* ── FIELDS ── */
-  .field { display:flex; flex-direction:column; gap:5px; margin-bottom:12px; }
-  .field-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  .field-row.full { grid-template-columns:1fr; }
-  label {
-    font-size:11px; font-weight:600; color:var(--text2);
-    text-transform:uppercase; letter-spacing:.5px;
-  }
-  input, select, textarea {
-    background:var(--bg2); border:1px solid var(--border);
-    border-radius:var(--radius-sm); padding:10px 12px;
-    color:var(--text); font-family:var(--font); font-size:13px;
-    width:100%; transition:var(--transition); -webkit-appearance:none;
-    outline:none;
-  }
-  input:focus, select:focus, textarea:focus {
-    border-color:var(--accent); background:var(--bg3);
-    box-shadow:0 0 0 3px var(--accent-bg);
-  }
-  input::placeholder, textarea::placeholder { color:var(--text3); }
-  input[readonly] {
-    background:var(--bg); color:var(--text3); border-style:dashed; cursor:default;
-  }
-  input[readonly]:focus { box-shadow:none; border-color:var(--border); }
-  textarea { resize:none; min-height:70px; }
-  select option { background:var(--card); color:var(--text); }
-  .char-count { font-size:10px; color:var(--text3); text-align:right; font-family:var(--mono); }
-  .calc-hint { font-size:11px; color:var(--ok); font-weight:600; margin-top:3px; min-height:14px; }
+/* TRAMITE CARDS */
+.tc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden}
+.tc-head{padding:14px 16px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:8px;background:linear-gradient(135deg,var(--card),var(--card2))}
+.tc-name{font-size:15px;font-weight:700;color:var(--text)}
+.tc-sub{font-size:12px;color:var(--text2);margin-top:3px;display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.tc-badges{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.tc-grid{display:grid;grid-template-columns:1fr 1fr}
+.tf{padding:10px 16px;border-bottom:1px solid var(--border);border-right:1px solid var(--border)}
+.tf:nth-child(even){border-right:none}
+.tf:last-child,.tf:nth-last-child(2):nth-child(odd){border-bottom:none}
+.tfl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px}
+.tfv{font-size:12px;color:var(--text);font-family:var(--mono);font-weight:500}
+.tfv.ok{color:var(--ok);font-weight:700}
+.tfv.warn{color:var(--warn);font-weight:700}
+.tfv.bad{color:var(--danger);font-weight:700}
+.tfv.pend{color:var(--text3);font-style:italic;font-family:var(--font)}
+.tc-step{padding:12px 16px;background:linear-gradient(135deg,var(--bg2),var(--bg3));border-top:1px solid var(--border)}
+.step-title{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.step-num{background:linear-gradient(135deg,var(--accent),#7C3AED);color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;flex-shrink:0}
+.tc-notes{padding:10px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--text2);font-style:italic;background:var(--bg2)}
+.tc-acts{padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;background:var(--bg2)}
 
-  /* ── BUTTONS ── */
-  .btn {
-    padding:10px 16px; border-radius:var(--radius-sm);
-    border:1px solid var(--border2); background:var(--card2);
-    color:var(--text); font-family:var(--font); font-size:13px; font-weight:600;
-    cursor:pointer; transition:var(--transition);
-    display:inline-flex; align-items:center; gap:6px; justify-content:center;
-    letter-spacing:-.1px;
-  }
-  .btn:hover { background:var(--bg3); border-color:var(--border2); }
-  .btn:active { transform:scale(.97); }
-  .btn.p {
-    background:linear-gradient(135deg, var(--accent) 0%, #6B45E8 100%);
-    color:#fff; border-color:transparent;
-    box-shadow:0 4px 16px rgba(79,110,247,.35);
-  }
-  .btn.p:hover { box-shadow:0 6px 20px rgba(79,110,247,.5); filter:brightness(1.1); }
-  .btn.danger { color:var(--danger); border-color:var(--danger-border); background:var(--danger-bg); }
-  .btn.danger:hover { background:rgba(248,113,113,.2); }
-  .btn.sm { padding:6px 12px; font-size:12px; }
-  .btn-row { display:flex; gap:8px; justify-content:flex-end; align-items:center; margin-top:6px; flex-wrap:wrap; }
+/* EMPTY / LOADING */
+.empty{text-align:center;padding:48px 20px;color:var(--text3)}
+.empty-icon{font-size:44px;display:block;margin-bottom:12px;opacity:.5}
+.loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 20px;gap:12px;color:var(--text3)}
+.spinner{width:28px;height:28px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-  /* ── TOAST ── */
-  #toast {
-    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px);
-    background:linear-gradient(135deg, var(--accent), #7C3AED);
-    color:#fff; padding:10px 20px; border-radius:30px;
-    font-size:13px; font-weight:600; box-shadow:0 8px 32px rgba(79,110,247,.4);
-    transition:transform .3s cubic-bezier(.34,1.56,.64,1); z-index:999; white-space:nowrap;
-  }
-  #toast.show { transform:translateX(-50%) translateY(0); }
+/* FILTERS */
+.filters{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.fb{padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--card2);color:var(--text2);cursor:pointer;font-family:var(--font);font-size:12px;font-weight:600;transition:all .15s}
+.fb.on{background:var(--accent-bg);border-color:var(--accent-border);color:var(--accent2)}
 
-  /* ── TRAMITE CARDS ── */
-  .tc {
-    background:var(--card); border:1px solid var(--border);
-    border-radius:var(--radius); margin-bottom:10px;
-    box-shadow:var(--shadow-sm); overflow:hidden;
-    transition:var(--transition);
-  }
-  .tc:hover { border-color:var(--border2); box-shadow:var(--shadow); }
-  .tc-head {
-    padding:14px 16px 12px; border-bottom:1px solid var(--border);
-    display:flex; justify-content:space-between; align-items:flex-start; gap:8px;
-    background:linear-gradient(135deg, var(--card) 0%, var(--card2) 100%);
-  }
-  .tc-name { font-size:15px; font-weight:700; color:var(--text); letter-spacing:-.2px; }
-  .tc-sub { font-size:12px; color:var(--text2); margin-top:3px; display:flex; gap:5px; flex-wrap:wrap; align-items:center; }
-  .tc-badges { display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0; }
+/* INFO / ALERTA */
+.info-box{background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:var(--radius-sm);padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.8;margin-bottom:14px}
+.info-box b{color:var(--accent2);font-weight:700}
+.alerta-box{background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:var(--radius-sm);padding:12px 14px;font-size:12px;color:var(--warn);margin-bottom:12px;line-height:1.7}
 
-  /* ── BADGES ── */
-  .badge {
-    display:inline-flex; align-items:center; gap:3px;
-    padding:3px 9px; border-radius:20px; font-size:10px; font-weight:700;
-    white-space:nowrap; border:1px solid; letter-spacing:.2px;
-  }
-  .bp { background:var(--pend-bg); color:var(--pend); border-color:var(--warn-border); }
-  .ba { background:var(--apr-bg); color:var(--apr); border-color:var(--ok-border); }
-  .bf { background:var(--fin-bg); color:var(--fin); border-color:var(--ok-border); }
-  .bb24 { background:var(--b24-bg); color:var(--b24); border-color:var(--b24-border); }
-  .bpso { background:var(--pso-bg); color:var(--pso); border-color:var(--pso-border); }
-  .b-venc { background:var(--danger-bg); color:var(--danger); border-color:var(--danger-border); font-size:10px; font-weight:700; }
-  .b-warn { background:var(--warn-bg); color:var(--warn); border-color:var(--warn-border); font-size:10px; font-weight:700; }
+/* SELECTOR PACIENTE */
+.pac-selector-btn{flex:1;min-width:140px;padding:16px;flex-direction:column;gap:6px;height:auto;display:flex}
 
-  /* ── GRID DE DATOS ── */
-  .tc-grid { display:grid; grid-template-columns:1fr 1fr; }
-  .tf {
-    padding:10px 16px; border-bottom:1px solid var(--border);
-    border-right:1px solid var(--border);
-  }
-  .tf:nth-child(even) { border-right:none; }
-  .tf:last-child, .tf:nth-last-child(2):nth-child(odd) { border-bottom:none; }
-  .tfl { font-size:9px; font-weight:700; color:var(--text3); text-transform:uppercase; letter-spacing:.6px; margin-bottom:3px; }
-  .tfv { font-size:12px; color:var(--text); font-family:var(--mono); font-weight:500; }
-  .tfv.ok { color:var(--ok); font-weight:700; }
-  .tfv.warn { color:var(--warn); font-weight:700; }
-  .tfv.bad { color:var(--danger); font-weight:700; }
-  .tfv.pend { color:var(--text3); font-style:italic; font-family:var(--font); font-weight:400; }
+/* ESTADÍSTICAS */
+.stat-section-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.stat-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.stat-grid-top{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+.stat-num-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 14px 12px;text-align:center}
+.stat-num{font-size:38px;font-weight:800;line-height:1;font-family:var(--mono)}
+.stat-num.green{color:var(--ok)} .stat-num.blue{color:var(--accent2)} .stat-num.amber{color:var(--warn)} .stat-num.purple{color:var(--pso)}
+.stat-label{font-size:10px;color:var(--text3);margin-top:6px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.pac-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden}
+.pac-head{padding:12px 16px;background:linear-gradient(135deg,var(--accent),#7C3AED);display:flex;justify-content:space-between;align-items:center;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pac-name{font-size:14px;font-weight:700;color:#fff}
+.pac-total{font-size:11px;color:rgba(255,255,255,.75);font-weight:600}
+.enf-row{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.enf-row:last-child{border-bottom:none}
+.enf-left{display:flex;flex-direction:column;gap:5px}
+.enf-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.bar-wrap{height:5px;background:var(--border);border-radius:3px;width:100%;margin-top:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px}
+.bar-b24{background:linear-gradient(90deg,var(--b24),#93C5FD)}
+.bar-pso{background:linear-gradient(90deg,var(--pso),#C4B5FD)}
+.mini-stats{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.mini-stat{display:flex;flex-direction:column;align-items:center;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;min-width:52px}
+.mini-stat-n{font-size:17px;font-weight:800;font-family:var(--mono);color:var(--text)}
+.mini-stat-l{font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.3px;text-align:center;margin-top:2px}
+.mini-stat-n.ok{color:var(--ok)} .mini-stat-n.warn{color:var(--warn)}
+.med-row{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border)}
+.med-row:last-child{border-bottom:none}
+.med-name{font-size:13px;font-weight:600;color:var(--text)}
+.med-count{font-size:12px;font-family:var(--mono);color:var(--text3);font-weight:700;flex-shrink:0;margin-left:8px}
+.med-bar-wrap{height:3px;background:var(--border);border-radius:2px;margin-top:4px;width:100%;overflow:hidden}
+.med-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--pso))}
 
-  /* ── STEPS ── */
-  .tc-step {
-    padding:14px 16px;
-    background:linear-gradient(135deg, var(--bg2) 0%, var(--bg3) 100%);
-    border-top:1px solid var(--border);
-  }
-  .step-title {
-    font-size:10px; font-weight:700; color:var(--text2);
-    text-transform:uppercase; letter-spacing:.6px; margin-bottom:10px;
-    display:flex; align-items:center; gap:7px;
-  }
-  .step-num {
-    background:linear-gradient(135deg, var(--accent), #7C3AED);
-    color:#fff; border-radius:50%; width:18px; height:18px;
-    display:inline-flex; align-items:center; justify-content:center;
-    font-size:9px; font-weight:800; flex-shrink:0;
-    box-shadow:0 0 8px rgba(79,110,247,.4);
-  }
-  .tc-notes {
-    padding:10px 16px; border-top:1px solid var(--border);
-    font-size:12px; color:var(--text2); line-height:1.6; font-style:italic;
-    background:var(--bg2);
-  }
-  .tc-acts {
-    padding:10px 16px; border-top:1px solid var(--border);
-    display:flex; gap:8px; flex-wrap:wrap; background:var(--bg2);
-  }
+/* FAB */
+.fab-print{position:fixed;bottom:20px;right:16px;z-index:200;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.fab-main{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#7C3AED);color:#fff;border:none;font-size:20px;cursor:pointer;box-shadow:0 8px 24px rgba(79,110,247,.45);display:flex;align-items:center;justify-content:center}
+.fab-main:active{transform:scale(.92)}
+.fab-label{background:var(--card);border:1px solid var(--border);color:var(--text2);font-size:11px;padding:5px 12px;border-radius:20px;white-space:nowrap;font-family:var(--font);font-weight:600}
 
-  /* ── EMPTY ── */
-  .empty { text-align:center; padding:48px 20px; color:var(--text3); }
-  .empty-icon { font-size:44px; display:block; margin-bottom:12px; opacity:.5; }
-
-  /* ── FILTERS ── */
-  .filters { display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
-  .fb {
-    padding:5px 14px; border-radius:20px;
-    border:1px solid var(--border); background:var(--card2);
-    color:var(--text2); cursor:pointer; font-family:var(--font);
-    font-size:12px; font-weight:600; transition:var(--transition);
-  }
-  .fb:hover { border-color:var(--border2); color:var(--text); }
-  .fb.on {
-    background:var(--accent-bg); border-color:var(--accent-border);
-    color:var(--accent2);
-  }
-
-  /* ── INFO BOX ── */
-  .info-box {
-    background:var(--accent-bg); border:1px solid var(--accent-border);
-    border-radius:var(--radius-sm); padding:12px 14px; font-size:12px;
-    color:var(--text2); line-height:1.8; margin-bottom:14px;
-  }
-  .info-box b { color:var(--accent2); font-weight:700; }
-  .alerta-box {
-    background:var(--warn-bg); border:1px solid var(--warn-border);
-    border-radius:var(--radius-sm); padding:12px 14px; font-size:12px;
-    color:var(--warn); margin-bottom:12px; line-height:1.7;
-  }
-  .alerta-box b { font-weight:700; }
-  .divider { height:1px; background:var(--border); margin:14px 0; }
-
-  /* ── LOADING ── */
-  .loading-wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:48px 20px; gap:12px; color:var(--text3); }
-  .spinner {
-    width:28px; height:28px; border:2px solid var(--border2);
-    border-top-color:var(--accent); border-radius:50%;
-    animation:spin .7s linear infinite;
-  }
-  @keyframes spin { to{transform:rotate(360deg)} }
-
-  /* ── FAB ── */
-  .fab-print { position:fixed; bottom:22px; right:16px; z-index:200; display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
-  .fab-main {
-    width:52px; height:52px; border-radius:50%;
-    background:linear-gradient(135deg, var(--accent), #7C3AED);
-    color:#fff; border:none; font-size:20px; cursor:pointer;
-    box-shadow:0 8px 24px rgba(79,110,247,.45);
-    display:flex; align-items:center; justify-content:center; transition:var(--transition);
-  }
-  .fab-main:active { transform:scale(.92); }
-  .fab-label {
-    background:var(--card); border:1px solid var(--border);
-    color:var(--text2); font-size:11px; padding:5px 12px;
-    border-radius:20px; white-space:nowrap; font-family:var(--font);
-    font-weight:600; box-shadow:var(--shadow-sm);
-  }
-
-  /* ── ESTADÍSTICAS ── */
-  .stat-section-title {
-    font-size:11px; font-weight:700; color:var(--text3);
-    text-transform:uppercase; letter-spacing:.8px; margin:20px 0 10px;
-    display:flex; align-items:center; gap:8px;
-  }
-  .stat-section-title::after { content:''; flex:1; height:1px; background:var(--border); }
-  .stat-grid-top { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:8px; }
-  .stat-num-card {
-    background:var(--card); border:1px solid var(--border);
-    border-radius:var(--radius); padding:16px 14px 12px;
-    box-shadow:var(--shadow-sm); text-align:center;
-    transition:var(--transition);
-  }
-  .stat-num-card:hover { border-color:var(--border2); }
-  .stat-num { font-size:38px; font-weight:800; line-height:1; font-family:var(--mono); }
-  .stat-num.green { color:var(--ok); text-shadow:0 0 20px rgba(52,211,153,.3); }
-  .stat-num.blue  { color:var(--accent2); text-shadow:0 0 20px rgba(79,110,247,.3); }
-  .stat-num.amber { color:var(--warn); text-shadow:0 0 20px rgba(251,191,36,.3); }
-  .stat-num.purple{ color:var(--pso); text-shadow:0 0 20px rgba(167,139,250,.3); }
-  .stat-label { font-size:10px; color:var(--text3); margin-top:6px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
-  .pac-card {
-    background:var(--card); border:1px solid var(--border);
-    border-radius:var(--radius); margin-bottom:10px; overflow:hidden;
-    box-shadow:var(--shadow-sm);
-  }
-  .pac-head {
-    padding:12px 16px;
-    background:linear-gradient(135deg, var(--accent) 0%, #7C3AED 100%);
-    display:flex; justify-content:space-between; align-items:center;
-  }
-  .pac-name { font-size:14px; font-weight:700; color:#fff; letter-spacing:-.2px; }
-  .pac-total { font-size:11px; color:rgba(255,255,255,.75); font-weight:600; }
-  .enf-row { padding:12px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:8px; }
-  .enf-row:last-child { border-bottom:none; }
-  .enf-left { display:flex; flex-direction:column; gap:5px; }
-  .enf-right { display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
-  .bar-wrap { height:5px; background:var(--border); border-radius:3px; width:100%; margin-top:4px; overflow:hidden; }
-  .bar-fill { height:100%; border-radius:3px; transition:width .6s ease; }
-  .bar-b24  { background:linear-gradient(90deg, var(--b24), #93C5FD); }
-  .bar-pso  { background:linear-gradient(90deg, var(--pso), #C4B5FD); }
-  .mini-stats { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
-  .mini-stat {
-    display:flex; flex-direction:column; align-items:center;
-    background:var(--bg2); border:1px solid var(--border);
-    border-radius:var(--radius-xs); padding:6px 10px; min-width:52px;
-  }
-  .mini-stat-n { font-size:17px; font-weight:800; font-family:var(--mono); color:var(--text); }
-  .mini-stat-l { font-size:9px; color:var(--text3); font-weight:700; text-transform:uppercase; letter-spacing:.3px; text-align:center; margin-top:2px; }
-  .mini-stat-n.ok { color:var(--ok); }
-  .mini-stat-n.warn { color:var(--warn); }
-  .med-row { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; border-bottom:1px solid var(--border); }
-  .med-row:last-child { border-bottom:none; }
-  .med-name { font-size:13px; font-weight:600; color:var(--text); }
-  .med-count { font-size:12px; font-family:var(--mono); color:var(--text3); font-weight:700; flex-shrink:0; margin-left:8px; }
-  .med-bar-wrap { height:3px; background:var(--border); border-radius:2px; margin-top:4px; width:100%; overflow:hidden; }
-  .med-bar-fill { height:100%; border-radius:2px; background:linear-gradient(90deg, var(--accent), var(--pso)); }
-
-  /* ── PRINT ── */
-  @media print {
-    @page { size:A4; margin:18mm 15mm; }
-    body { background:#fff!important; font-size:10pt; font-family:Arial,sans-serif; color:#000; }
-    .header,.tabs,.btn,.tc-step,.tc-acts,.filters,.info-box,.alerta-box,.fab-print,.login-wrap { display:none!important; }
-    .sec { display:block!important; padding:0!important; }
-    .sec:not(.print-target) { display:none!important; }
-    .print-header { display:block!important; margin-bottom:16pt; border-bottom:2pt solid #4F6EF7; padding-bottom:8pt; }
-    .print-header-title { font-size:16pt; font-weight:700; color:#4F6EF7; }
-    .print-header-sub,.print-header-date { font-size:9pt; color:#555; margin-top:3pt; }
-    .tc { border:1pt solid #ccc!important; border-radius:0!important; margin-bottom:8pt!important; box-shadow:none!important; page-break-inside:avoid; background:#fff!important; }
-    .tc-head { padding:7pt 10pt!important; background:#F8F9FF!important; border-bottom:1pt solid #ccc!important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    .tc-name { font-size:12pt!important; color:#000!important; }
-    .tc-sub { font-size:9pt!important; color:#555!important; }
-    .tf { padding:5pt 10pt!important; border-color:#eee!important; background:#fff!important; }
-    .tfl { font-size:7pt!important; color:#888!important; }
-    .tfv { font-size:10pt!important; color:#000!important; font-family:monospace!important; }
-    .tfv.ok { color:#166534!important; } .tfv.warn { color:#92400E!important; } .tfv.bad { color:#991B1B!important; } .tfv.pend { color:#999!important; }
-    .tc-notes { font-size:9pt!important; padding:5pt 10pt!important; color:#555!important; background:#fafafa!important; border-top:1pt solid #eee!important; }
-    .badge { font-size:8pt!important; padding:2pt 6pt!important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    .stat-num-card { border:1pt solid #ccc!important; box-shadow:none!important; background:#fff!important; }
-    .stat-num { font-size:28pt!important; text-shadow:none!important; }
-    .pac-card { border:1pt solid #ccc!important; box-shadow:none!important; page-break-inside:avoid; }
-    .pac-head { background:#4F6EF7!important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    .bar-fill,.med-bar-fill { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    .mini-stat { background:#f5f5f5!important; border:1pt solid #ddd!important; }
-  }
-  .print-header { display:none; }
-
-  /* ── MODAL DE EDICIÓN ── */
-  .modal-overlay {
-    position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:500;
-    display:flex; align-items:flex-end; justify-content:center;
-    backdrop-filter:blur(4px); animation:fadeIn .2s ease;
-  }
-  .modal {
-    background:var(--card); border:1px solid var(--border);
-    border-radius:20px 20px 0 0; padding:20px 16px 32px;
-    width:100%; max-width:600px; max-height:90vh; overflow-y:auto;
-    animation:slideUp .25s cubic-bezier(.4,0,.2,1);
-  }
-  @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
-  .modal-header {
-    display:flex; justify-content:space-between; align-items:center;
-    margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border);
-  }
-  .modal-title { font-size:16px; font-weight:700; color:var(--text); }
-  .modal-close {
-    width:30px; height:30px; border-radius:50%; border:1px solid var(--border);
-    background:var(--card2); color:var(--text2); cursor:pointer; font-size:16px;
-    display:flex; align-items:center; justify-content:center; font-family:var(--font);
-  }
+/* PRINT */
+@media print {
+  @page{size:A4;margin:18mm 15mm}
+  body{background:#fff!important;font-size:10pt;font-family:Arial,sans-serif;color:#000}
+  .header,.tabs,.btn,.tc-step,.tc-acts,.filters,.info-box,.alerta-box,.fab-print,.login-wrap,.sec:not(.print-target){display:none!important}
+  .sec.print-target{display:block!important;padding:0!important}
+  .print-header{display:block!important;margin-bottom:16pt;border-bottom:2pt solid #4F6EF7;padding-bottom:8pt}
+  .print-header-title{font-size:16pt;font-weight:700;color:#4F6EF7}
+  .print-header-sub,.print-header-date{font-size:9pt;color:#555;margin-top:3pt}
+  .tc{border:1pt solid #ccc!important;border-radius:0!important;margin-bottom:8pt!important;box-shadow:none!important;page-break-inside:avoid;background:#fff!important}
+  .tc-head{padding:7pt 10pt!important;background:#F8F9FF!important;border-bottom:1pt solid #ccc!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .tc-name{font-size:12pt!important;color:#000!important}
+  .tc-sub{font-size:9pt!important;color:#555!important}
+  .tf{padding:5pt 10pt!important;border-color:#eee!important;background:#fff!important}
+  .tfl{font-size:7pt!important;color:#888!important}
+  .tfv{font-size:10pt!important;color:#000!important;font-family:monospace!important}
+  .tfv.ok{color:#166534!important} .tfv.warn{color:#92400E!important} .tfv.bad{color:#991B1B!important} .tfv.pend{color:#999!important}
+  .tc-notes{font-size:9pt!important;padding:5pt 10pt!important;color:#555!important;background:#fafafa!important}
+  .badge{font-size:8pt!important;padding:2pt 6pt!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .stat-num-card{border:1pt solid #ccc!important;box-shadow:none!important;background:#fff!important}
+  .pac-card{border:1pt solid #ccc!important;box-shadow:none!important;page-break-inside:avoid}
+  .pac-head{background:#4F6EF7!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .bar-fill,.med-bar-fill{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+.print-header{display:none}
 </style>
 </head>
 <body>
@@ -469,11 +216,9 @@
         <div class="header-sub">Aprobaciones OS UP &nbsp;·&nbsp; <span id="user-email"></span></div>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <div class="sync-indicator">
-        <div class="sync-dot" id="sync-dot"></div>
-        <span id="sync-txt">Sincronizado</span>
-      </div>
+    <div class="sync-indicator">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-txt">Sincronizado</span>
     </div>
   </div>
   <div class="tabs">
@@ -481,7 +226,6 @@
     <button class="tab"     onclick="goTab('activos')">📋 En trámite <span class="cnt" id="cnt-a">0</span></button>
     <button class="tab"     onclick="goTab('fin')">✓ Finalizados <span class="cnt" id="cnt-f">0</span></button>
     <button class="tab"     onclick="goTab('recetas')">📄 Recetas</button>
-    <button class="tab" id="tab-editar" style="display:none" onclick="goTab('editar')">✏️ Editando</button>
     <button class="tab"     onclick="goTab('estudios')">🔬 Estudios</button>
     <button class="tab"     onclick="goTab('stats')">📊 Estadísticas</button>
   </div>
@@ -491,7 +235,7 @@
 
 <div class="fab-print" id="fab-wrap" style="display:none">
   <div class="fab-label" id="fab-lbl">Imprimir PDF</div>
-  <button class="fab-main" onclick="imprimirSeccion()" title="Imprimir / Guardar PDF">🖨</button>
+  <button class="fab-main" onclick="imprimirSeccion()">🖨</button>
 </div>
 
 <!-- LOGIN -->
@@ -499,17 +243,17 @@
   <div class="login-wrap">
     <div class="login-logo">💊</div>
     <div class="login-title">Seguimiento Medicación Familiar</div>
-    <div class="login-desc">Seguimiento de aprobaciones OS UP para el grupo familiar. Ingresá para continuar.</div>
+    <div class="login-desc">Seguimiento de aprobaciones OS UP para el grupo familiar.</div>
     <div class="login-box">
       <div class="field" style="margin:0">
         <label>Usuario</label>
-        <input type="text" id="l-user" placeholder="Tu usuario" autocomplete="username" onkeydown="if(event.key==='Enter') doLogin()">
+        <input type="text" id="l-user" placeholder="Tu usuario" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
       </div>
       <div class="field" style="margin:0">
         <label>Contraseña</label>
-        <input type="password" id="l-pass" placeholder="Tu contraseña" autocomplete="current-password" onkeydown="if(event.key==='Enter') doLogin()">
+        <input type="password" id="l-pass" placeholder="Tu contraseña" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
       </div>
-      <button class="btn p" style="width:100%;padding:12px;margin-top:2px" onclick="doLogin()">Ingresar →</button>
+      <button class="btn p full" style="padding:12px;margin-top:2px" onclick="doLogin()">Ingresar →</button>
       <div id="login-error" style="font-size:12px;color:var(--danger);text-align:center;display:none">⚠ Usuario o contraseña incorrectos</div>
     </div>
   </div>
@@ -518,10 +262,15 @@
 <!-- NUEVO -->
 <div id="sec-nuevo" class="sec">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-    <div style="font-size:12px;color:var(--muted)" id="bienvenida"></div>
-    <button onclick="cerrarSesion()" class="btn danger sm">🔒 Cerrar sesión</button>
+    <div style="font-size:12px;color:var(--text2)" id="bienvenida"></div>
+    <button onclick="cerrarSesion()" class="btn danger sm">🔒 Salir</button>
   </div>
-  <div class="info-box"><b>Cálculo automático:</b><br>• <b>OS:</b> 10 días hábiles (Lun–Vie, sin feriados) desde el día siguiente a la presentación.<br>• <b>Droguería:</b> 48hs hábiles = 2 días hábiles (Lun–Sab, sin feriados) desde el día siguiente al ingreso.<br>• <b>B24:</b> no requiere fecha de toma/aplicación.</div>
+  <div class="info-box">
+    <b>Cálculo automático:</b><br>
+    • <b>OS:</b> 10 días hábiles (Lun–Vie, sin feriados) desde el día siguiente a la presentación.<br>
+    • <b>Droguería:</b> 2 días hábiles (Lun–Sab, sin feriados) desde el día siguiente al ingreso.<br>
+    • <b>B24:</b> no requiere fecha de toma/aplicación.
+  </div>
   <div id="alertas-box"></div>
   <div class="card">
     <div class="card-title">Datos del trámite</div>
@@ -546,7 +295,7 @@
     <div class="divider"></div>
     <div class="field-row">
       <div class="field"><label>Presentación a obra social *</label><input type="date" id="n-pres" oninput="calcVencOS()"></div>
-      <div class="field"><label>Vto. legal OS — calculado (10 días hábiles)</label><input type="text" id="n-vos" readonly placeholder="Automático"></div>
+      <div class="field"><label>Vto. legal OS — calculado</label><input type="text" id="n-vos" readonly placeholder="Automático"></div>
     </div>
     <div class="field">
       <label>Notas (máx. 200 caracteres)</label>
@@ -554,7 +303,7 @@
       <span class="char-count" id="nc">0 / 200</span>
     </div>
     <div class="btn-row">
-      <button class="btn" onclick="limpiar()">Limpiar</button>
+      <button class="btn" onclick="limpiarForm()">Limpiar</button>
       <button class="btn p" onclick="guardar()">Guardar trámite</button>
     </div>
   </div>
@@ -562,17 +311,15 @@
 
 <!-- ACTIVOS -->
 <div id="sec-activos" class="sec">
-  <div class="print-header" id="ph-activos"><div class="print-header-title">💊 Seguimiento Medicación Familiar OS UP — Trámites en curso</div><div class="print-header-sub">Seguimiento de aprobaciones OS UP · Grupo familiar</div><div class="print-header-date" id="phd-activos"></div></div>
-  <!-- Selector paciente -->
+  <div class="print-header"><div class="print-header-title">💊 Seguimiento Medicación Familiar OS UP — Trámites en curso</div><div class="print-header-sub">Seguimiento de aprobaciones OS UP · Grupo familiar</div><div class="print-header-date" id="phd-activos"></div></div>
   <div id="act-selector">
     <div class="card-title" style="margin-bottom:10px">Seleccioná un paciente</div>
     <div style="display:flex;gap:10px;flex-wrap:wrap" id="act-pac-btns"></div>
   </div>
-  <!-- Contenido -->
   <div id="act-contenido" style="display:none">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
-      <button class="btn sm" onclick="volverSelectorAct()">← Volver</button>
-      <div style="font-size:15px;font-weight:700;color:var(--text)" id="act-pac-titulo"></div>
+      <button class="btn sm" onclick="volverAct()">← Volver</button>
+      <div style="font-size:15px;font-weight:700" id="act-titulo"></div>
     </div>
     <div class="filters" id="act-enf-tabs"></div>
     <div id="lst-a"></div>
@@ -581,109 +328,121 @@
 
 <!-- FINALIZADOS -->
 <div id="sec-fin" class="sec">
-  <div class="print-header" id="ph-fin"><div class="print-header-title">💊 Seguimiento Medicación Familiar OS UP — Trámites finalizados</div><div class="print-header-sub">Seguimiento de aprobaciones OS UP · Grupo familiar</div><div class="print-header-date" id="phd-fin"></div></div>
-  <!-- Selector paciente -->
+  <div class="print-header"><div class="print-header-title">💊 Seguimiento Medicación Familiar OS UP — Trámites finalizados</div><div class="print-header-sub">Seguimiento de aprobaciones OS UP · Grupo familiar</div><div class="print-header-date" id="phd-fin"></div></div>
   <div id="fin-selector">
     <div class="card-title" style="margin-bottom:10px">Seleccioná un paciente</div>
     <div style="display:flex;gap:10px;flex-wrap:wrap" id="fin-pac-btns"></div>
   </div>
-  <!-- Contenido -->
   <div id="fin-contenido" style="display:none">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
-      <button class="btn sm" onclick="volverSelectorFin()">← Volver</button>
-      <div style="font-size:15px;font-weight:700;color:var(--text)" id="fin-pac-titulo"></div>
+      <button class="btn sm" onclick="volverFin()">← Volver</button>
+      <div style="font-size:15px;font-weight:700" id="fin-titulo"></div>
     </div>
     <div class="filters" id="fin-enf-tabs"></div>
     <div id="lst-f"></div>
   </div>
 </div>
 
-<!-- ESTADÍSTICAS -->
-<div id="sec-stats" class="sec">
-  <div class="print-header" id="ph-stats"><div class="print-header-title">💊 Seguimiento Medicación Familiar OS UP — Estadísticas</div><div class="print-header-sub">Seguimiento de aprobaciones OS UP · Grupo familiar</div><div class="print-header-date" id="phd-stats"></div></div>
-  <div id="stats-content"></div>
+<!-- EDITAR -->
+<div id="sec-editar" class="sec">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+    <button class="btn sm" onclick="cancelarEdicion()">← Volver</button>
+    <div style="font-size:16px;font-weight:700">✏️ Editar trámite</div>
+  </div>
+  <input type="hidden" id="e-id">
+  <div class="card">
+    <div class="card-title">Paciente y enfermedad</div>
+    <div class="field-row">
+      <div class="field"><label>Paciente</label><input type="text" id="e-pac" readonly style="opacity:.5"></div>
+      <div class="field"><label>Enfermedad</label><input type="text" id="e-enf" readonly style="opacity:.5"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Medicación</div>
+    <div class="field-row">
+      <div class="field"><label>Medicación</label><select id="e-med"></select></div>
+      <div class="field"><label>Otro (texto libre)</label><input type="text" id="e-medlib" placeholder="Si no está en la lista"></div>
+    </div>
+  </div>
+  <div class="card" id="e-card-toma">
+    <div class="card-title">Fecha de aplicación</div>
+    <div class="field-row">
+      <div class="field"><label>Fecha de toma / aplicación</label><input type="date" id="e-toma" oninput="eCalcProxima()"></div>
+      <div class="field"><label>Próxima aplicación (calculada)</label><input type="text" id="e-proxima" readonly></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Obra social y droguería</div>
+    <div class="field-row">
+      <div class="field"><label>Presentación a OS</label><input type="date" id="e-pres" oninput="eCalcVencOS()"></div>
+      <div class="field"><label>Vto. legal OS (calculado)</label><input type="text" id="e-vos" readonly></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Aprobación real OS</label><input type="date" id="e-apr" oninput="eCalcDrog()"></div>
+      <div class="field"><label>Ingreso a droguería</label><input type="date" id="e-ing" oninput="eCalcVencDrog()"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Vto. droguería (calculado)</label><input type="text" id="e-vdrog" readonly></div>
+      <div class="field"><label>Disponible en farmacia</label><input type="date" id="e-disp"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Notas</div>
+    <div class="field">
+      <textarea id="e-notas" maxlength="200" placeholder="Observaciones..."></textarea>
+      <span id="e-nc" class="char-count">0 / 200</span>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn" onclick="cancelarEdicion()">Cancelar</button>
+    <button class="btn p" onclick="guardarEdicion()">💾 Guardar cambios</button>
+  </div>
 </div>
 
 <!-- RECETAS -->
 <div id="sec-recetas" class="sec">
-  <div class="print-header" id="ph-recetas">
-    <div class="print-header-title">💊 Seguimiento Medicación Familiar OS UP — Recetas</div>
-    <div class="print-header-sub">Seguimiento de aprobaciones OS UP · Grupo familiar</div>
-    <div class="print-header-date" id="phd-recetas"></div>
-  </div>
-
-  <!-- Selector de paciente -->
   <div id="rec-selector">
     <div class="card-title" style="margin-bottom:10px">Seleccioná un paciente</div>
     <div style="display:flex;gap:10px;flex-wrap:wrap" id="rec-pac-btns"></div>
   </div>
-
-  <!-- Contenido recetas del paciente -->
   <div id="rec-contenido" style="display:none">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
-      <button class="btn sm" onclick="volverSelector()">← Volver</button>
-      <div style="font-size:15px;font-weight:700;color:var(--text)" id="rec-pac-titulo"></div>
+      <button class="btn sm" onclick="volverRec()">← Volver</button>
+      <div style="font-size:15px;font-weight:700" id="rec-titulo"></div>
     </div>
-
-    <!-- Tabs de enfermedad -->
     <div class="filters" id="rec-enf-tabs"></div>
-
-    <!-- Uploader -->
     <div class="card" style="margin-bottom:14px">
       <div class="card-title">Subir nueva receta</div>
       <div class="field-row">
-        <div class="field">
-          <label>Año</label>
-          <select id="rec-anio"></select>
-        </div>
-        <div class="field">
-          <label>Nombre del archivo (opcional)</label>
-          <input type="text" id="rec-nombre" placeholder="Ej: Receta junio 2026">
-        </div>
+        <div class="field"><label>Año</label><select id="rec-anio"></select></div>
+        <div class="field"><label>Nombre (opcional)</label><input type="text" id="rec-nombre" placeholder="Ej: Receta junio 2026"></div>
       </div>
-      <div class="field full">
-        <label>Archivo (PDF o imagen)</label>
-        <input type="file" id="rec-file" accept=".pdf,image/*" style="padding:8px">
-      </div>
+      <div class="field full"><label>Archivo (PDF o imagen)</label><input type="file" id="rec-file" accept=".pdf,image/*" style="padding:8px"></div>
       <div class="btn-row">
-        <div id="rec-upload-progress" style="font-size:12px;color:var(--text2);display:none">⏳ Subiendo...</div>
-        <button class="btn p sm" onclick="subirReceta()">⬆ Subir receta</button>
+        <div id="rec-prog" style="font-size:12px;color:var(--text2);display:none">⏳ Subiendo...</div>
+        <button class="btn p sm" id="rec-btn-subir" onclick="subirReceta()">⬆ Subir receta</button>
       </div>
     </div>
-
-    <!-- Lista de recetas -->
     <div id="rec-lista"></div>
   </div>
 </div>
 
 <!-- ESTUDIOS -->
 <div id="sec-estudios" class="sec">
-  <div class="print-header" id="ph-estudios">
-    <div class="print-header-title">💊 Seguimiento Medicación Familiar OS UP — Estudios médicos</div>
-    <div class="print-header-sub">Seguimiento de aprobaciones OS UP · Grupo familiar</div>
-    <div class="print-header-date" id="phd-estudios"></div>
-  </div>
-
   <div id="est-selector">
     <div class="card-title" style="margin-bottom:10px">Seleccioná un paciente</div>
     <div style="display:flex;gap:10px;flex-wrap:wrap" id="est-pac-btns"></div>
   </div>
-
   <div id="est-contenido" style="display:none">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
-      <button class="btn sm" onclick="volverSelectorEst()">← Volver</button>
-      <div style="font-size:15px;font-weight:700;color:var(--text)" id="est-pac-titulo"></div>
+      <button class="btn sm" onclick="volverEst()">← Volver</button>
+      <div style="font-size:15px;font-weight:700" id="est-titulo"></div>
     </div>
-
-    <!-- Filtro por tipo -->
     <div class="filters" id="est-tipo-tabs"></div>
-
-    <!-- Uploader -->
     <div class="card" style="margin-bottom:14px">
       <div class="card-title">Subir nuevo estudio</div>
       <div class="field-row">
-        <div class="field">
-          <label>Tipo de estudio *</label>
+        <div class="field"><label>Tipo *</label>
           <select id="est-tipo">
             <option value="Laboratorio">Laboratorio</option>
             <option value="Diagnóstico por imágenes">Diagnóstico por imágenes</option>
@@ -691,152 +450,46 @@
             <option value="Otros">Otros</option>
           </select>
         </div>
-        <div class="field">
-          <label>Fecha del estudio *</label>
-          <input type="date" id="est-fecha">
-        </div>
+        <div class="field"><label>Fecha del estudio *</label><input type="date" id="est-fecha"></div>
       </div>
       <div class="field-row">
-        <div class="field">
-          <label>Año</label>
-          <select id="est-anio"></select>
-        </div>
-        <div class="field">
-          <label>Nombre / descripción (opcional)</label>
-          <input type="text" id="est-nombre" placeholder="Ej: Hemograma completo">
-        </div>
+        <div class="field"><label>Año</label><select id="est-anio"></select></div>
+        <div class="field"><label>Descripción (opcional)</label><input type="text" id="est-nombre" placeholder="Ej: Hemograma"></div>
       </div>
-      <div class="field full">
-        <label>Archivo (PDF o imagen)</label>
-        <input type="file" id="est-file" accept=".pdf,image/*" style="padding:8px">
-      </div>
+      <div class="field full"><label>Archivo (PDF o imagen)</label><input type="file" id="est-file" accept=".pdf,image/*" style="padding:8px"></div>
       <div class="btn-row">
-        <div id="est-upload-progress" style="font-size:12px;color:var(--text2);display:none">⏳ Subiendo...</div>
-        <button class="btn p sm" onclick="subirEstudio()">⬆ Subir estudio</button>
+        <div id="est-prog" style="font-size:12px;color:var(--text2);display:none">⏳ Subiendo...</div>
+        <button class="btn p sm" id="est-btn-subir" onclick="subirEstudio()">⬆ Subir estudio</button>
       </div>
     </div>
-
     <div id="est-lista"></div>
   </div>
 </div>
 
-<!-- SECCIÓN EDICIÓN -->
-<div id="sec-editar" class="sec">
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-    <button class="btn sm" id="edit-volver-btn" onclick="volverDeEdicion()">← Volver</button>
-    <div style="font-size:16px;font-weight:700;color:var(--text)">✏️ Editar trámite</div>
-  </div>
-
-  <input type="hidden" id="edit-id">
-  <input type="hidden" id="edit-origen">
-
-  <div class="card">
-    <div class="card-title">Paciente y enfermedad</div>
-    <div class="field-row">
-      <div class="field">
-        <label>Paciente</label>
-        <input type="text" id="edit-pac" readonly style="opacity:.5">
-      </div>
-      <div class="field">
-        <label>Enfermedad</label>
-        <input type="text" id="edit-enf" readonly style="opacity:.5">
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Medicación</div>
-    <div class="field-row">
-      <div class="field">
-        <label>Medicación</label>
-        <select id="edit-med"></select>
-      </div>
-      <div class="field">
-        <label>Otro (texto libre)</label>
-        <input type="text" id="edit-medlib" placeholder="Si no está en la lista">
-      </div>
-    </div>
-  </div>
-
-  <div class="card" id="edit-card-toma">
-    <div class="card-title">Fechas de aplicación</div>
-    <div class="field-row">
-      <div class="field">
-        <label>Fecha de toma / aplicación</label>
-        <input type="date" id="edit-toma" oninput="editCalcProxima()">
-      </div>
-      <div class="field">
-        <label>Próxima aplicación (calculada)</label>
-        <input type="text" id="edit-proxima" readonly placeholder="Automático">
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Obra social</div>
-    <div class="field-row">
-      <div class="field">
-        <label>Presentación a OS</label>
-        <input type="date" id="edit-pres" oninput="editCalcVencOS()">
-      </div>
-      <div class="field">
-        <label>Vto. legal OS (calculado)</label>
-        <input type="text" id="edit-vos" readonly>
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field">
-        <label>Aprobación real OS</label>
-        <input type="date" id="edit-apr" oninput="editCalcDrog()">
-      </div>
-      <div class="field">
-        <label>Ingreso a droguería</label>
-        <input type="date" id="edit-ing" oninput="editCalcVencDrog()">
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field">
-        <label>Vto. droguería (calculado)</label>
-        <input type="text" id="edit-vdrog" readonly>
-      </div>
-      <div class="field">
-        <label>Disponible en farmacia</label>
-        <input type="date" id="edit-disp">
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Notas</div>
-    <div class="field">
-      <textarea id="edit-notas" maxlength="200" placeholder="Observaciones..."></textarea>
-      <span id="edit-nc" class="char-count">0 / 200</span>
-    </div>
-  </div>
-
-  <div class="btn-row" style="margin-top:4px">
-    <button class="btn" onclick="volverDeEdicion()">Cancelar</button>
-    <button class="btn p" onclick="guardarEdicion()">💾 Guardar cambios</button>
-  </div>
+<!-- ESTADÍSTICAS -->
+<div id="sec-stats" class="sec">
+  <div class="print-header"><div class="print-header-title">💊 Seguimiento Medicación Familiar OS UP — Estadísticas</div><div class="print-header-sub">Seguimiento de aprobaciones OS UP · Grupo familiar</div><div class="print-header-date" id="phd-stats"></div></div>
+  <div id="stats-content"></div>
 </div>
-
-
-
-<!-- Google API -->
-
 
 <script>
 // ============================================================
-//  CONFIGURACIÓN
+// CONFIGURACIÓN
 // ============================================================
-// URL del Apps Script Web App (se configura una vez)
-const SCRIPT_URL  = "https://script.google.com/macros/s/AKfycbwMGNygJPzJTXBt8DfzWq9cLAJaMh3qbNVBQxU6QYseAQk7V9s4DsTtD-wC-qVVq5AH/exec";
-const SHEET_ID    = "1vytNvoKFi3EtmGFIrZ3mRxnnegz5ndI4VrvqsGkUMU8";
-const SHEET_NAME  = "Tramites";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwMGNygJPzJTXBt8DfzWq9cLAJaMh3qbNVBQxU6QYseAQk7V9s4DsTtD-wC-qVVq5AH/exec";
+const SHEET_ID   = "1vytNvoKFi3EtmGFIrZ3mRxnnegz5ndI4VrvqsGkUMU8";
+const SHEET_NAME = "Tramites";
+const COLS = ["id","paciente","enfermedad","medicacion","toma","proximaAplicacion",
+              "presentacionOS","vencOS","aprobacionRealOS","ingresoDrogueria",
+              "vencDrogueria","disponibleFarmacia","notas","estado","creadoEn"];
 
-// ============================================================
-//  CONSTANTES
-// ============================================================
+const USUARIOS = { "gsaladino":"pemo2008", "rdursi":"charcas4026" };
+
+const MEDS = {
+  "B24":["Biktarvy","Dovato","Dolutegravir","Cabenuva","Triumeq","Genvoya","Descovy","Atripla","Juluca","Zuvuvir L Pack","Otro"],
+  "Psoriasis/APS":["Adalimumab (Humira)","Secukinumab (Cosentyx)","Ixekizumab (Taltz)","Ustekinumab (Stelara)","Risankizumab (Skyrizi)","Guselkumab (Tremfya)","Metotrexato","Leflunomida","Apremilast (Otezla)","Baricitinib (Olumiant)","Otro"]
+};
+
 const FER = new Set([
   "2026-01-01","2026-02-16","2026-02-17","2026-03-24","2026-04-02","2026-04-03",
   "2026-04-06","2026-05-01","2026-05-25","2026-06-15","2026-06-19","2026-06-20",
@@ -845,45 +498,39 @@ const FER = new Set([
   "2027-04-06","2027-05-01","2027-05-25","2027-06-21","2027-07-09","2027-08-16",
   "2027-10-11","2027-11-20","2027-12-08","2027-12-25"
 ]);
-const MEDS = {
-  "B24":["Biktarvy","Dovato","Dolutegravir","Cabenuva","Triumeq","Genvoya","Descovy","Atripla","Juluca","Zuvuvir L Pack","Otro"],
-  "Psoriasis/APS":["Adalimumab (Humira)","Secukinumab (Cosentyx)","Ixekizumab (Taltz)","Ustekinumab (Stelara)","Risankizumab (Skyrizi)","Guselkumab (Tremfya)","Metotrexato","Leflunomida","Apremilast (Otezla)","Baricitinib (Olumiant)","Otro"]
-};
-const COLS = ["id","paciente","enfermedad","medicacion","toma","proximaAplicacion","presentacionOS","vencOS","aprobacionRealOS","ingresoDrogueria","vencDrogueria","disponibleFarmacia","notas","estado","creadoEn"];
-const filtros = { a:"todos", f:"todos" };
-let tabActual = "nuevo";
-
-let accessToken = null;
-let cachedData  = [];
-let isSyncing   = false;
-let syncTimer   = null;
-let lastHash    = "";
 
 // ============================================================
-//  FECHAS
+// ESTADO GLOBAL
+// ============================================================
+let cachedData   = [];
+let isSyncing    = false;
+let syncTimer    = null;
+let lastHash     = "";
+let tabActual    = "nuevo";
+let editOrigen   = "activos";
+// Navegación activos/fin
+let actPac="", actEnf="", finPac="", finEnf="";
+// Navegación recetas/estudios
+let recPac="", recEnf="", estPac="", estTipo="Todos";
+
+// ============================================================
+// UTILIDADES DE FECHA
 // ============================================================
 function ifmt(d){ return d.toISOString().slice(0,10); }
 function pd(s){
-  const clean = (s||"").split("T")[0].trim();
-  const [y,m,d] = clean.split("-").map(Number);
-  return new Date(y, m-1, d);
+  const clean=(s||"").split("T")[0].trim();
+  const [y,m,d]=clean.split("-").map(Number);
+  return new Date(y,m-1,d);
 }
 function fh(d){ return FER.has(ifmt(d)); }
 function fd(s){
-  if(!s || s==="—") return "—";
-  try {
-    // Manejar formato ISO completo: "2026-06-01T03:00:00.000Z"
-    const clean = s.split("T")[0].trim();
-    if(!clean || clean.length < 8) return s;
-    const parts = clean.split("-");
-    if(parts.length !== 3) return s;
-    const [y, m, d] = parts;
-    if(!y || !m || !d) return s;
-    // Asegurar dos dígitos
-    const dd = d.padStart(2,"0");
-    const mm = m.padStart(2,"0");
-    return `${dd}/${mm}/${y}`;
-  } catch(e){ return s; }
+  if(!s||s==="—") return "—";
+  try{
+    const clean=s.split("T")[0].trim();
+    if(!clean||clean.length<8) return s;
+    const [y,m,d]=clean.split("-");
+    return `${(d||"").padStart(2,"0")}/${(m||"").padStart(2,"0")}/${y}`;
+  }catch(e){ return s; }
 }
 function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 function hoyFmt(){ return new Date().toLocaleDateString("es-AR",{weekday:"long",year:"numeric",month:"long",day:"numeric"}); }
@@ -891,256 +538,175 @@ function hoyFmt(){ return new Date().toLocaleDateString("es-AR",{weekday:"long",
 function calcOS(start,n){
   let d=pd(start); d.setDate(d.getDate()+1);
   let c=0;
-  while(c<n){ const dw=d.getDay(); if(dw!==0&&dw!==6&&!fh(d)) c++; if(c<n) d.setDate(d.getDate()+1); }
+  while(c<n){ const dw=d.getDay(); if(dw!==0&&dw!==6&&!fh(d))c++; if(c<n)d.setDate(d.getDate()+1); }
   return ifmt(d);
 }
-// Próxima aplicación: 28 días corridos desde fecha de aplicación (inclusive)
-function calcProximaAplicacion(fechaToma){
-  if(!fechaToma) return "";
-  const d = pd(fechaToma);
-  d.setDate(d.getDate() + 27); // +27 porque el día de aplicación cuenta como día 1
-  return ifmt(d);
-}
-
-function calcDrog(start,dh){
+function calcDrog(start,n){
   let d=pd(start); d.setDate(d.getDate()+1);
   let c=0;
-  while(c<dh){ const dw=d.getDay(); if(dw!==0&&!fh(d)) c++; if(c<dh) d.setDate(d.getDate()+1); }
+  while(c<n){ const dw=d.getDay(); if(dw!==0&&!fh(d))c++; if(c<n)d.setDate(d.getDate()+1); }
   return ifmt(d);
 }
-function siguienteDiaHabil(start){
+function calcProxApl(fecha){
+  if(!fecha) return "";
+  const d=pd(fecha); d.setDate(d.getDate()+27);
+  return ifmt(d);
+}
+function siguienteHabil(start){
   let d=pd(start); d.setDate(d.getDate()+1);
   while(true){ const dw=d.getDay(); if(dw!==0&&!fh(d)) return ifmt(d); d.setDate(d.getDate()+1); }
 }
-function diasDiff(s){ const h=new Date(); h.setHours(0,0,0,0); return Math.round((pd(s)-h)/86400000); }
-
-// ============================================================
-//  GOOGLE AUTH — GAPI OAuth2 popup (funciona en GitHub Pages)
-// ============================================================
-function showLoginError(msg){
-  const el = document.getElementById("login-error");
-  if(el){ el.textContent = msg; el.style.display = "block"; }
-}
-
-function cerrarSesion(){
-  if(!confirm("¿Cerrar sesión?")) return;
-  accessToken = null;
-  localStorage.removeItem("med_access_token");
-  localStorage.removeItem("med_user_email");
-  if(syncTimer) clearTimeout(syncTimer);
-  // Volver a pantalla de login
-  document.getElementById("main-header").style.display = "none";
-  document.querySelectorAll(".sec").forEach(s=>s.classList.remove("on"));
-  document.getElementById("sec-login").classList.add("on");
-}
-
-async function reLogin(){
-  // Si hay error de conexión, tocar el indicador intenta reconectar
-  const txt = document.getElementById("sync-txt");
-  if(txt && txt.textContent.includes("Error")){
-    showToast("Reconectando...");
-    await signIn();
-  }
+function diasDiff(s){
+  const h=new Date(); h.setHours(0,0,0,0);
+  return Math.round((pd(s)-h)/86400000);
 }
 
 // ============================================================
-//  AUTH PROPIO (usuario + contraseña)
+// AUTH
 // ============================================================
-const USUARIOS = {
-  "gsaladino": "pemo2008",
-  "rdursi":    "charcas4026"
-};
-
 function doLogin(){
-  const user = (document.getElementById("l-user").value || "").trim().toLowerCase();
-  const pass = (document.getElementById("l-pass").value || "").trim();
-  const errEl = document.getElementById("login-error");
-  if(USUARIOS[user] && USUARIOS[user] === pass){
-    errEl.style.display = "none";
-    localStorage.setItem("med_logged_user", user);
+  const user=(document.getElementById("l-user").value||"").trim().toLowerCase();
+  const pass=(document.getElementById("l-pass").value||"").trim();
+  const err=document.getElementById("login-error");
+  if(USUARIOS[user]&&USUARIOS[user]===pass){
+    err.style.display="none";
+    localStorage.setItem("med_user",user);
     onSignedIn(user);
-  } else {
-    errEl.style.display = "block";
-  }
+  } else { err.style.display="block"; }
 }
-
 function cerrarSesion(){
   if(!confirm("¿Cerrar sesión?")) return;
-  localStorage.removeItem("med_logged_user");
+  localStorage.removeItem("med_user");
   if(syncTimer) clearTimeout(syncTimer);
-  document.getElementById("main-header").style.display = "none";
+  cachedData=[]; lastHash="";
+  document.getElementById("main-header").style.display="none";
   document.querySelectorAll(".sec").forEach(s=>s.classList.remove("on"));
   document.getElementById("sec-login").classList.add("on");
-  document.getElementById("l-user").value = "";
-  document.getElementById("l-pass").value = "";
+  document.getElementById("l-user").value="";
+  document.getElementById("l-pass").value="";
 }
-
 function initAuth(){
-  const savedUser = localStorage.getItem("med_logged_user");
-  if(savedUser){
-    onSignedIn(savedUser);
-  }
+  const u=localStorage.getItem("med_user");
+  if(u) onSignedIn(u);
 }
-
-async function refreshTokenIfNeeded(){ return true; } // no aplica con auth propio
-
 async function onSignedIn(user){
-  document.getElementById("main-header").style.display = "block";
-  document.getElementById("user-email").textContent = "👤 " + user;
-  const bienEl = document.getElementById("bienvenida");
-  if(bienEl) bienEl.textContent = "Hola, " + user;
+  document.getElementById("main-header").style.display="block";
+  document.getElementById("user-email").textContent="👤 "+user;
+  const b=document.getElementById("bienvenida"); if(b) b.textContent="Hola, "+user;
   document.getElementById("sec-login").classList.remove("on");
   document.getElementById("sec-nuevo").classList.add("on");
-  await ensureSheet();
   await loadAndRender();
 }
 
 // ============================================================
-//  SHEETS API
+// SHEETS VIA APPS SCRIPT
 // ============================================================
-function sheetsUrl(range){
-  return `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(range)}`;
-}
-// API Key de Google para acceso a Sheets (planilla compartida como Editor)
-const API_KEY = "AIzaSyD_placeholder"; // se reemplaza con clave real
-
-function authHeader(){
-  return { "Content-Type": "application/json" };
-}
-
-function sheetsUrlWithKey(range){
-  return sheetsUrl(range) + "?key=" + API_KEY;
-}
-
-async function ensureSheet(){ /* Apps Script maneja esto */ }
-
-async function callScript(action, payload){
-  try {
-    const r = await fetch(SCRIPT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain" },
-      body: JSON.stringify({ action, sheetId: SHEET_ID, sheetName: SHEET_NAME, cols: COLS, ...payload })
+async function callScript(action,payload){
+  try{
+    const r=await fetch(SCRIPT_URL,{
+      method:"POST",
+      headers:{"Content-Type":"text/plain"},
+      body:JSON.stringify({action,sheetId:SHEET_ID,sheetName:SHEET_NAME,cols:COLS,...payload})
     });
     return await r.json();
-  } catch(e) {
-    return { error: e.message };
-  }
+  }catch(e){ return {error:e.message}; }
+}
+
+function setSyncState(state,txt){
+  const dot=document.getElementById("sync-dot");
+  const lbl=document.getElementById("sync-txt");
+  if(!dot||!lbl) return;
+  dot.className="sync-dot"+(state==="syncing"?" syncing":state==="error"?" error":"");
+  lbl.textContent=txt;
 }
 
 async function loadData(){
   if(isSyncing) return cachedData;
-  isSyncing = true;
+  isSyncing=true;
   setSyncState("syncing","Sincronizando...");
   try{
-    const data = await callScript("getAll", {});
-    if(data.error){
-      setSyncState("error","Sin conexión");
-      isSyncing = false;
-      return cachedData;
-    }
-    const newData = (data.rows || []).map(row => {
-      const obj = {};
-      COLS.forEach((col,i) => obj[col] = row[i]||"");
-      return obj;
-    }).filter(t => t.id);
-    const newHash = JSON.stringify(newData);
-    if(newHash !== lastHash){
-      lastHash = newHash;
-      cachedData = newData;
-    }
+    const data=await callScript("getAll",{});
+    if(data.error){ setSyncState("error","Sin conexión"); isSyncing=false; return cachedData; }
+    const newData=(data.rows||[]).map(row=>{
+      const obj={}; COLS.forEach((c,i)=>obj[c]=row[i]||""); return obj;
+    }).filter(t=>t.id);
+    const newHash=JSON.stringify(newData);
+    if(newHash!==lastHash){ lastHash=newHash; cachedData=newData; }
     setSyncState("ok","Sincronizado");
-    isSyncing = false;
-    return cachedData;
-  }catch(e){
-    setSyncState("error","Sin conexión");
-    isSyncing = false;
-    return cachedData;
-  }
+  }catch(e){ setSyncState("error","Sin conexión"); }
+  isSyncing=false;
+  return cachedData;
 }
 
 async function saveRow(t){
   setSyncState("syncing","Guardando...");
   try{
-    const rowData = COLS.map(c=>t[c]||"");
-    const data = await callScript("saveRow", { id: t.id, row: rowData });
+    const rowData=COLS.map(c=>t[c]||"");
+    const data=await callScript("saveRow",{id:t.id,row:rowData});
     if(data.ok){ setSyncState("ok","Sincronizado"); lastHash=""; return true; }
     setSyncState("error","Error al guardar"); return false;
-  }catch(e){
-    setSyncState("error","Error al guardar"); return false;
-  }
+  }catch(e){ setSyncState("error","Error al guardar"); return false; }
 }
 
 async function deleteRow(id){
   setSyncState("syncing","Eliminando...");
   try{
-    const data = await callScript("deleteRow", { id });
+    const data=await callScript("deleteRow",{id});
     if(data.ok){ setSyncState("ok","Sincronizado"); lastHash=""; return true; }
     setSyncState("error","Error al eliminar"); return false;
-  }catch(e){
-    setSyncState("error","Error al eliminar"); return false;
-  }
-}
-
-
-function setSyncState(state,txt){
-  const dot=document.getElementById("sync-dot");
-  const label=document.getElementById("sync-txt");
-  if(!dot||!label) return;
-  dot.className="sync-dot"+(state==="syncing"?" syncing":state==="error"?" error":"");
-  label.textContent=txt;
+  }catch(e){ setSyncState("error","Error al eliminar"); return false; }
 }
 
 async function loadAndRender(){
-  if(isSyncing) return;
+  showLoading();
   await loadData();
   render();
-  // Programar UN solo refresh en 90 segundos, sin recursividad
   if(syncTimer) clearTimeout(syncTimer);
-  syncTimer = setTimeout(silentRefresh, 120000);
+  syncTimer=setTimeout(silentRefresh,120000);
 }
 
 async function silentRefresh(){
   if(syncTimer) clearTimeout(syncTimer);
-  const loggedIn = !!localStorage.getItem("med_logged_user");
-  if(!isSyncing && loggedIn){
-    const prevHash = lastHash;
+  const loggedIn=!!localStorage.getItem("med_user");
+  if(!isSyncing&&loggedIn){
+    const prev=lastHash;
     await loadData();
-    if(lastHash !== prevHash) render();
+    if(lastHash!==prev) render();
   }
-  syncTimer = setTimeout(silentRefresh, 120000);
+  syncTimer=setTimeout(silentRefresh,120000);
 }
 
 function showLoading(){
-  // Solo mostrar spinner en la carga inicial (listas vacías)
   ["lst-a","lst-f"].forEach(id=>{
     const el=document.getElementById(id);
-    if(el && el.innerHTML.trim()===""){
-      el.innerHTML=`<div class="loading-wrap"><div class="spinner"></div><span>Cargando...</span></div>`;
-    }
+    if(el&&el.innerHTML.trim()==="") el.innerHTML=`<div class="loading-wrap"><div class="spinner"></div><span>Cargando...</span></div>`;
   });
 }
 
 // ============================================================
-//  FORMULARIO
+// FORMULARIO NUEVO
 // ============================================================
 function onEnfChange(){
   const enf=document.getElementById("n-enf").value;
   const sel=document.getElementById("n-med");
   sel.innerHTML='<option value="">— Seleccionar —</option>';
-  if(enf&&MEDS[enf]) MEDS[enf].forEach(m=>{ const o=document.createElement("option"); o.value=m; o.textContent=m; sel.appendChild(o); });
+  if(enf&&MEDS[enf]) MEDS[enf].forEach(m=>{const o=document.createElement("option");o.value=m;o.textContent=m;sel.appendChild(o);});
   document.getElementById("row-toma").style.display=(enf==="B24"||!enf)?"none":"";
 }
 function calcVencOS(){ const v=document.getElementById("n-pres").value; document.getElementById("n-vos").value=v?fd(calcOS(v,10)):""; }
-function calcProxima(){ const v=document.getElementById("n-toma").value; document.getElementById("n-proxima").value=v?fd(calcProximaAplicacion(v)):""; }
+function calcProxima(){ const v=document.getElementById("n-toma").value; document.getElementById("n-proxima").value=v?fd(calcProxApl(v)):""; }
 document.getElementById("n-notas").addEventListener("input",function(){ document.getElementById("nc").textContent=this.value.length+" / 200"; });
-function limpiar(){
-  ["n-pac","n-pres","n-toma","n-notas","n-medlib"].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=""; });
+
+function limpiarForm(){
+  ["n-pac","n-pres","n-toma","n-notas","n-medlib"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
   document.getElementById("n-enf").value="";
   document.getElementById("n-vos").value="";
+  document.getElementById("n-proxima").value="";
   document.getElementById("n-med").innerHTML='<option value="">Primero elegí enfermedad</option>';
   document.getElementById("row-toma").style.display="none";
   document.getElementById("nc").textContent="0 / 200";
 }
+
 async function guardar(){
   const pac=document.getElementById("n-pac").value.trim();
   const enf=document.getElementById("n-enf").value;
@@ -1148,70 +714,176 @@ async function guardar(){
   const medLib=document.getElementById("n-medlib").value.trim();
   const med=medLib||medSel;
   const pres=document.getElementById("n-pres").value;
-  if(!pac||!enf||!med||!pres){ alert("Completar campos obligatorios (*):\n• Paciente\n• Enfermedad\n• Medicación\n• Fecha de presentación OS"); return; }
+  if(!pac||!enf||!med||!pres){ alert("Completar campos obligatorios:\n• Paciente\n• Enfermedad\n• Medicación\n• Fecha de presentación OS"); return; }
+  const toma=(enf==="B24")?"":(document.getElementById("n-toma").value||"");
   const t={
     id:Date.now().toString(), paciente:pac, enfermedad:enf, medicacion:med,
-    toma:(enf==="B24")?"":(document.getElementById("n-toma").value||""),
-    proximaAplicacion:(enf==="B24")?"":(calcProximaAplicacion(document.getElementById("n-toma").value)||""),
+    toma, proximaAplicacion:(enf==="Psoriasis/APS"&&toma)?calcProxApl(toma):"",
     presentacionOS:pres, vencOS:calcOS(pres,10),
-    aprobacionRealOS:"", ingresoDrogueria:"", vencDrogueria:"", disponibleFarmacia:"",
-    notas:document.getElementById("n-notas").value, estado:"pendiente",
-    creadoEn:new Date().toISOString()
+    aprobacionRealOS:"", ingresoDrogueria:"", vencDrogueria:"",
+    disponibleFarmacia:"", notas:document.getElementById("n-notas").value,
+    estado:"pendiente", creadoEn:new Date().toISOString()
   };
-  const ok = await saveRow(t);
-  if(ok){ showToast("✓ Trámite guardado"); limpiar(); lastHash=""; goTab("activos"); await loadAndRender(); }
+  const ok=await saveRow(t);
+  if(ok){ showToast("✓ Trámite guardado"); limpiarForm(); goTab("activos"); await loadAndRender(); }
 }
 
 // ============================================================
-//  HANDLERS TARJETAS
+// HANDLERS TARJETAS (pasos 1 y 2)
 // ============================================================
 function onAprChange(id){
-  const apr=document.getElementById("apr-"+id), ing=document.getElementById("ing-"+id), prev=document.getElementById("prev-"+id);
+  const apr=document.getElementById("apr-"+id);
+  const ing=document.getElementById("ing-"+id);
+  const prev=document.getElementById("prev-"+id);
   if(apr&&apr.value&&ing&&!ing.dataset.manual){ ing.value=apr.value; if(prev) prev.textContent="→ Vto. droguería: "+fd(calcDrog(apr.value,2)); }
 }
 function onIngChange(id){
-  const ing=document.getElementById("ing-"+id), prev=document.getElementById("prev-"+id);
+  const ing=document.getElementById("ing-"+id);
+  const prev=document.getElementById("prev-"+id);
   if(ing){ ing.dataset.manual="1"; if(ing.value&&prev) prev.textContent="→ Vto. droguería: "+fd(calcDrog(ing.value,2)); }
 }
 async function guardarAprobacion(id){
-  const apr=document.getElementById("apr-"+id), ing=document.getElementById("ing-"+id);
+  const apr=document.getElementById("apr-"+id);
+  const ing=document.getElementById("ing-"+id);
   if(!apr||!apr.value){ alert("Ingresá la fecha de aprobación real de la OS."); return; }
   const ingVal=(ing&&ing.value)?ing.value:apr.value;
-  const all=await loadData(); const t=all.find(x=>x.id===id); if(!t) return;
-  t.aprobacionRealOS=apr.value; t.ingresoDrogueria=ingVal; t.vencDrogueria=calcDrog(ingVal,2); t.estado="aprobado";
+  await loadData();
+  const t=cachedData.find(x=>x.id===id);
+  if(!t){ alert("Error: recargá la página."); return; }
+  t.aprobacionRealOS=apr.value; t.ingresoDrogueria=ingVal;
+  t.vencDrogueria=calcDrog(ingVal,2); t.estado="aprobado";
   const ok=await saveRow(t);
-  if(ok){ showToast("✓ Aprobación registrada"); lastHash=""; await loadAndRender(); }
+  if(ok){ showToast("✓ Aprobación registrada"); await loadAndRender(); if(actPac) mostrarTramitesPac("activos"); }
 }
-function onDispChange(id){ const inp=document.getElementById("disp-"+id); if(inp) inp.dataset.manual="1"; }
 async function guardarDisponible(id){
   const inp=document.getElementById("disp-"+id);
   if(!inp||!inp.value){ alert("Ingresá la fecha disponible en farmacia."); return; }
-  const all=await loadData(); const t=all.find(x=>x.id===id); if(!t) return;
+  await loadData();
+  const t=cachedData.find(x=>x.id===id);
+  if(!t){ alert("Error: recargá la página."); return; }
   t.disponibleFarmacia=inp.value; t.estado="finalizado";
   const ok=await saveRow(t);
-  if(ok){ showToast("✓ Trámite finalizado"); lastHash=""; await loadAndRender(); }
+  if(ok){ showToast("✓ Trámite finalizado"); await loadAndRender(); if(actPac) mostrarTramitesPac("activos"); }
 }
 async function eliminar(id){
   if(!confirm("¿Eliminar este trámite?\nEsta acción no se puede deshacer.")) return;
   const ok=await deleteRow(id);
-  if(ok){ showToast("🗑 Eliminado"); lastHash=""; await loadAndRender(); }
+  if(ok){ showToast("🗑 Eliminado"); await loadAndRender(); if(actPac) mostrarTramitesPac("activos"); if(finPac) mostrarTramitesPac("fin"); }
 }
 
 // ============================================================
-//  TOAST / IMPRESIÓN
+// EDICIÓN DE TRÁMITES
 // ============================================================
-function showToast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2200); }
-function imprimirSeccion(){
-  const fechaHoy="Impreso el: "+hoyFmt();
-  ["activos","fin","stats"].forEach(n=>{ const el=document.getElementById("phd-"+n); if(el) el.textContent=fechaHoy; });
-  document.querySelectorAll(".sec").forEach(s=>s.classList.remove("print-target"));
-  const sec=document.getElementById("sec-"+tabActual); if(sec) sec.classList.add("print-target");
-  setTimeout(()=>window.print(),100);
+document.getElementById("e-notas").addEventListener("input",function(){ document.getElementById("e-nc").textContent=this.value.length+" / 200"; });
+
+function abrirEdicion(id){
+  const t=cachedData.find(x=>x.id===id);
+  if(!t){ showToast("Error al abrir. Recargá la página."); return; }
+
+  editOrigen=tabActual; // recordar desde dónde venimos
+
+  document.getElementById("e-id").value=t.id;
+  document.getElementById("e-pac").value=t.paciente;
+  document.getElementById("e-enf").value=t.enfermedad;
+
+  // Medicación
+  const sel=document.getElementById("e-med");
+  sel.innerHTML='<option value="">— Seleccionar —</option>';
+  (MEDS[t.enfermedad]||[]).forEach(m=>{const o=document.createElement("option");o.value=m;o.textContent=m;sel.appendChild(o);});
+  const enLista=(MEDS[t.enfermedad]||[]).includes(t.medicacion);
+  sel.value=enLista?t.medicacion:"";
+  document.getElementById("e-medlib").value=enLista?"":t.medicacion;
+
+  // Fechas
+  document.getElementById("e-toma").value=t.toma||"";
+  document.getElementById("e-proxima").value=t.toma?fd(t.proximaAplicacion||calcProxApl(t.toma)):"";
+  document.getElementById("e-pres").value=t.presentacionOS||"";
+  document.getElementById("e-vos").value=t.vencOS?fd(t.vencOS):"";
+  document.getElementById("e-apr").value=t.aprobacionRealOS||"";
+  document.getElementById("e-ing").value=t.ingresoDrogueria||"";
+  document.getElementById("e-vdrog").value=t.vencDrogueria?fd(t.vencDrogueria):"";
+  document.getElementById("e-disp").value=t.disponibleFarmacia||"";
+  document.getElementById("e-notas").value=t.notas||"";
+  document.getElementById("e-nc").textContent=(t.notas||"").length+" / 200";
+  document.getElementById("e-card-toma").style.display=t.enfermedad==="B24"?"none":"block";
+  document.getElementById("e-ing").dataset.manual="";
+
+  goTab("editar");
+}
+
+function cancelarEdicion(){
+  goTab(editOrigen==="fin"?"fin":"activos");
+}
+
+function eCalcProxima(){ const v=document.getElementById("e-toma").value; document.getElementById("e-proxima").value=v?fd(calcProxApl(v)):""; }
+function eCalcVencOS(){ const v=document.getElementById("e-pres").value; document.getElementById("e-vos").value=v?fd(calcOS(v,10)):""; }
+function eCalcDrog(){
+  const apr=document.getElementById("e-apr").value;
+  const ing=document.getElementById("e-ing");
+  if(apr&&!ing.dataset.manual){ ing.value=apr; eCalcVencDrog(); }
+}
+function eCalcVencDrog(){
+  const v=document.getElementById("e-ing").value;
+  document.getElementById("e-vdrog").value=v?fd(calcDrog(v,2)):"";
+  document.getElementById("e-ing").dataset.manual="1";
+}
+
+async function guardarEdicion(){
+  const id=document.getElementById("e-id").value;
+  await loadData();
+  const t=cachedData.find(x=>x.id===id);
+  if(!t){ alert("No se encontró el trámite."); return; }
+
+  const medSel=document.getElementById("e-med").value;
+  const medLib=document.getElementById("e-medlib").value.trim();
+  const med=medLib||medSel;
+  const pres=document.getElementById("e-pres").value;
+  if(!med){ alert("La medicación no puede estar vacía."); return; }
+  if(!pres){ alert("La fecha de presentación OS no puede estar vacía."); return; }
+
+  const toma=document.getElementById("e-toma").value;
+  const apr=document.getElementById("e-apr").value;
+  const ing=document.getElementById("e-ing").value;
+  const disp=document.getElementById("e-disp").value;
+
+  t.medicacion=med;
+  t.toma=(t.enfermedad==="B24")?"":toma;
+  t.proximaAplicacion=(t.enfermedad==="Psoriasis/APS"&&toma)?calcProxApl(toma):"";
+  t.presentacionOS=pres;
+  t.vencOS=calcOS(pres,10);
+  t.aprobacionRealOS=apr;
+  t.ingresoDrogueria=ing||apr;
+  t.vencDrogueria=(ing||apr)?calcDrog(ing||apr,2):"";
+  t.disponibleFarmacia=disp;
+  t.notas=document.getElementById("e-notas").value;
+  if(disp) t.estado="finalizado";
+  else if(apr) t.estado="aprobado";
+  else t.estado="pendiente";
+
+  const ok=await saveRow(t);
+  if(ok){
+    showToast("✓ Trámite actualizado");
+    lastHash="";
+    await loadAndRender();
+    cancelarEdicion();
+  } else { alert("Error al guardar."); }
 }
 
 // ============================================================
-//  ALERTAS
+// RENDER
 // ============================================================
+function render(){
+  const activos=cachedData.filter(x=>x.estado!=="finalizado");
+  const fin=cachedData.filter(x=>x.estado==="finalizado");
+  document.getElementById("cnt-a").textContent=activos.length;
+  document.getElementById("cnt-f").textContent=fin.length;
+  renderAlertas();
+  renderSelectorPac("act-pac-btns",activos,"activos");
+  renderSelectorPac("fin-pac-btns",fin,"fin");
+  if(actPac) mostrarTramitesPac("activos");
+  if(finPac) mostrarTramitesPac("fin");
+}
+
 function renderAlertas(){
   const activos=cachedData.filter(x=>x.estado!=="finalizado");
   const alertas=[];
@@ -1223,123 +895,71 @@ function renderAlertas(){
   el.innerHTML=alertas.length?`<div class="alerta-box"><b>Alertas activas (${alertas.length})</b><br>${alertas.map(a=>`• ${a}`).join("<br>")}</div>`:"";
 }
 
-// ============================================================
-//  RENDER
-// ============================================================
-// Estado de navegación por paciente
-let actPaciente = ""; let actEnf = "";
-let finPaciente = ""; let finEnf = "";
-
-function render(){
-  const activos = cachedData.filter(x=>x.estado!=="finalizado");
-  const fin     = cachedData.filter(x=>x.estado==="finalizado");
-  document.getElementById("cnt-a").textContent = activos.length;
-  document.getElementById("cnt-f").textContent = fin.length;
-  renderAlertas();
-  // Llenar mapa global con TODOS los tramites
-  if(!window._tramiteMap) window._tramiteMap = {};
-  cachedData.forEach(t => { window._tramiteMap[t.id] = t; });
-  // Actualizar selector de pacientes
-  renderSelectorPac("act-pac-btns", activos, "activos");
-  renderSelectorPac("fin-pac-btns", fin, "fin");
-  // Si ya hay paciente seleccionado, refrescar la lista
-  if(actPaciente) renderTramitesPac("lst-a", activos, actPaciente, actEnf, false);
-  if(finPaciente) renderTramitesPac("lst-f", fin, finPaciente, finEnf, true);
-}
-
-function renderSelectorPac(cid, lista, sec){
-  const el = document.getElementById(cid);
-  if(!el) return;
-  const pacs = [...new Set(lista.map(x=>x.paciente))].filter(Boolean).sort();
-  if(!pacs.length){
-    el.innerHTML = `<div class="empty"><span class="empty-icon">${sec==="activos"?"📋":"📂"}</span><span style="font-size:14px">${sec==="activos"?"No hay trámites activos":"No hay trámites finalizados"}</span></div>`;
-    return;
-  }
-  el.innerHTML = pacs.map(p => {
-    const cnt = lista.filter(x=>x.paciente===p).length;
-    return `<button class="btn" style="flex:1;min-width:140px;padding:16px;flex-direction:column;gap:6px;height:auto"
-      onclick="selPac('${esc(p)}','${sec}')">
-      <span style="font-size:24px">👤</span>
-      <span style="font-size:13px;font-weight:700">${esc(p)}</span>
-      <span style="font-size:11px;color:var(--text3)">${cnt} trámite${cnt!==1?"s":""}</span>
-    </button>`;
+function renderSelectorPac(cid,lista,sec){
+  const el=document.getElementById(cid); if(!el) return;
+  const pacs=[...new Set(lista.map(x=>x.paciente))].filter(Boolean).sort();
+  if(!pacs.length){ el.innerHTML=`<div class="empty"><span class="empty-icon">${sec==="activos"?"📋":"📂"}</span><span style="font-size:14px">${sec==="activos"?"No hay trámites activos":"No hay trámites finalizados"}</span></div>`; return; }
+  el.innerHTML=pacs.map(p=>{
+    const cnt=lista.filter(x=>x.paciente===p).length;
+    return `<button class="btn pac-selector-btn" onclick="selPac('${esc(p)}','${sec}')"><span style="font-size:24px">👤</span><span style="font-size:13px;font-weight:700">${esc(p)}</span><span style="font-size:11px;color:var(--text3)">${cnt} trámite${cnt!==1?"s":""}</span></button>`;
   }).join("");
 }
 
-async function selPac(pac, sec){
-  // Asegurar datos frescos
-  if(!cachedData.length) await loadData();
-  const lista = cachedData.filter(x=> sec==="activos" ? x.estado!=="finalizado" : x.estado==="finalizado");
-  const enfs  = [...new Set(lista.filter(x=>x.paciente===pac).map(x=>x.enfermedad))].filter(Boolean);
-  const primeraEnf = enfs[0] || "";
+function selPac(pac,sec){
+  if(sec==="activos"){ actPac=pac; actEnf=""; } else { finPac=pac; finEnf=""; }
+  const lista=cachedData.filter(x=>sec==="activos"?x.estado!=="finalizado":x.estado==="finalizado");
+  const enfs=[...new Set(lista.filter(x=>x.paciente===pac).map(x=>x.enfermedad))].filter(Boolean);
 
   if(sec==="activos"){
-    actPaciente = pac; actEnf = primeraEnf;
-    document.getElementById("act-selector").style.display = "none";
-    document.getElementById("act-contenido").style.display = "block";
-    document.getElementById("act-pac-titulo").textContent = "👤 " + pac;
-    renderEnfTabs("act-enf-tabs", enfs, actEnf, "activos");
-    renderTramitesPac("lst-a", lista, pac, actEnf, false);
+    document.getElementById("act-selector").style.display="none";
+    document.getElementById("act-contenido").style.display="block";
+    document.getElementById("act-titulo").textContent="👤 "+pac;
+    renderEnfTabs("act-enf-tabs",enfs,"","activos");
   } else {
-    finPaciente = pac; finEnf = primeraEnf;
-    document.getElementById("fin-selector").style.display = "none";
-    document.getElementById("fin-contenido").style.display = "block";
-    document.getElementById("fin-pac-titulo").textContent = "👤 " + pac;
-    renderEnfTabs("fin-enf-tabs", enfs, finEnf, "fin");
-    renderTramitesPac("lst-f", lista, pac, finEnf, true);
+    document.getElementById("fin-selector").style.display="none";
+    document.getElementById("fin-contenido").style.display="block";
+    document.getElementById("fin-titulo").textContent="👤 "+pac;
+    renderEnfTabs("fin-enf-tabs",enfs,"","fin");
   }
+  mostrarTramitesPac(sec);
 }
 
-function renderEnfTabs(cid, enfs, activa, sec){
-  const el = document.getElementById(cid);
-  if(!el) return;
-  const todas = ["Todas", ...enfs];
-  el.innerHTML = todas.map(e =>
-    `<button class="fb ${e===activa||(!activa&&e==="Todas")?"on":""}"
-      onclick="selEnf('${esc(e)}','${sec}')">${esc(e==="Todas"?"Todas las enfermedades":e)}</button>`
+function renderEnfTabs(cid,enfs,activa,sec){
+  const el=document.getElementById(cid); if(!el) return;
+  el.innerHTML=["Todas",...enfs].map(e=>
+    `<button class="fb ${(!activa&&e==="Todas")||(activa===e)?"on":""}" onclick="selEnf('${esc(e)}','${sec}')">${esc(e==="Todas"?"Todas":e)}</button>`
   ).join("");
 }
 
-function selEnf(enf, sec){
-  const lista = cachedData.filter(x=> sec==="activos" ? x.estado!=="finalizado" : x.estado==="finalizado");
-  if(sec==="activos"){
-    actEnf = enf==="Todas" ? "" : enf;
-    renderEnfTabs("act-enf-tabs", [...new Set(lista.filter(x=>x.paciente===actPaciente).map(x=>x.enfermedad))], enf, "activos");
-    renderTramitesPac("lst-a", lista, actPaciente, actEnf, false);
-  } else {
-    finEnf = enf==="Todas" ? "" : enf;
-    renderEnfTabs("fin-enf-tabs", [...new Set(lista.filter(x=>x.paciente===finPaciente).map(x=>x.enfermedad))], enf, "fin");
-    renderTramitesPac("lst-f", lista, finPaciente, finEnf, true);
-  }
+function selEnf(enf,sec){
+  if(sec==="activos") actEnf=enf==="Todas"?"":enf;
+  else finEnf=enf==="Todas"?"":enf;
+  const lista=cachedData.filter(x=>sec==="activos"?x.estado!=="finalizado":x.estado==="finalizado");
+  const pac=sec==="activos"?actPac:finPac;
+  const enfs=[...new Set(lista.filter(x=>x.paciente===pac).map(x=>x.enfermedad))].filter(Boolean);
+  renderEnfTabs(sec==="activos"?"act-enf-tabs":"fin-enf-tabs", enfs, enf==="Todas"?"":enf, sec);
+  mostrarTramitesPac(sec);
 }
 
-function renderTramitesPac(cid, lista, pac, enf, esFin){
-  const el = document.getElementById(cid);
-  if(!el) return;
-  let filtrada = lista.filter(x=>x.paciente===pac);
-  if(enf) filtrada = filtrada.filter(x=>x.enfermedad===enf);
-  if(!filtrada.length){
-    el.innerHTML = `<div class="empty"><span class="empty-icon">${esFin?"📂":"📋"}</span><span style="font-size:14px">No hay trámites</span></div>`;
-    return;
-  }
-  // Guardar en mapa global para edición
-  if(!window._tramiteMap) window._tramiteMap = {};
-  filtrada.forEach(t => { window._tramiteMap[t.id] = t; });
-  el.innerHTML = filtrada.map(t=>renderTC(t,esFin)).join("");
+function mostrarTramitesPac(sec){
+  const esFin=sec==="fin";
+  const cid=esFin?"lst-f":"lst-a";
+  const pac=esFin?finPac:actPac;
+  const enf=esFin?finEnf:actEnf;
+  const el=document.getElementById(cid); if(!el) return;
+  let lista=cachedData.filter(x=>esFin?x.estado==="finalizado":x.estado!=="finalizado");
+  lista=lista.filter(x=>x.paciente===pac);
+  if(enf) lista=lista.filter(x=>x.enfermedad===enf);
+  if(!lista.length){ el.innerHTML=`<div class="empty"><span class="empty-icon">${esFin?"📂":"📋"}</span><span style="font-size:14px">No hay trámites</span></div>`; return; }
+  el.innerHTML=lista.map(t=>renderTC(t,esFin)).join("");
 }
 
-function volverSelectorAct(){
-  actPaciente=""; actEnf="";
-  document.getElementById("act-selector").style.display = "block";
-  document.getElementById("act-contenido").style.display = "none";
-  document.getElementById("lst-a").innerHTML = "";
-}
-function volverSelectorFin(){
-  finPaciente=""; finEnf="";
-  document.getElementById("fin-selector").style.display = "block";
-  document.getElementById("fin-contenido").style.display = "none";
-  document.getElementById("lst-f").innerHTML = "";
-}
+function volverAct(){ actPac=""; actEnf=""; document.getElementById("act-selector").style.display="block"; document.getElementById("act-contenido").style.display="none"; document.getElementById("lst-a").innerHTML=""; }
+function volverFin(){ finPac=""; finEnf=""; document.getElementById("fin-selector").style.display="block"; document.getElementById("fin-contenido").style.display="none"; document.getElementById("lst-f").innerHTML=""; }
+
+// ============================================================
+// RENDER TARJETA
+// ============================================================
 function stateBadge(t){
   if(t.estado==="finalizado") return `<span class="badge bf">✓ Finalizado</span>`;
   if(t.estado==="aprobado")   return `<span class="badge ba">✓ OS Aprobada</span>`;
@@ -1357,579 +977,312 @@ function vosClass(t){
   if(t.aprobacionRealOS||!t.vencOS) return "";
   const d=diasDiff(t.vencOS); if(d<0) return "bad"; if(d<=2) return "warn"; return "";
 }
+
 function renderTC(t,esFin){
   let stepHtml="";
   if(!esFin){
     if(!t.aprobacionRealOS){
-      stepHtml=`<div class="tc-step"><div class="step-title"><span class="step-num">1</span> Registrar aprobación de obra social</div><div class="field-row" style="margin-bottom:8px"><div class="field" style="margin:0"><label>Aprobación real OS</label><input type="date" id="apr-${t.id}" oninput="onAprChange('${t.id}')"></div><div class="field" style="margin:0"><label>Ingreso a droguería</label><input type="date" id="ing-${t.id}" oninput="onIngChange('${t.id}')" placeholder="Se llena con fecha OS"></div></div><div class="calc-hint" id="prev-${t.id}"></div><div class="btn-row" style="margin-top:10px"><button class="btn p sm" onclick="guardarAprobacion('${t.id}')">Guardar aprobación</button></div></div>`;
+      stepHtml=`<div class="tc-step">
+        <div class="step-title"><span class="step-num">1</span> Registrar aprobación OS</div>
+        <div class="field-row" style="margin-bottom:8px">
+          <div class="field" style="margin:0"><label>Aprobación real OS</label><input type="date" id="apr-${t.id}" oninput="onAprChange('${t.id}')"></div>
+          <div class="field" style="margin:0"><label>Ingreso a droguería</label><input type="date" id="ing-${t.id}" oninput="onIngChange('${t.id}')"></div>
+        </div>
+        <div style="font-size:11px;color:var(--ok);font-weight:600;min-height:14px;margin-bottom:8px" id="prev-${t.id}"></div>
+        <div class="btn-row" style="margin-top:4px"><button class="btn p sm" onclick="guardarAprobacion('${t.id}')">Guardar aprobación</button></div>
+      </div>`;
     } else if(!t.disponibleFarmacia){
-      const sug=t.vencDrogueria?siguienteDiaHabil(t.vencDrogueria):"";
-      stepHtml=`<div class="tc-step"><div class="step-title"><span class="step-num">2</span> Registrar disponible en farmacia</div><div style="font-size:11px;color:var(--muted);margin-bottom:8px">Fecha pre-completada con el día hábil siguiente al vto. de droguería. Podés modificarla.</div><div style="display:flex;gap:8px;align-items:flex-end"><div class="field" style="margin:0;flex:1"><label>Fecha disponible en farmacia</label><input type="date" id="disp-${t.id}" value="${sug}" oninput="onDispChange('${t.id}')"></div><button class="btn p sm" onclick="guardarDisponible('${t.id}')">Finalizar</button></div></div>`;
+      const sug=t.vencDrogueria?siguienteHabil(t.vencDrogueria):"";
+      stepHtml=`<div class="tc-step">
+        <div class="step-title"><span class="step-num">2</span> Registrar disponible en farmacia</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:8px">Fecha pre-completada con el día hábil siguiente al vto. droguería.</div>
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <div class="field" style="margin:0;flex:1"><label>Fecha disponible en farmacia</label><input type="date" id="disp-${t.id}" value="${sug}"></div>
+          <button class="btn p sm" onclick="guardarDisponible('${t.id}')">Finalizar</button>
+        </div>
+      </div>`;
     }
   }
   const notasHtml=(t.notas&&t.notas.trim())?`<div class="tc-notes">📝 ${esc(t.notas)}</div>`:"";
   const drogAlerta=(t.estado==="aprobado"&&t.vencDrogueria)?diasBadge(t.vencDrogueria):"";
-  return `<div class="tc"><div class="tc-head"><div><div class="tc-name">${esc(t.paciente)}</div><div class="tc-sub"><span>${esc(t.medicacion)}</span>${enfBadge(t.enfermedad)}</div></div><div class="tc-badges">${stateBadge(t)}${t.estado==="pendiente"?diasBadge(t.vencOS):""}${drogAlerta}</div></div><div class="tc-grid"><div class="tf"><div class="tfl">Presentado a OS</div><div class="tfv">${fd(t.presentacionOS)}</div></div><div class="tf"><div class="tfl">Vto. legal OS</div><div class="tfv ${vosClass(t)}">${fd(t.vencOS)}</div></div><div class="tf"><div class="tfl">Aprobación real OS</div><div class="tfv ${t.aprobacionRealOS?"ok":"pend"}">${t.aprobacionRealOS?fd(t.aprobacionRealOS):"Pendiente"}</div></div><div class="tf"><div class="tfl">Ingreso a droguería</div><div class="tfv">${fd(t.ingresoDrogueria)}</div></div><div class="tf"><div class="tfl">Vto. droguería (48hs)</div><div class="tfv">${fd(t.vencDrogueria)}</div></div><div class="tf"><div class="tfl">Disponible en farmacia</div><div class="tfv ${t.disponibleFarmacia?"ok":"pend"}">${t.disponibleFarmacia?fd(t.disponibleFarmacia):"—"}</div></div>${(t.toma||t.enfermedad==="Psoriasis/APS")?`<div class="tf"><div class="tfl">Fecha toma / aplicación</div><div class="tfv ${t.toma?"":"pend"}">${t.toma?fd(t.toma):"—"}</div></div>`:""}
-      ${(t.enfermedad==="Psoriasis/APS")?`<div class="tf"><div class="tfl">Próxima aplicación</div><div class="tfv ${(t.proximaAplicacion||t.toma)?"ok":""}">${t.toma?fd(t.proximaAplicacion||calcProximaAplicacion(t.toma)):"—"}</div></div>`:""}<div class="tf"><div class="tfl">Iniciado el</div><div class="tfv" style="font-size:11px;color:var(--muted)">${fd(t.creadoEn?t.creadoEn.slice(0,10):"")}</div></div></div>${notasHtml}${stepHtml}<div class="tc-acts"><button class="btn sm" onclick="abrirEdicion('${t.id}')">✏️ Editar</button><button class="btn danger sm" onclick="eliminar('${t.id}')">🗑 Eliminar</button></div></div>`;
+  const proxHtml=(t.enfermedad==="Psoriasis/APS")?`<div class="tf"><div class="tfl">Próxima aplicación</div><div class="tfv ${(t.toma||t.proximaAplicacion)?"ok":""}">${t.toma?fd(t.proximaAplicacion||calcProxApl(t.toma)):"—"}</div></div>`:"";
+  const tomaHtml=(t.enfermedad==="Psoriasis/APS")?`<div class="tf"><div class="tfl">Fecha toma / aplicación</div><div class="tfv ${t.toma?"":"pend"}">${t.toma?fd(t.toma):"—"}</div></div>`:"";
+
+  return `<div class="tc">
+    <div class="tc-head">
+      <div><div class="tc-name">${esc(t.paciente)}</div><div class="tc-sub"><span>${esc(t.medicacion)}</span>${enfBadge(t.enfermedad)}</div></div>
+      <div class="tc-badges">${stateBadge(t)}${t.estado==="pendiente"?diasBadge(t.vencOS):""}${drogAlerta}</div>
+    </div>
+    <div class="tc-grid">
+      <div class="tf"><div class="tfl">Presentado a OS</div><div class="tfv">${fd(t.presentacionOS)}</div></div>
+      <div class="tf"><div class="tfl">Vto. legal OS</div><div class="tfv ${vosClass(t)}">${fd(t.vencOS)}</div></div>
+      <div class="tf"><div class="tfl">Aprobación real OS</div><div class="tfv ${t.aprobacionRealOS?"ok":"pend"}">${t.aprobacionRealOS?fd(t.aprobacionRealOS):"Pendiente"}</div></div>
+      <div class="tf"><div class="tfl">Ingreso a droguería</div><div class="tfv">${fd(t.ingresoDrogueria)}</div></div>
+      <div class="tf"><div class="tfl">Vto. droguería (48hs)</div><div class="tfv">${fd(t.vencDrogueria)}</div></div>
+      <div class="tf"><div class="tfl">Disponible en farmacia</div><div class="tfv ${t.disponibleFarmacia?"ok":"pend"}">${t.disponibleFarmacia?fd(t.disponibleFarmacia):"—"}</div></div>
+      ${tomaHtml}${proxHtml}
+      <div class="tf"><div class="tfl">Iniciado el</div><div class="tfv" style="font-size:11px;color:var(--text3)">${fd(t.creadoEn?t.creadoEn.slice(0,10):"")}</div></div>
+    </div>
+    ${notasHtml}${stepHtml}
+    <div class="tc-acts">
+      <button class="btn sm" onclick="abrirEdicion('${t.id}')">✏️ Editar</button>
+      <button class="btn danger sm" onclick="eliminar('${t.id}')">🗑 Eliminar</button>
+    </div>
+  </div>`;
 }
 
 // ============================================================
-//  ESTADÍSTICAS
+// RECETAS
+// ============================================================
+function getPacientes(){ return [...new Set(cachedData.map(x=>x.paciente))].filter(Boolean).sort(); }
+
+function initRecetas(){
+  const el=document.getElementById("rec-pac-btns"); if(!el) return;
+  const pacs=getPacientes();
+  el.innerHTML=pacs.map(p=>`<button class="btn pac-selector-btn" onclick="selRecPac('${esc(p)}')"><span style="font-size:24px">👤</span><span style="font-size:13px;font-weight:700">${esc(p)}</span></button>`).join("");
+}
+function selRecPac(pac){
+  recPac=pac; recEnf="";
+  document.getElementById("rec-selector").style.display="none";
+  document.getElementById("rec-contenido").style.display="block";
+  document.getElementById("rec-titulo").textContent="👤 "+pac;
+  const enfs=[...new Set(cachedData.filter(x=>x.paciente===pac).map(x=>x.enfermedad))].filter(Boolean);
+  const tabs=document.getElementById("rec-enf-tabs");
+  tabs.innerHTML=enfs.map(e=>`<button class="fb ${e===enfs[0]?"on":""}" onclick="selRecEnf('${esc(e)}')">${esc(e)}</button>`).join("");
+  if(enfs.length){ recEnf=enfs[0]; }
+  const anioSel=document.getElementById("rec-anio");
+  const anioActual=new Date().getFullYear();
+  anioSel.innerHTML=[anioActual,anioActual+1,anioActual-1].map(a=>`<option value="${a}">${a}</option>`).join("");
+  cargarRecetas();
+}
+function selRecEnf(enf){
+  recEnf=enf;
+  document.querySelectorAll("#rec-enf-tabs .fb").forEach(b=>b.classList.toggle("on",b.textContent.trim()===enf));
+  cargarRecetas();
+}
+function volverRec(){ recPac=""; document.getElementById("rec-selector").style.display="block"; document.getElementById("rec-contenido").style.display="none"; }
+async function cargarRecetas(){
+  const lista=document.getElementById("rec-lista"); lista.innerHTML=`<div class="loading-wrap"><div class="spinner"></div><span>Cargando...</span></div>`;
+  try{
+    const data=await callScript("getRecetas",{paciente:recPac,enfermedad:recEnf});
+    if(data.error){ lista.innerHTML=`<div class="empty"><span class="empty-icon">⚠️</span><span>${esc(data.error)}</span></div>`; return; }
+    renderArchivos("rec-lista",data.recetas||[],"📄");
+  }catch(e){ lista.innerHTML=`<div class="empty"><span class="empty-icon">⚠️</span><span>Sin conexión</span></div>`; }
+}
+async function subirReceta(){
+  const fi=document.getElementById("rec-file");
+  const anio=document.getElementById("rec-anio").value;
+  const nombre=document.getElementById("rec-nombre").value.trim();
+  if(!fi.files.length){ alert("Seleccioná un archivo."); return; }
+  const file=fi.files[0];
+  if(file.size>10*1024*1024){ alert("Máximo 10MB."); return; }
+  const nombreFinal=nombre||(recPac+" - "+recEnf+" - "+anio+" - "+file.name);
+  await subirArchivo("rec",{paciente:recPac,enfermedad:recEnf,anio:parseInt(anio),nombre:nombreFinal,mimeType:file.type,file},cargarRecetas);
+}
+async function eliminarReceta(fileId){
+  if(!confirm("¿Eliminar esta receta?\\nSe moverá a la papelera.")) return;
+  const data=await callScript("deleteReceta",{fileId});
+  if(data.ok){ showToast("🗑 Eliminado"); cargarRecetas(); } else alert("Error al eliminar.");
+}
+
+// ============================================================
+// ESTUDIOS
+// ============================================================
+const TIPOS_EST=["Todos","Laboratorio","Diagnóstico por imágenes","Biopsia","Otros"];
+function initEstudios(){
+  const el=document.getElementById("est-pac-btns"); if(!el) return;
+  const pacs=getPacientes();
+  el.innerHTML=pacs.map(p=>`<button class="btn pac-selector-btn" onclick="selEstPac('${esc(p)}')"><span style="font-size:24px">👤</span><span style="font-size:13px;font-weight:700">${esc(p)}</span></button>`).join("");
+}
+function selEstPac(pac){
+  estPac=pac; estTipo="Todos";
+  document.getElementById("est-selector").style.display="none";
+  document.getElementById("est-contenido").style.display="block";
+  document.getElementById("est-titulo").textContent="👤 "+pac;
+  const tabs=document.getElementById("est-tipo-tabs");
+  tabs.innerHTML=TIPOS_EST.map(t=>`<button class="fb ${t==="Todos"?"on":""}" onclick="selEstTipo('${esc(t)}')">${esc(t)}</button>`).join("");
+  const anioSel=document.getElementById("est-anio");
+  const a=new Date().getFullYear();
+  anioSel.innerHTML=[a,a+1,a-1].map(x=>`<option value="${x}">${x}</option>`).join("");
+  document.getElementById("est-fecha").value=ifmt(new Date());
+  cargarEstudios();
+}
+function selEstTipo(tipo){
+  estTipo=tipo;
+  document.querySelectorAll("#est-tipo-tabs .fb").forEach(b=>b.classList.toggle("on",b.textContent.trim()===tipo));
+  cargarEstudios();
+}
+function volverEst(){ estPac=""; document.getElementById("est-selector").style.display="block"; document.getElementById("est-contenido").style.display="none"; }
+async function cargarEstudios(){
+  const lista=document.getElementById("est-lista"); lista.innerHTML=`<div class="loading-wrap"><div class="spinner"></div><span>Cargando...</span></div>`;
+  try{
+    const enf=estTipo==="Todos"?"":estTipo;
+    const data=await callScript("getRecetas",{paciente:estPac+"_estudios",enfermedad:enf});
+    if(data.error){ lista.innerHTML=`<div class="empty"><span class="empty-icon">⚠️</span><span>${esc(data.error)}</span></div>`; return; }
+    renderArchivos("est-lista",data.recetas||[],"🔬");
+  }catch(e){ lista.innerHTML=`<div class="empty"><span class="empty-icon">⚠️</span><span>Sin conexión</span></div>`; }
+}
+async function subirEstudio(){
+  const fi=document.getElementById("est-file");
+  const tipo=document.getElementById("est-tipo").value;
+  const fecha=document.getElementById("est-fecha").value;
+  const anio=document.getElementById("est-anio").value;
+  const nombre=document.getElementById("est-nombre").value.trim();
+  if(!fi.files.length){ alert("Seleccioná un archivo."); return; }
+  if(!fecha){ alert("Ingresá la fecha del estudio."); return; }
+  const file=fi.files[0];
+  if(file.size>10*1024*1024){ alert("Máximo 10MB."); return; }
+  const nombreFinal=nombre||(tipo+" - "+fd(fecha)+" - "+file.name);
+  await subirArchivo("est",{paciente:estPac+"_estudios",enfermedad:tipo,anio:parseInt(anio),nombre:nombreFinal,mimeType:file.type,file},cargarEstudios);
+}
+async function eliminarEstudio(fileId){
+  if(!confirm("¿Eliminar este estudio?\\nSe moverá a la papelera.")) return;
+  const data=await callScript("deleteReceta",{fileId});
+  if(data.ok){ showToast("🗑 Eliminado"); cargarEstudios(); } else alert("Error al eliminar.");
+}
+
+async function subirArchivo(prefijo,params,callback){
+  const prog=document.getElementById(prefijo+"-prog");
+  const btn=document.getElementById(prefijo+"-btn-subir");
+  prog.style.display="block"; btn.disabled=true;
+  try{
+    const base64=await new Promise((res,rej)=>{
+      const reader=new FileReader();
+      reader.onload=()=>res(reader.result.split(",")[1]);
+      reader.onerror=()=>rej(new Error("Error al leer"));
+      reader.readAsDataURL(params.file);
+    });
+    const data=await callScript("uploadReceta",{paciente:params.paciente,enfermedad:params.enfermedad,anio:params.anio,nombre:params.nombre,mimeType:params.mimeType,base64});
+    if(data.error){ alert("Error al subir: "+data.error); return; }
+    showToast("✓ Archivo subido");
+    document.getElementById(prefijo+"-file").value="";
+    if(document.getElementById(prefijo+"-nombre")) document.getElementById(prefijo+"-nombre").value="";
+    callback();
+  }catch(e){ alert("Error: "+e.message); }
+  finally{ prog.style.display="none"; btn.disabled=false; }
+}
+
+function renderArchivos(cid,lista,iconoDefault){
+  const el=document.getElementById(cid);
+  if(!lista.length){ el.innerHTML=`<div class="empty"><span class="empty-icon">${iconoDefault}</span><span style="font-size:14px">No hay archivos cargados aún</span></div>`; return; }
+  const porAnio={};
+  lista.forEach(r=>{ if(!porAnio[r.anio]) porAnio[r.anio]=[]; porAnio[r.anio].push(r); });
+  const iconos={"Laboratorio":"🧪","Diagnóstico por imágenes":"🩻","Biopsia":"🔬","Otros":"📋"};
+  let html="";
+  Object.keys(porAnio).sort((a,b)=>b-a).forEach(anio=>{
+    html+=`<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin:16px 0 8px;display:flex;align-items:center;gap:8px">📅 ${anio}<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>`;
+    porAnio[anio].forEach(r=>{
+      const icono=iconos[r.enfermedad]||"📄";
+      const kb=r.size?Math.round(r.size/1024)+" KB":"";
+      html+=`<div class="tc" style="margin-bottom:8px"><div style="padding:12px 16px;display:flex;align-items:center;gap:12px">
+        <div style="font-size:28px;flex-shrink:0">${icono}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.nombre)}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">${r.fecha?fd(r.fecha):""} ${kb?"· "+kb:""}</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          <a href="${r.viewUrl}" target="_blank" class="btn sm" style="text-decoration:none">👁 Ver</a>
+          <button class="btn danger sm" onclick="${cid.startsWith("rec")?"eliminarReceta":"eliminarEstudio"}('${r.fileId}')">🗑</button>
+        </div>
+      </div></div>`;
+    });
+  });
+  el.innerHTML=html;
+}
+
+// ============================================================
+// ESTADÍSTICAS
 // ============================================================
 function renderStats(){
   const lista=cachedData; const el=document.getElementById("stats-content");
-  if(!lista.length){ el.innerHTML=`<div class="empty"><span class="empty-icon">📊</span><span style="font-size:14px">Todavía no hay trámites cargados</span></div>`; return; }
-  const total=lista.length, finalizados=lista.filter(x=>x.estado==="finalizado").length, activos=lista.filter(x=>x.estado!=="finalizado").length;
-  const b24Total=lista.filter(x=>x.enfermedad==="B24").length, psoTotal=lista.filter(x=>x.enfermedad==="Psoriasis/APS").length;
-  const pacientes=[...new Set(lista.map(x=>x.paciente))].sort();
+  if(!lista.length){ el.innerHTML=`<div class="empty"><span class="empty-icon">📊</span><span style="font-size:14px">No hay trámites cargados</span></div>`; return; }
+  const total=lista.length, fin=lista.filter(x=>x.estado==="finalizado").length, act=lista.filter(x=>x.estado!=="finalizado").length;
+  const b24=lista.filter(x=>x.enfermedad==="B24").length, pso=lista.filter(x=>x.enfermedad==="Psoriasis/APS").length;
+  const pacs=[...new Set(lista.map(x=>x.paciente))].sort();
   const medCount={}; lista.forEach(t=>{ medCount[t.medicacion]=(medCount[t.medicacion]||0)+1; });
   const topMeds=Object.entries(medCount).sort((a,b)=>b[1]-a[1]).slice(0,5); const maxMed=topMeds[0]?.[1]||1;
   const conApr=lista.filter(x=>x.aprobacionRealOS&&x.presentacionOS);
   let demoraOS="—";
   if(conApr.length){ const sum=conApr.reduce((a,t)=>a+Math.round((pd(t.aprobacionRealOS)-pd(t.presentacionOS))/86400000),0); demoraOS=Math.round(sum/conApr.length)+" días"; }
-  let html=`<div class="stat-section-title">📋 Resumen general</div><div class="stat-grid-top"><div class="stat-num-card"><div class="stat-num green">${total}</div><div class="stat-label">Total trámites</div></div><div class="stat-num-card"><div class="stat-num blue">${activos}</div><div class="stat-label">En trámite</div></div><div class="stat-num-card"><div class="stat-num amber">${finalizados}</div><div class="stat-label">Finalizados</div></div><div class="stat-num-card"><div class="stat-num purple">${pacientes.length}</div><div class="stat-label">Pacientes</div></div></div>`;
-  html+=`<div class="card" style="margin-top:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between"><div style="font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px">⏱ Demora promedio OS</div><div style="font-size:22px;font-weight:700;font-family:var(--mono);color:var(--warn)">${demoraOS}</div></div>`;
-  html+=`<div class="stat-section-title" style="margin-top:20px">🏥 Por enfermedad</div><div class="stat-grid-top"><div class="stat-num-card"><div class="stat-num" style="color:#1E3A8A">${b24Total}</div><div class="stat-label">B24</div><div class="bar-wrap" style="margin-top:8px"><div class="bar-fill bar-b24" style="width:${total?Math.round(b24Total/total*100):0}%"></div></div><div style="font-size:10px;color:var(--muted);margin-top:4px">${total?Math.round(b24Total/total*100):0}% del total</div></div><div class="stat-num-card"><div class="stat-num" style="color:#5B21B6">${psoTotal}</div><div class="stat-label">Psoriasis / APS</div><div class="bar-wrap" style="margin-top:8px"><div class="bar-fill bar-pso" style="width:${total?Math.round(psoTotal/total*100):0}%"></div></div><div style="font-size:10px;color:var(--muted);margin-top:4px">${total?Math.round(psoTotal/total*100):0}% del total</div></div></div>`;
-  html+=`<div class="stat-section-title" style="margin-top:20px">👤 Por paciente</div>`;
-  pacientes.forEach(pac=>{
-    const tp=lista.filter(x=>x.paciente===pac); const tot=tp.length, fin2=tp.filter(x=>x.estado==="finalizado").length, act=tp.filter(x=>x.estado!=="finalizado").length;
+
+  let html=`<div class="stat-section-title">📋 Resumen general</div>
+  <div class="stat-grid-top">
+    <div class="stat-num-card"><div class="stat-num green">${total}</div><div class="stat-label">Total</div></div>
+    <div class="stat-num-card"><div class="stat-num blue">${act}</div><div class="stat-label">En trámite</div></div>
+    <div class="stat-num-card"><div class="stat-num amber">${fin}</div><div class="stat-label">Finalizados</div></div>
+    <div class="stat-num-card"><div class="stat-num purple">${pacs.length}</div><div class="stat-label">Pacientes</div></div>
+  </div>
+  <div class="card" style="margin-top:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between">
+    <div style="font-size:12px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.4px">⏱ Demora promedio OS</div>
+    <div style="font-size:22px;font-weight:700;font-family:var(--mono);color:var(--warn)">${demoraOS}</div>
+  </div>
+  <div class="stat-section-title" style="margin-top:20px">🏥 Por enfermedad</div>
+  <div class="stat-grid-top">
+    <div class="stat-num-card"><div class="stat-num" style="color:var(--b24)">${b24}</div><div class="stat-label">B24</div><div class="bar-wrap" style="margin-top:8px"><div class="bar-fill bar-b24" style="width:${total?Math.round(b24/total*100):0}%"></div></div><div style="font-size:10px;color:var(--text3);margin-top:4px">${total?Math.round(b24/total*100):0}% del total</div></div>
+    <div class="stat-num-card"><div class="stat-num" style="color:var(--pso)">${pso}</div><div class="stat-label">Psoriasis/APS</div><div class="bar-wrap" style="margin-top:8px"><div class="bar-fill bar-pso" style="width:${total?Math.round(pso/total*100):0}%"></div></div><div style="font-size:10px;color:var(--text3);margin-top:4px">${total?Math.round(pso/total*100):0}% del total</div></div>
+  </div>
+  <div class="stat-section-title" style="margin-top:20px">👤 Por paciente</div>`;
+
+  pacs.forEach(pac=>{
+    const tp=lista.filter(x=>x.paciente===pac); const tot=tp.length;
+    const fin2=tp.filter(x=>x.estado==="finalizado").length, act2=tp.filter(x=>x.estado!=="finalizado").length;
     const b24p=tp.filter(x=>x.enfermedad==="B24").length, psop=tp.filter(x=>x.enfermedad==="Psoriasis/APS").length;
-    html+=`<div class="pac-card"><div class="pac-head"><div class="pac-name">👤 ${esc(pac)}</div><div class="pac-total">${tot} trámite${tot!==1?"s":""}</div></div><div style="padding:12px 14px;border-bottom:1px solid var(--border)"><div class="mini-stats"><div class="mini-stat"><span class="mini-stat-n">${tot}</span><span class="mini-stat-l">Total</span></div><div class="mini-stat"><span class="mini-stat-n ok">${fin2}</span><span class="mini-stat-l">Final.</span></div><div class="mini-stat"><span class="mini-stat-n warn">${act}</span><span class="mini-stat-l">Activos</span></div><div class="mini-stat"><span class="mini-stat-n" style="color:#1E3A8A">${b24p}</span><span class="mini-stat-l">B24</span></div><div class="mini-stat"><span class="mini-stat-n" style="color:#5B21B6">${psop}</span><span class="mini-stat-l">Pso/APS</span></div></div></div>`;
-    if(b24p>0){ const b24f=tp.filter(x=>x.enfermedad==="B24"&&x.estado==="finalizado").length, b24a=b24p-b24f, b24meds=[...new Set(tp.filter(x=>x.enfermedad==="B24").map(x=>x.medicacion))]; html+=`<div class="enf-row"><div class="enf-left"><span class="badge bb24" style="align-self:flex-start">B24</span><div style="font-size:11px;color:var(--muted);margin-top:4px">${b24meds.map(m=>`<b>${esc(m)}</b>`).join(", ")}</div><div class="bar-wrap" style="width:140px;margin-top:6px"><div class="bar-fill bar-b24" style="width:${Math.round(b24p/tot*100)}%"></div></div></div><div class="enf-right"><div style="font-size:20px;font-weight:700;font-family:var(--mono);color:#1E3A8A">${b24p}</div><div style="font-size:10px;color:var(--muted)">✓ ${b24f} fin. | ⏳ ${b24a} activo${b24a!==1?"s":""}</div></div></div>`; }
-    if(psop>0){ const psof=tp.filter(x=>x.enfermedad==="Psoriasis/APS"&&x.estado==="finalizado").length, psoa=psop-psof, psomeds=[...new Set(tp.filter(x=>x.enfermedad==="Psoriasis/APS").map(x=>x.medicacion))]; html+=`<div class="enf-row"><div class="enf-left"><span class="badge bpso" style="align-self:flex-start">Psoriasis / APS</span><div style="font-size:11px;color:var(--muted);margin-top:4px">${psomeds.map(m=>`<b>${esc(m)}</b>`).join(", ")}</div><div class="bar-wrap" style="width:140px;margin-top:6px"><div class="bar-fill bar-pso" style="width:${Math.round(psop/tot*100)}%"></div></div></div><div class="enf-right"><div style="font-size:20px;font-weight:700;font-family:var(--mono);color:#5B21B6">${psop}</div><div style="font-size:10px;color:var(--muted)">✓ ${psof} fin. | ⏳ ${psoa} activo${psoa!==1?"s":""}</div></div></div>`; }
+    html+=`<div class="pac-card"><div class="pac-head"><div class="pac-name">👤 ${esc(pac)}</div><div class="pac-total">${tot} trámite${tot!==1?"s":""}</div></div>
+    <div style="padding:12px 16px;border-bottom:1px solid var(--border)"><div class="mini-stats">
+      <div class="mini-stat"><span class="mini-stat-n">${tot}</span><span class="mini-stat-l">Total</span></div>
+      <div class="mini-stat"><span class="mini-stat-n ok">${fin2}</span><span class="mini-stat-l">Final.</span></div>
+      <div class="mini-stat"><span class="mini-stat-n warn">${act2}</span><span class="mini-stat-l">Activos</span></div>
+      <div class="mini-stat"><span class="mini-stat-n" style="color:var(--b24)">${b24p}</span><span class="mini-stat-l">B24</span></div>
+      <div class="mini-stat"><span class="mini-stat-n" style="color:var(--pso)">${psop}</span><span class="mini-stat-l">Pso/APS</span></div>
+    </div></div>`;
+    if(b24p>0){ const b24f=tp.filter(x=>x.enfermedad==="B24"&&x.estado==="finalizado").length; const b24meds=[...new Set(tp.filter(x=>x.enfermedad==="B24").map(x=>x.medicacion))]; html+=`<div class="enf-row"><div class="enf-left"><span class="badge bb24">B24</span><div style="font-size:11px;color:var(--text2);margin-top:4px">${b24meds.map(m=>`<b>${esc(m)}</b>`).join(", ")}</div><div class="bar-wrap" style="width:140px;margin-top:6px"><div class="bar-fill bar-b24" style="width:${Math.round(b24p/tot*100)}%"></div></div></div><div class="enf-right"><div style="font-size:20px;font-weight:700;font-family:var(--mono);color:var(--b24)">${b24p}</div><div style="font-size:10px;color:var(--text3)">✓ ${b24f} fin. | ⏳ ${b24p-b24f} activo${b24p-b24f!==1?"s":""}</div></div></div>`; }
+    if(psop>0){ const psof=tp.filter(x=>x.enfermedad==="Psoriasis/APS"&&x.estado==="finalizado").length; const psomeds=[...new Set(tp.filter(x=>x.enfermedad==="Psoriasis/APS").map(x=>x.medicacion))]; html+=`<div class="enf-row"><div class="enf-left"><span class="badge bpso">Psoriasis/APS</span><div style="font-size:11px;color:var(--text2);margin-top:4px">${psomeds.map(m=>`<b>${esc(m)}</b>`).join(", ")}</div><div class="bar-wrap" style="width:140px;margin-top:6px"><div class="bar-fill bar-pso" style="width:${Math.round(psop/tot*100)}%"></div></div></div><div class="enf-right"><div style="font-size:20px;font-weight:700;font-family:var(--mono);color:var(--pso)">${psop}</div><div style="font-size:10px;color:var(--text3)">✓ ${psof} fin. | ⏳ ${psop-psof} activo${psop-psof!==1?"s":""}</div></div></div>`; }
     html+=`</div>`;
   });
-  if(topMeds.length){ html+=`<div class="stat-section-title" style="margin-top:20px">💊 Medicaciones más gestionadas</div><div class="card" style="padding:0;overflow:hidden">`; topMeds.forEach(([med,cnt])=>{ html+=`<div class="med-row"><div style="flex:1"><div class="med-name">${esc(med)}</div><div class="med-bar-wrap"><div class="med-bar-fill" style="width:${Math.round(cnt/maxMed*100)}%"></div></div></div><div class="med-count">${cnt} trámite${cnt!==1?"s":""}</div></div>`; }); html+=`</div>`; }
+
+  if(topMeds.length){
+    html+=`<div class="stat-section-title" style="margin-top:20px">💊 Medicaciones más gestionadas</div><div class="card" style="padding:0;overflow:hidden">`;
+    topMeds.forEach(([med,cnt])=>{ html+=`<div class="med-row"><div style="flex:1"><div class="med-name">${esc(med)}</div><div class="med-bar-wrap"><div class="med-bar-fill" style="width:${Math.round(cnt/maxMed*100)}%"></div></div></div><div class="med-count">${cnt} trámite${cnt!==1?"s":""}</div></div>`; });
+    html+=`</div>`;
+  }
   el.innerHTML=html;
 }
 
 // ============================================================
-//  RECETAS
+// IMPRESIÓN
 // ============================================================
-const PACIENTES_RECETAS = {
-  "gsaladino":  { nombre: "G. Saladino", enfermedades: ["B24", "Psoriasis-APS"] },
-  "rdursi":     { nombre: "Jorge Ricardo Dursi", enfermedades: ["B24", "Psoriasis-APS"] }
-};
-
-// También derivamos pacientes de los trámites cargados
-function getPacientesUnicos(){
-  const fromData = [...new Set(cachedData.map(x=>x.paciente))].filter(Boolean);
-  return fromData.length ? fromData : [];
+function imprimirSeccion(){
+  const fechaHoy="Impreso el: "+hoyFmt();
+  ["activos","fin","stats"].forEach(n=>{ const el=document.getElementById("phd-"+n); if(el) el.textContent=fechaHoy; });
+  document.querySelectorAll(".sec").forEach(s=>s.classList.remove("print-target"));
+  const sec=document.getElementById("sec-"+tabActual); if(sec) sec.classList.add("print-target");
+  setTimeout(()=>window.print(),100);
 }
 
-let recPacienteActual = "";
-let recEnfActual = "";
-
-function initRecetas(){
-  const btns = document.getElementById("rec-pac-btns");
-  const pacs = getPacientesUnicos();
-  btns.innerHTML = pacs.map(p => `
-    <button class="btn" style="flex:1;min-width:140px;padding:16px;flex-direction:column;gap:6px;height:auto"
-      onclick="seleccionarPaciente('${esc(p)}')">
-      <span style="font-size:24px">👤</span>
-      <span style="font-size:13px;font-weight:700">${esc(p)}</span>
-    </button>`).join("");
-}
-
-function seleccionarPaciente(pac){
-  recPacienteActual = pac;
-  document.getElementById("rec-selector").style.display = "none";
-  document.getElementById("rec-contenido").style.display = "block";
-  document.getElementById("rec-pac-titulo").textContent = "👤 " + pac;
-
-  // Enfermedades del paciente (desde sus trámites)
-  const enfs = [...new Set(cachedData.filter(x=>x.paciente===pac).map(x=>x.enfermedad))].filter(Boolean);
-  const enfList = enfs.length ? enfs : ["B24", "Psoriasis-APS"];
-  recEnfActual = enfList[0];
-
-  // Tabs de enfermedad
-  const tabs = document.getElementById("rec-enf-tabs");
-  tabs.innerHTML = enfList.map(e => `
-    <button class="fb ${e===recEnfActual?"on":""}" onclick="seleccionarEnf('${esc(e)}')">${esc(e)}</button>
-  `).join("");
-
-  // Años disponibles
-  const anioSel = document.getElementById("rec-anio");
-  const anioActual = new Date().getFullYear();
-  anioSel.innerHTML = [anioActual, anioActual+1, anioActual-1].map(a=>
-    `<option value="${a}">${a}</option>`).join("");
-
-  cargarRecetas();
-}
-
-function seleccionarEnf(enf){
-  recEnfActual = enf;
-  document.querySelectorAll("#rec-enf-tabs .fb").forEach(b=>{
-    b.classList.toggle("on", b.textContent.trim()===enf);
-  });
-  cargarRecetas();
-}
-
-function volverSelector(){
-  document.getElementById("rec-selector").style.display = "block";
-  document.getElementById("rec-contenido").style.display = "none";
-  document.getElementById("rec-lista").innerHTML = "";
-}
-
-async function cargarRecetas(){
-  const lista = document.getElementById("rec-lista");
-  lista.innerHTML = `<div class="loading-wrap"><div class="spinner"></div><span>Cargando recetas...</span></div>`;
-  try {
-    const data = await callScript("getRecetas", {
-      paciente: recPacienteActual,
-      enfermedad: recEnfActual
-    });
-    if(data.error){ lista.innerHTML = `<div class="empty"><span class="empty-icon">⚠️</span><span>Error: ${esc(data.error)}</span></div>`; return; }
-    renderRecetas(data.recetas || []);
-  } catch(e){
-    lista.innerHTML = `<div class="empty"><span class="empty-icon">⚠️</span><span>Sin conexión</span></div>`;
-  }
-}
-
-function renderRecetas(recetas){
-  const lista = document.getElementById("rec-lista");
-  if(!recetas.length){
-    lista.innerHTML = `<div class="empty"><span class="empty-icon">📄</span><span style="font-size:14px">No hay recetas cargadas aún</span></div>`;
-    return;
-  }
-
-  // Agrupar por año
-  const porAnio = {};
-  recetas.forEach(r => {
-    if(!porAnio[r.anio]) porAnio[r.anio] = [];
-    porAnio[r.anio].push(r);
-  });
-
-  let html = "";
-  Object.keys(porAnio).sort((a,b)=>b-a).forEach(anio => {
-    html += `<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin:16px 0 8px;display:flex;align-items:center;gap:8px">
-      📅 ${anio} <span style="flex:1;height:1px;background:var(--border);display:block"></span>
-    </div>`;
-    porAnio[anio].forEach(r => {
-      const esImagen = r.mimeType && r.mimeType.startsWith("image/");
-      const esPDF    = r.mimeType === "application/pdf";
-      const icono    = esPDF ? "📄" : esImagen ? "🖼" : "📎";
-      const kb       = r.size ? Math.round(r.size/1024) + " KB" : "";
-      html += `
-      <div class="tc" style="margin-bottom:8px">
-        <div style="padding:12px 16px;display:flex;align-items:center;gap:12px">
-          <div style="font-size:28px;flex-shrink:0">${icono}</div>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:13px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.nombre)}</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px">${r.fecha ? fd(r.fecha) : ""} ${kb ? "· "+kb : ""}</div>
-          </div>
-          <div style="display:flex;gap:6px;flex-shrink:0">
-            <a href="${r.viewUrl}" target="_blank" class="btn sm" style="text-decoration:none">👁 Ver</a>
-            <button class="btn danger sm" onclick="eliminarReceta('${r.fileId}')">🗑</button>
-          </div>
-        </div>
-      </div>`;
-    });
-  });
-  lista.innerHTML = html;
-}
-
-async function subirReceta(){
-  const fileInput = document.getElementById("rec-file");
-  const nombreInput = document.getElementById("rec-nombre");
-  const anio = document.getElementById("rec-anio").value;
-  const progress = document.getElementById("rec-upload-progress");
-
-  if(!fileInput.files.length){ alert("Seleccioná un archivo primero."); return; }
-  const file = fileInput.files[0];
-
-  // Validar tipo
-  const tiposValidos = ["application/pdf","image/jpeg","image/png","image/jpg","image/webp","image/heic"];
-  if(!tiposValidos.includes(file.type) && !file.type.startsWith("image/")){
-    alert("Solo se aceptan archivos PDF o imágenes."); return;
-  }
-
-  // Validar tamaño (máx 10MB)
-  if(file.size > 10 * 1024 * 1024){ alert("El archivo no puede superar 10MB."); return; }
-
-  const nombre = nombreInput.value.trim() ||
-    (recPacienteActual.split(" ")[0] + " - " + recEnfActual + " - " + anio + " - " + file.name);
-
-  progress.style.display = "block";
-  document.querySelector("[onclick='subirReceta()']").disabled = true;
-
-  try {
-    // Convertir a base64
-    const base64 = await new Promise((res, rej) => {
-      const reader = new FileReader();
-      reader.onload = () => res(reader.result.split(",")[1]);
-      reader.onerror = () => rej(new Error("Error al leer el archivo"));
-      reader.readAsDataURL(file);
-    });
-
-    const data = await callScript("uploadReceta", {
-      paciente:   recPacienteActual,
-      enfermedad: recEnfActual,
-      anio:       parseInt(anio),
-      nombre:     nombre,
-      mimeType:   file.type,
-      base64:     base64
-    });
-
-    if(data.error){ alert("Error al subir: " + data.error); return; }
-
-    showToast("✓ Receta subida correctamente");
-    fileInput.value = "";
-    nombreInput.value = "";
-    cargarRecetas();
-
-  } catch(e){
-    alert("Error: " + e.message);
-  } finally {
-    progress.style.display = "none";
-    document.querySelector("[onclick='subirReceta()']").disabled = false;
-  }
-}
-
-async function eliminarReceta(fileId){
-  if(!confirm("¿Eliminar esta receta?\nSe moverá a la papelera de Google Drive.")) return;
-  try {
-    const data = await callScript("deleteReceta", { fileId });
-    if(data.ok){ showToast("🗑 Receta eliminada"); cargarRecetas(); }
-    else alert("Error al eliminar: " + (data.error||""));
-  } catch(e){ alert("Error: " + e.message); }
-}
+function showToast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2200); }
 
 // ============================================================
-//  EDICIÓN DE TRÁMITES
-// ============================================================
-let editOrigen = "activos"; // para saber a donde volver
-
-document.getElementById("edit-notas").addEventListener("input", function(){
-  document.getElementById("edit-nc").textContent = this.value.length + " / 200";
-});
-
-function abrirEdicion(id){
-  // Buscar en mapa global primero, luego en cachedData
-  const t = (window._tramiteMap && window._tramiteMap[id])
-            || cachedData.find(x=>x.id===id);
-  if(!t){ showToast("Error: recargá la página e intentá de nuevo"); return; }
-  abrirEdicionConTramite(t);
-}
-
-function abrirEdicionConTramite(t){
-  editOrigen = tabActual === "fin" ? "fin" : "activos";
-  document.getElementById("edit-id").value    = id;
-  document.getElementById("edit-origen").value = editOrigen;
-  document.getElementById("edit-pac").value   = t.paciente;
-  document.getElementById("edit-enf").value   = t.enfermedad;
-
-  // Medicación
-  const sel = document.getElementById("edit-med");
-  sel.innerHTML = '<option value="">— Seleccionar —</option>';
-  const meds = MEDS[t.enfermedad] || [];
-  meds.forEach(m => {
-    const o = document.createElement("option");
-    o.value = m; o.textContent = m; sel.appendChild(o);
-  });
-  const esListado = meds.includes(t.medicacion);
-  sel.value = esListado ? t.medicacion : "";
-  document.getElementById("edit-medlib").value = esListado ? "" : t.medicacion;
-
-  // Fechas
-  document.getElementById("edit-toma").value  = t.toma || "";
-  document.getElementById("edit-proxima").value = t.toma ? fd(t.proximaAplicacion || calcProximaAplicacion(t.toma)) : "";
-  document.getElementById("edit-pres").value  = t.presentacionOS || "";
-  document.getElementById("edit-vos").value   = t.vencOS ? fd(t.vencOS) : "";
-  document.getElementById("edit-apr").value   = t.aprobacionRealOS || "";
-  document.getElementById("edit-ing").value   = t.ingresoDrogueria || "";
-  document.getElementById("edit-vdrog").value = t.vencDrogueria ? fd(t.vencDrogueria) : "";
-  document.getElementById("edit-disp").value  = t.disponibleFarmacia || "";
-
-  // Notas
-  document.getElementById("edit-notas").value = t.notas || "";
-  document.getElementById("edit-nc").textContent = (t.notas||"").length + " / 200";
-
-  // Mostrar/ocultar card de toma
-  document.getElementById("edit-card-toma").style.display = t.enfermedad === "B24" ? "none" : "block";
-
-  // Navegar a la sección de edición
-  document.getElementById("tab-editar").style.display = "flex";
-  goTab("editar");
-}
-
-function volverDeEdicion(){
-  document.getElementById("tab-editar").style.display = "none";
-  document.getElementById("edit-ing").dataset.manual = "";
-  goTab(editOrigen === "fin" ? "fin" : "activos");
-}
-
-function editCalcProxima(){
-  const v = document.getElementById("edit-toma").value;
-  document.getElementById("edit-proxima").value = v ? fd(calcProximaAplicacion(v)) : "";
-}
-function editCalcVencOS(){
-  const v = document.getElementById("edit-pres").value;
-  document.getElementById("edit-vos").value = v ? fd(calcOS(v,10)) : "";
-}
-function editCalcDrog(){
-  const apr = document.getElementById("edit-apr").value;
-  const ing  = document.getElementById("edit-ing");
-  if(apr && !ing.dataset.manual){ ing.value = apr; editCalcVencDrog(); }
-}
-function editCalcVencDrog(){
-  const v = document.getElementById("edit-ing").value;
-  document.getElementById("edit-vdrog").value = v ? fd(calcDrog(v,2)) : "";
-  document.getElementById("edit-ing").dataset.manual = "1";
-}
-
-async function guardarEdicion(){
-  const id   = document.getElementById("edit-id").value;
-  const lista = await loadData();
-  const t    = lista.find(x=>x.id===id);
-  if(!t){ alert("No se encontró el trámite."); return; }
-
-  const medSel = document.getElementById("edit-med").value;
-  const medLib = document.getElementById("edit-medlib").value.trim();
-  const med    = medLib || medSel;
-  const pres   = document.getElementById("edit-pres").value;
-  const toma   = document.getElementById("edit-toma").value;
-  const apr    = document.getElementById("edit-apr").value;
-  const ing    = document.getElementById("edit-ing").value;
-  const disp   = document.getElementById("edit-disp").value;
-
-  if(!med){  alert("La medicación no puede estar vacía."); return; }
-  if(!pres){ alert("La fecha de presentación OS no puede estar vacía."); return; }
-
-  t.medicacion         = med;
-  t.toma               = (t.enfermedad==="B24") ? "" : toma;
-  t.proximaAplicacion  = (t.enfermedad==="Psoriasis/APS" && toma) ? calcProximaAplicacion(toma) : "";
-  t.presentacionOS     = pres;
-  t.vencOS             = calcOS(pres, 10);
-  t.aprobacionRealOS   = apr;
-  t.ingresoDrogueria   = ing || apr;
-  t.vencDrogueria      = (ing||apr) ? calcDrog(ing||apr, 2) : "";
-  t.disponibleFarmacia = disp;
-  t.notas              = document.getElementById("edit-notas").value;
-  if(disp)     t.estado = "finalizado";
-  else if(apr) t.estado = "aprobado";
-  else         t.estado = "pendiente";
-
-  const ok = await saveRow(t);
-  if(ok){
-    showToast("✓ Trámite actualizado");
-    lastHash = "";
-    volverDeEdicion();
-    await loadAndRender();
-  } else {
-    alert("Error al guardar los cambios.");
-  }
-}
-
-// ============================================================
-//  ESTUDIOS MÉDICOS
-// ============================================================
-const TIPOS_ESTUDIO = ["Todos","Laboratorio","Diagnóstico por imágenes","Biopsia","Otros"];
-let estPacienteActual = "";
-let estTipoActual = "Todos";
-
-function initEstudios(){
-  const btns = document.getElementById("est-pac-btns");
-  const pacs = getPacientesUnicos();
-  btns.innerHTML = pacs.map(p => `
-    <button class="btn" style="flex:1;min-width:140px;padding:16px;flex-direction:column;gap:6px;height:auto"
-      onclick="seleccionarPacienteEst('${esc(p)}')">
-      <span style="font-size:24px">👤</span>
-      <span style="font-size:13px;font-weight:700">${esc(p)}</span>
-    </button>`).join("");
-}
-
-function seleccionarPacienteEst(pac){
-  estPacienteActual = pac;
-  estTipoActual = "Todos";
-  document.getElementById("est-selector").style.display = "none";
-  document.getElementById("est-contenido").style.display = "block";
-  document.getElementById("est-pac-titulo").textContent = "👤 " + pac;
-
-  // Tabs de tipo
-  const tabs = document.getElementById("est-tipo-tabs");
-  tabs.innerHTML = TIPOS_ESTUDIO.map(t =>
-    `<button class="fb ${t==="Todos"?"on":""}" onclick="seleccionarTipoEst('${esc(t)}')">${esc(t)}</button>`
-  ).join("");
-
-  // Años
-  const anioSel = document.getElementById("est-anio");
-  const anioActual = new Date().getFullYear();
-  anioSel.innerHTML = [anioActual, anioActual+1, anioActual-1].map(a=>
-    `<option value="${a}">${a}</option>`).join("");
-
-  // Fecha default hoy
-  document.getElementById("est-fecha").value = ifmt(new Date());
-
-  cargarEstudios();
-}
-
-function seleccionarTipoEst(tipo){
-  estTipoActual = tipo;
-  document.querySelectorAll("#est-tipo-tabs .fb").forEach(b=>{
-    b.classList.toggle("on", b.textContent.trim()===tipo);
-  });
-  cargarEstudios();
-}
-
-function volverSelectorEst(){
-  document.getElementById("est-selector").style.display = "block";
-  document.getElementById("est-contenido").style.display = "none";
-  document.getElementById("est-lista").innerHTML = "";
-}
-
-async function cargarEstudios(){
-  const lista = document.getElementById("est-lista");
-  lista.innerHTML = `<div class="loading-wrap"><div class="spinner"></div><span>Cargando estudios...</span></div>`;
-  try {
-    const enfermedad = estTipoActual === "Todos" ? "" : estTipoActual;
-    const data = await callScript("getRecetas", {
-      paciente: estPacienteActual + "_estudios",
-      enfermedad: enfermedad
-    });
-    if(data.error){ lista.innerHTML = `<div class="empty"><span class="empty-icon">⚠️</span><span>Error: ${esc(data.error)}</span></div>`; return; }
-    renderEstudios(data.recetas || []);
-  } catch(e){
-    lista.innerHTML = `<div class="empty"><span class="empty-icon">⚠️</span><span>Sin conexión</span></div>`;
-  }
-}
-
-function renderEstudios(estudios){
-  const lista = document.getElementById("est-lista");
-  if(!estudios.length){
-    lista.innerHTML = `<div class="empty"><span class="empty-icon">🔬</span><span style="font-size:14px">No hay estudios cargados aún</span></div>`;
-    return;
-  }
-
-  // Agrupar por año
-  const porAnio = {};
-  estudios.forEach(e => {
-    if(!porAnio[e.anio]) porAnio[e.anio] = [];
-    porAnio[e.anio].push(e);
-  });
-
-  const iconos = { "Laboratorio":"🧪", "Diagnóstico por imágenes":"🩻", "Biopsia":"🔬", "Otros":"📋" };
-
-  let html = "";
-  Object.keys(porAnio).sort((a,b)=>b-a).forEach(anio => {
-    html += `<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin:16px 0 8px;display:flex;align-items:center;gap:8px">
-      📅 ${anio} <span style="flex:1;height:1px;background:var(--border);display:block"></span>
-    </div>`;
-    porAnio[anio].forEach(e => {
-      const icono = iconos[e.enfermedad] || "📋";
-      const kb = e.size ? Math.round(e.size/1024) + " KB" : "";
-      // Extract fecha from nombre if stored
-      const fechaDisplay = e.fecha ? fd(e.fecha) : "";
-      html += `
-      <div class="tc" style="margin-bottom:8px">
-        <div style="padding:12px 16px;display:flex;align-items:center;gap:12px">
-          <div style="font-size:28px;flex-shrink:0">${icono}</div>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:13px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(e.nombre)}</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap">
-              <span class="badge ${e.enfermedad==="Laboratorio"?"ba":e.enfermedad==="Biopsia"?"b-venc":"bb24"}">${esc(e.enfermedad)}</span>
-              ${fechaDisplay ? `<span>📅 ${fechaDisplay}</span>` : ""}
-              ${kb ? `<span>${kb}</span>` : ""}
-            </div>
-          </div>
-          <div style="display:flex;gap:6px;flex-shrink:0">
-            <a href="${e.viewUrl}" target="_blank" class="btn sm" style="text-decoration:none">👁 Ver</a>
-            <button class="btn danger sm" onclick="eliminarEstudio('${e.fileId}')">🗑</button>
-          </div>
-        </div>
-      </div>`;
-    });
-  });
-  lista.innerHTML = html;
-}
-
-async function subirEstudio(){
-  const fileInput = document.getElementById("est-file");
-  const tipo = document.getElementById("est-tipo").value;
-  const fecha = document.getElementById("est-fecha").value;
-  const nombreInput = document.getElementById("est-nombre");
-  const anio = document.getElementById("est-anio").value;
-  const progress = document.getElementById("est-upload-progress");
-
-  if(!fileInput.files.length){ alert("Seleccioná un archivo primero."); return; }
-  if(!fecha){ alert("Ingresá la fecha del estudio."); return; }
-  const file = fileInput.files[0];
-
-  if(file.size > 10 * 1024 * 1024){ alert("El archivo no puede superar 10MB."); return; }
-
-  const fechaStr = fd(fecha);
-  const nombre = nombreInput.value.trim() ||
-    (tipo + " - " + fechaStr + " - " + file.name);
-
-  progress.style.display = "block";
-  document.querySelector("[onclick='subirEstudio()']").disabled = true;
-
-  try {
-    const base64 = await new Promise((res, rej) => {
-      const reader = new FileReader();
-      reader.onload = () => res(reader.result.split(",")[1]);
-      reader.onerror = () => rej(new Error("Error al leer el archivo"));
-      reader.readAsDataURL(file);
-    });
-
-    const data = await callScript("uploadReceta", {
-      paciente:   estPacienteActual + "_estudios",
-      enfermedad: tipo,
-      anio:       parseInt(anio),
-      nombre:     nombre,
-      mimeType:   file.type,
-      base64:     base64
-    });
-
-    if(data.error){ alert("Error al subir: " + data.error); return; }
-
-    showToast("✓ Estudio subido correctamente");
-    fileInput.value = "";
-    nombreInput.value = "";
-    cargarEstudios();
-
-  } catch(e){
-    alert("Error: " + e.message);
-  } finally {
-    progress.style.display = "none";
-    document.querySelector("[onclick='subirEstudio()']").disabled = false;
-  }
-}
-
-async function eliminarEstudio(fileId){
-  if(!confirm("¿Eliminar este estudio?\nSe moverá a la papelera de Google Drive.")) return;
-  try {
-    const data = await callScript("deleteReceta", { fileId });
-    if(data.ok){ showToast("🗑 Estudio eliminado"); cargarEstudios(); }
-    else alert("Error al eliminar: " + (data.error||""));
-  } catch(e){ alert("Error: " + e.message); }
-}
-
-// ============================================================
-//  NAV
+// NAVEGACIÓN
 // ============================================================
 function goTab(name){
   tabActual=name;
-  const names=["login","nuevo","activos","fin","recetas","estudios","stats","editar"];
-  document.querySelectorAll(".tab").forEach((t,i)=>t.classList.toggle("on",["nuevo","activos","fin","recetas","estudios","stats","editar"][i]===name));
+  const tabNames=["nuevo","activos","fin","recetas","estudios","stats","editar"];
+  document.querySelectorAll(".tab").forEach((t,i)=>t.classList.toggle("on",tabNames[i]===name));
   document.querySelectorAll(".sec").forEach(s=>s.classList.remove("on"));
-  document.getElementById("sec-"+name).classList.add("on");
+  const sec=document.getElementById("sec-"+name); if(sec) sec.classList.add("on");
   const fab=document.getElementById("fab-wrap");
-  if(name==="nuevo"||name==="login"||name==="recetas"||name==="estudios"||name==="editar"){ fab.style.display="none"; }
-  else { fab.style.display="flex"; const lbls={activos:"Imprimir trámites activos",fin:"Imprimir finalizados",stats:"Imprimir estadísticas"}; document.getElementById("fab-lbl").textContent=lbls[name]||"Imprimir PDF"; }
+  if(["nuevo","login","recetas","estudios","editar"].includes(name)){ fab.style.display="none"; }
+  else{ fab.style.display="flex"; const lbls={activos:"Imprimir trámites activos",fin:"Imprimir finalizados",stats:"Imprimir estadísticas"}; document.getElementById("fab-lbl").textContent=lbls[name]||"Imprimir PDF"; }
   if(name==="stats") renderStats();
-  else if(name==="recetas"){ initRecetas(); }
-  else if(name==="estudios"){ initEstudios(); }
-  else if(name==="activos"||name==="fin"){ if(!cachedData.length) loadAndRender(); else render(); }
-  else if(name!=="nuevo"&&name!=="login") render();
+  else if(name==="recetas") initRecetas();
+  else if(name==="estudios") initEstudios();
+  else if(name==="activos"||name==="fin") render();
 }
 
 // ============================================================
-//  INIT
+// INIT
 // ============================================================
-window.addEventListener("load", ()=>{
-  initAuth();
-});
+window.addEventListener("load",()=>{ initAuth(); });
 </script>
 </body>
 </html>
