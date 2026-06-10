@@ -1362,7 +1362,7 @@ function renderTC(t,esFin){
   const notasHtml=(t.notas&&t.notas.trim())?`<div class="tc-notes">📝 ${esc(t.notas)}</div>`:"";
   const drogAlerta=(t.estado==="aprobado"&&t.vencDrogueria)?diasBadge(t.vencDrogueria):"";
   return `<div class="tc"><div class="tc-head"><div><div class="tc-name">${esc(t.paciente)}</div><div class="tc-sub"><span>${esc(t.medicacion)}</span>${enfBadge(t.enfermedad)}</div></div><div class="tc-badges">${stateBadge(t)}${t.estado==="pendiente"?diasBadge(t.vencOS):""}${drogAlerta}</div></div><div class="tc-grid"><div class="tf"><div class="tfl">Presentado a OS</div><div class="tfv">${fd(t.presentacionOS)}</div></div><div class="tf"><div class="tfl">Vto. legal OS</div><div class="tfv ${vosClass(t)}">${fd(t.vencOS)}</div></div><div class="tf"><div class="tfl">Aprobación real OS</div><div class="tfv ${t.aprobacionRealOS?"ok":"pend"}">${t.aprobacionRealOS?fd(t.aprobacionRealOS):"Pendiente"}</div></div><div class="tf"><div class="tfl">Ingreso a droguería</div><div class="tfv">${fd(t.ingresoDrogueria)}</div></div><div class="tf"><div class="tfl">Vto. droguería (48hs)</div><div class="tfv">${fd(t.vencDrogueria)}</div></div><div class="tf"><div class="tfl">Disponible en farmacia</div><div class="tfv ${t.disponibleFarmacia?"ok":"pend"}">${t.disponibleFarmacia?fd(t.disponibleFarmacia):"—"}</div></div>${(t.toma||t.enfermedad==="Psoriasis/APS")?`<div class="tf"><div class="tfl">Fecha toma / aplicación</div><div class="tfv ${t.toma?"":"pend"}">${t.toma?fd(t.toma):"—"}</div></div>`:""}
-      ${(t.enfermedad==="Psoriasis/APS")?`<div class="tf"><div class="tfl">Próxima aplicación</div><div class="tfv ${(t.proximaAplicacion||t.toma)?"ok":""}">${t.toma?fd(t.proximaAplicacion||calcProximaAplicacion(t.toma)):"—"}</div></div>`:""}<div class="tf"><div class="tfl">Iniciado el</div><div class="tfv" style="font-size:11px;color:var(--muted)">${fd(t.creadoEn?t.creadoEn.slice(0,10):"")}</div></div></div>${notasHtml}${stepHtml}<div class="tc-acts"><button class="btn sm" onclick="abrirEdicion('${t.id}')">✏️ Editar</button><button class="btn danger sm" onclick="eliminar('${t.id}')">🗑 Eliminar</button></div></div>`;
+      ${(t.enfermedad==="Psoriasis/APS")?`<div class="tf"><div class="tfl">Próxima aplicación</div><div class="tfv ${(t.proximaAplicacion||t.toma)?"ok":""}">${t.toma?fd(t.proximaAplicacion||calcProximaAplicacion(t.toma)):"—"}</div></div>`:""}<div class="tf"><div class="tfl">Iniciado el</div><div class="tfv" style="font-size:11px;color:var(--muted)">${fd(t.creadoEn?t.creadoEn.slice(0,10):"")}</div></div></div>${notasHtml}${stepHtml}<div class="tc-acts"><button class="btn sm" onclick="abrirEdicionData(this)" data-tramite='${encodeURIComponent(JSON.stringify(t))}'>✏️ Editar</button><button class="btn danger sm" onclick="eliminar('${t.id}')">🗑 Eliminar</button></div></div>`;
 }
 
 // ============================================================
@@ -1596,27 +1596,25 @@ document.getElementById("edit-notas").addEventListener("input", function(){
   document.getElementById("edit-nc").textContent = this.value.length + " / 200";
 });
 
-async function abrirEdicion(id){
-  // Determinar origen por tab actual
-  const origen = tabActual === "fin" ? "fin" : "activos";
-  editOrigen = origen;
+function abrirEdicionData(btn){
+  try {
+    const t = JSON.parse(decodeURIComponent(btn.dataset.tramite));
+    abrirEdicionConTramite(t);
+  } catch(e) {
+    showToast("Error al abrir edición");
+    console.error(e);
+  }
+}
 
-  // Asegurar que cachedData tenga datos
-  if(!cachedData.length){
-    showToast("Cargando...");
-    await loadData();
-  }
+function abrirEdicion(id){
+  // Fallback: buscar en cachedData
+  const t = cachedData.find(x=>x.id===id);
+  if(t) abrirEdicionConTramite(t);
+  else showToast("Recargando...");
+}
 
-  let t = cachedData.find(x=>x.id===id);
-  if(!t){
-    await loadData();
-    t = cachedData.find(x=>x.id===id);
-  }
-  if(!t){
-    showToast("Recargando datos...");
-    await loadAndRender();
-    return;
-  }
+function abrirEdicionConTramite(t){
+  editOrigen = tabActual === "fin" ? "fin" : "activos";
   document.getElementById("edit-id").value    = id;
   document.getElementById("edit-origen").value = editOrigen;
   document.getElementById("edit-pac").value   = t.paciente;
