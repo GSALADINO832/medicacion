@@ -1236,7 +1236,10 @@ function render(){
   document.getElementById("cnt-a").textContent = activos.length;
   document.getElementById("cnt-f").textContent = fin.length;
   renderAlertas();
-  // Actualizar selector de pacientes en activos
+  // Llenar mapa global con TODOS los tramites
+  if(!window._tramiteMap) window._tramiteMap = {};
+  cachedData.forEach(t => { window._tramiteMap[t.id] = t; });
+  // Actualizar selector de pacientes
   renderSelectorPac("act-pac-btns", activos, "activos");
   renderSelectorPac("fin-pac-btns", fin, "fin");
   // Si ya hay paciente seleccionado, refrescar la lista
@@ -1263,7 +1266,9 @@ function renderSelectorPac(cid, lista, sec){
   }).join("");
 }
 
-function selPac(pac, sec){
+async function selPac(pac, sec){
+  // Asegurar datos frescos
+  if(!cachedData.length) await loadData();
   const lista = cachedData.filter(x=> sec==="activos" ? x.estado!=="finalizado" : x.estado==="finalizado");
   const enfs  = [...new Set(lista.filter(x=>x.paciente===pac).map(x=>x.enfermedad))].filter(Boolean);
   const primeraEnf = enfs[0] || "";
